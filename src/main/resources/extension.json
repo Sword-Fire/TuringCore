@@ -1,0 +1,18 @@
+{
+  "entrypoint": "net.geekmc.turingcore.TuringCoreExtension",
+  "name": "TuringCoreExtension",
+  "version": "!@!version!@!",
+  "dependencies": [],
+  "externalDependencies": {
+    "repositories": [
+      {
+        "name": "Central",
+        "url": "https://repo1.maven.org/maven2/"
+      }
+    ],
+    "artifacts": [
+      "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
+      "net.kyori:adventure-text-minimessage:4.12.0"
+    ]
+  }
+}

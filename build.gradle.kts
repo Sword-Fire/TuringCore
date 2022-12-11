@@ -11,12 +11,29 @@ group = "net.geekmc.turingcore"
 version = "1.0-SNAPSHOT"
 
 repositories {
+    maven(url = "https://jitpack.io")
     mavenCentral()
     mavenLocal()
 }
 
 dependencies {
+    // TODO: pin version
+    compileOnly("com.github.Minestom:Minestom:-SNAPSHOT") {
+        exclude(group = "org.tinylog")
+    }
 
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    compileOnly("net.kyori:adventure-text-minimessage:4.12.0")
+}
+
+// Process some props in extension.json
+@Suppress("UnstableApiUsage")
+tasks.withType<ProcessResources> {
+    filter {
+        return@filter if ("!@!version!@!" in it) {
+            it.replace("!@!version!@!", version as String)
+        } else it
+    }
 }
 
 tasks.withType<ShadowJar> {
