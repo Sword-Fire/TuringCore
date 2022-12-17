@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "net.geekmc.turingcore"
-version = "1.0-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 
 repositories {
     maven(url = "https://jitpack.io")
@@ -24,6 +24,14 @@ dependencies {
 
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     compileOnly("net.kyori:adventure-text-minimessage:4.12.0")
+
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.1")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+
+    compileOnly("com.github.Project-Cepi:KStom:f02e4c21d4")
+
+    compileOnly("org.yaml:snakeyaml:1.33")
 }
 
 // Process some props in extension.json
