@@ -1,6 +1,6 @@
 {
   "entrypoint": "net.geekmc.turingcore.TuringCore",
-  "name": "TuringCoreExtension",
+  "name": "TuringCore",
   "version": "!@!version!@!",
   "dependencies": [],
   "externalDependencies": {
