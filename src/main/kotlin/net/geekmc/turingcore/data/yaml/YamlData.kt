@@ -54,6 +54,7 @@ class YamlData(path: Path, yaml: Yaml = defaultYaml) {
     }
 
     operator fun <T> get(key: String): T? {
+        // keys 是将 key 按照 . 分割的关键字列表。
         val keys = key.split(".")
         var obj = rootMap
         val iter = keys.iterator()
@@ -65,7 +66,7 @@ class YamlData(path: Path, yaml: Yaml = defaultYaml) {
                 try {
                     next = next.toString().toInt()
                 } catch (exception: java.lang.NumberFormatException) {
-                    exception.printStackTrace()
+                    // 不需要抛出异常，按找不到处理。
                     return null
                 }
                 // String 转成 Integer 作为 Key 未存在，返回空。

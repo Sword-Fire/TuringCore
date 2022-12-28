@@ -38,6 +38,5 @@ object ColorUtil {
                 }
                 colorMap[split[0]] = "<${split[1]}>"
             }
-        info(colorMap)
     }
 }

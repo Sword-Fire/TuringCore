@@ -1,7 +1,7 @@
 {
   "entrypoint": "net.geekmc.turingcore.TuringCore",
   "name": "TuringCore",
-  "version": "!@!version!@!",
+  "version": "@!extensionVersion@",
   "dependencies": [],
   "externalDependencies": {
     "repositories": [
@@ -15,13 +15,12 @@
       }
     ],
     "artifacts": [
-      "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
-      "net.kyori:adventure-text-minimessage:4.12.0",
-      "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
-      "org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.1",
-      "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1",
-      "com.github.Project-Cepi:KStom:f02e4c21d4",
-      "org.yaml:snakeyaml:1.33"
+      "org.jetbrains.kotlinx:kotlinx-coroutines-core:@!dependencyVersion@",
+      "org.jetbrains.kotlinx:kotlinx-serialization-core:@!dependencyVersion@",
+      "org.jetbrains.kotlinx:kotlinx-serialization-json:@!dependencyVersion@",
+      "org.yaml:snakeyaml:@!dependencyVersion@",
+      "net.kyori:adventure-text-minimessage:@!dependencyVersion@",
+      "com.github.Project-Cepi:KStom:@!dependencyVersion@"
     ]
   }
 }
