@@ -6,7 +6,7 @@ import net.minestom.server.command.CommandSender
 
 class TypeActionBar : Type {
 
-    var text: String? = null
+    private var text: String? = null
 
     override fun init(source: Map<String, Any>): Boolean {
         text = source["text"]?.toString() ?: return false
