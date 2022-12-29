@@ -27,14 +27,17 @@ object LanguageUtil {
             messageMap[k] = when (v) {
                 is String -> TypeText(v)
                 is List<*> -> TypeText().apply {
-                    init(mutableMapOf("text" to v))
-                }
-                is Map<*, *> -> {
-                    val source = v.map { it.key.toString() to it.value!! }.toMap()
-                    val type = languageType[source["type"]]?.getDeclaredConstructor()?.newInstance()
-                        ?: error("Mismatched language node: ${source["type"]}. ($k)")
-                    type.apply {
-                        init(source)
+                    v.mapNotNull { sub ->
+                        if (sub is Map<*, *>) {
+                            val source = sub.map { it.key.toString() to it.value!! }.toMap()
+                            val type = languageType[source["type"]]?.getDeclaredConstructor()?.newInstance()
+                                ?: error("Mismatched language node: ${source["type"]}. ($k)")
+                            type.apply {
+                                init(source)
+                            }
+                        } else {
+                            init(mutableMapOf("texts" to v))
+                        }
                     }
                 }
                 else -> error("Unsupported language node: $v. ($k)")
