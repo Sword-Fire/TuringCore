@@ -7,11 +7,11 @@ import java.time.Duration
 
 class TypeTitle : Type {
 
-    private var title: String? = null
-    private var subtitle: String? = null
-    private var fadein = 0L
-    private var stay = 1000L
-    private var fadeout = 0L
+    var title: String? = null
+    var subtitle: String? = null
+    var fadein = 0L
+    var stay = 1000L
+    var fadeout = 0L
 
     override fun init(source: Map<String, Any>): Boolean {
         title = source["title"]?.toString() ?: return false
