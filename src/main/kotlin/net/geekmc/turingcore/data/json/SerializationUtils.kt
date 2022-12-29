@@ -23,10 +23,9 @@ import world.cepi.kstom.serializer.*
 import java.time.Duration
 import java.util.*
 
-@Suppress("SpellCheckingInspection")
+@Suppress("unused")
 inline fun <reified T : @Serializable Any> isMinestomObject(obj: T) = isMinestomObject<T>()
 
-@Suppress("SpellCheckingInspection")
 inline fun <reified T : @Serializable Any> isMinestomObject(): Boolean {
     return when (T::class) {
         Block::class, RelativeVec::class,
@@ -51,10 +50,10 @@ inline fun <reified T : @Serializable Any> isMinestomObject(): Boolean {
     }
 }
 
-@Suppress("SpellCheckingInspection")
+@Suppress("unused")
 inline fun <reified T : @Serializable Any> minestomSerializer(obj: T) = minestomSerializer<T>()
 
-@Suppress("SpellCheckingInspection", "UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 @OptIn(InternalSerializationApi::class)
 inline fun <reified T : @Serializable Any> minestomSerializer() = when (T::class) {
     Block::class -> BlockSerializer

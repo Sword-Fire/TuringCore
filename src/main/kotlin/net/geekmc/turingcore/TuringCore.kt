@@ -11,11 +11,11 @@ import net.geekmc.turingcore.command.management.CommandPermission
 import net.geekmc.turingcore.command.management.CommandSave
 import net.geekmc.turingcore.command.management.CommandStop
 import net.geekmc.turingcore.framework.TuringFrameWork
-import net.geekmc.turingcore.service.impl.instance.InstanceService
-import net.geekmc.turingcore.service.impl.instance.InstanceService.MAIN_INSTANCE_ID
-import net.geekmc.turingcore.service.impl.motd.MotdService
-import net.geekmc.turingcore.service.impl.player.impl.PlayerBasicDataService
-import net.geekmc.turingcore.service.impl.skin.SkinService
+import net.geekmc.turingcore.service.instance.InstanceService
+import net.geekmc.turingcore.service.instance.InstanceService.MAIN_INSTANCE_ID
+import net.geekmc.turingcore.service.motd.MotdService
+import net.geekmc.turingcore.service.player.impl.PlayerBasicDataService
+import net.geekmc.turingcore.service.skin.SkinService
 import net.geekmc.turingcore.util.GLOBAL_EVENT
 import net.geekmc.turingcore.util.color.ColorUtil
 import net.geekmc.turingcore.util.color.toComponent

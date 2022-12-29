@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.service.impl.instance
+package net.geekmc.turingcore.service.instance
 
 import net.geekmc.turingcore.service.IndependentService
 import net.minestom.server.MinecraftServer

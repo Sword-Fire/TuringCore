@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.service.impl.motd
+package net.geekmc.turingcore.service.motd
 
 import net.geekmc.turingcore.TuringCore
 import net.geekmc.turingcore.data.yaml.YamlData

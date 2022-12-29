@@ -47,7 +47,7 @@ object CommandGamemode : Kommand({
             setGameMode(sender, it, !modeArgs)
         }
     }
-}, name = "gamemode", aliases = arrayOf("gm", "gmode")) {
+}, name = "gamemode", aliases = arrayOf("gm")) {
 
     fun setGameMode(sender: CommandSender, player: Player, mode: String) {
         player.gameMode = when (mode.uppercase()) {

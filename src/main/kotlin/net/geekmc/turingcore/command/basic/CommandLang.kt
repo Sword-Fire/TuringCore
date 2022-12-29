@@ -1,7 +1,6 @@
 package net.geekmc.turingcore.command.basic
 
 import net.geekmc.turingcore.command.opSyntax
-import net.geekmc.turingcore.util.color.message
 import net.geekmc.turingcore.util.lang.LanguageUtil
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.command.builder.arguments.ArgumentString

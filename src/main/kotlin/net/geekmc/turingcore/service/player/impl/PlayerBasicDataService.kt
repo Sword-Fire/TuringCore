@@ -1,9 +1,9 @@
-package net.geekmc.turingcore.service.impl.player.impl
+package net.geekmc.turingcore.service.player.impl
 
 import net.geekmc.turingcore.service.MinestomService
 import net.geekmc.turingcore.service.Service
-import net.geekmc.turingcore.service.impl.player.PlayerDataService
-import net.geekmc.turingcore.service.impl.player.data
+import net.geekmc.turingcore.service.player.PlayerDataService
+import net.geekmc.turingcore.service.player.data
 import net.geekmc.turingcore.util.GLOBAL_EVENT
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
@@ -71,9 +71,9 @@ object PlayerBasicDataService : MinestomService() {
         player.data["permissions"] = arrayListOf<Permission>().apply {
             addAll(player.allPermissions)
         }
+        // 即使物品为空也应该写入至文件，不然会导致刷物品。
         for (i in 0 until player.inventory.size) {
             val item = player.inventory.getItemStack(i)
-            // 即使材质为空气也应该写入至文件，不然有刷物品的风险。
             player.data["inventory.$i"] = item
         }
     }

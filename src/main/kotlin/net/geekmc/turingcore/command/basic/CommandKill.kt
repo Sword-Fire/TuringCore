@@ -3,11 +3,9 @@ package net.geekmc.turingcore.command.basic
 import net.geekmc.turingcore.command.args
 import net.geekmc.turingcore.command.findPlayers
 import net.geekmc.turingcore.command.opSyntax
-import net.geekmc.turingcore.util.color.message
 import net.geekmc.turingcore.util.foldToString
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity
-import net.minestom.server.entity.Player
 import world.cepi.kstom.command.kommand.Kommand
 
 object CommandKill : Kommand({

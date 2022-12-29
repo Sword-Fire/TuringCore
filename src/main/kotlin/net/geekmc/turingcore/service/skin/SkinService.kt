@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.service.impl.skin
+package net.geekmc.turingcore.service.skin
 
 import kotlinx.coroutines.*
 import net.geekmc.turingcore.TuringCore

@@ -23,9 +23,12 @@ object LanguageUtil {
         }
         TuringCore.INSTANCE.saveResource(PATH)
         val data = YamlData(TuringCore.INSTANCE.resolvePath(PATH))
-        data.rootMap.forEach { (k, v) ->
+        data.rootMapObject.forEach { (k, v) ->
+            if (k !is String) return
             messageMap[k] = when (v) {
-                is String -> TypeText(v)
+                is String -> {
+                    TypeText(v)
+                }
                 is List<*> -> TypeText().apply {
                     init(mutableMapOf("text" to v))
                 }
@@ -37,6 +40,7 @@ object LanguageUtil {
                         init(source)
                     }
                 }
+
                 else -> error("Unsupported language node: $v. ($k)")
             }
         }

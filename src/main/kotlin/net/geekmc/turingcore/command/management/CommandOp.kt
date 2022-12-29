@@ -2,7 +2,7 @@ package net.geekmc.turingcore.command.management
 
 import net.geekmc.turingcore.command.args
 import net.geekmc.turingcore.command.opSyntax
-import net.geekmc.turingcore.service.impl.player.data
+import net.geekmc.turingcore.service.player.data
 import net.geekmc.turingcore.util.color.message
 import net.minestom.server.command.builder.arguments.ArgumentBoolean
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity

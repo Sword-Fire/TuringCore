@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.command.management
 
 import net.geekmc.turingcore.command.opSyntax
-import net.geekmc.turingcore.service.impl.instance.InstanceService
+import net.geekmc.turingcore.service.instance.InstanceService
 import net.geekmc.turingcore.util.color.message
 import world.cepi.kstom.command.kommand.Kommand
 import kotlin.time.ExperimentalTime
