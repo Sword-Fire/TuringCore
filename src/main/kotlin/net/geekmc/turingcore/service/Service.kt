@@ -2,18 +2,22 @@ package net.geekmc.turingcore.service
 
 /**
  * 代表一种服务。
- * @see MinestomService
- * @see IndependentService
+ * @see [MinestomService]
+ * @see [IndependentService]
  */
 abstract class Service {
 
     var isActive = false
         protected set
 
+    fun start() {
+        check(!isActive) { "Service is already started!" }
+        isActive = true
+        onEnable()
+    }
+
     fun stop() {
-        if (!isActive) {
-            throw IllegalStateException("Service is not started!")
-        }
+        check(isActive) { "Service is not started!" }
         isActive = false
         onDisable()
     }
