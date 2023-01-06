@@ -20,7 +20,11 @@
       "org.jetbrains.kotlinx:kotlinx-serialization-json:@!dependencyVersion@",
       "org.yaml:snakeyaml:@!dependencyVersion@",
       "net.kyori:adventure-text-minimessage:@!dependencyVersion@",
-      "com.github.Project-Cepi:KStom:@!dependencyVersion@"
+      "com.github.Project-Cepi:KStom:@!dependencyVersion@",
+      "org.flywaydb:flyway-core:@!dependencyVersion@",
+      "com.charleskorn.kaml:kaml:@!dependencyVersion@",
+      "org.xerial:sqlite-jdbc:@!dependencyVersion@",
+      "org.ktorm:ktorm-core:@!dependencyVersion@"
     ]
   }
 }

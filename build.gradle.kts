@@ -4,6 +4,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCach
 
 plugins {
     kotlin("jvm") version "1.7.22"
+    kotlin("plugin.serialization") version "1.7.22"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -29,7 +30,10 @@ dependencies {
     compileOnly("org.yaml:snakeyaml:${project.ext["version.snakeyaml"]}")
     compileOnly("net.kyori:adventure-text-minimessage:${project.ext["version.adventure-text-minimessage"]}")
     compileOnly("com.github.Project-Cepi:KStom:${project.ext["version.KStom"]}")
-
+    compileOnly("org.flywaydb:flyway-core:${project.ext["version.flyway-core"]}")
+    compileOnly("org.xerial:sqlite-jdbc:${project.ext["version.sqlite-jdbc"]}")
+    compileOnly("com.charleskorn.kaml:kaml:${project.ext["version.kaml"]}")
+    compileOnly("org.ktorm:ktorm-core:${project.ext["version.ktorm-core"]}")
 }
 
 @Suppress("UnstableApiUsage")
