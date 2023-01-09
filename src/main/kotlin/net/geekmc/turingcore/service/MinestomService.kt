@@ -14,7 +14,7 @@ abstract class MinestomService : Service() {
      * 启用该服务，并使所有监听器都挂载在 [eventNode] 中。
      */
     fun start(eventNode: EventNode<Event>) {
-        this.eventNode = eventNode
         super.start()
+        this.eventNode = eventNode
     }
 }
