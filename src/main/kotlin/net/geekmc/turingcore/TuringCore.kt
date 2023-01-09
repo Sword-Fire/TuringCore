@@ -115,18 +115,16 @@ class TuringCore : Extension() {
         Manager.command.unknownCommandCallback = CommandCallback { sender, _ ->
             sender.sendLang("message-command-unknown")
         }
-        arrayListOf<Kommand>().apply {
-            this += CommandGamemode
-            this += CommandKill
-            this += CommandTeleport
-            this += CommandInfo
-            this += CommandOp
-            this += CommandPermission
-            this += CommandSave
-            this += CommandStop
-            this += CommandLang
-        }.forEach {
-            it.register()
-        }
+        arrayOf(
+            CommandGamemode,
+            CommandKill,
+            CommandTeleport,
+            CommandInfo,
+            CommandOp,
+            CommandPermission,
+            CommandSave,
+            CommandStop,
+            CommandLang,
+        ).forEach { it.register() }
     }
 }
