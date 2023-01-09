@@ -6,6 +6,6 @@ import java.util.UUID
 interface PlayerUuid: Entity<PlayerUuid> {
     companion object : Entity.Factory<PlayerUuid>()
 
-    var playerName: String
-    var playerUuid: UUID
+    var uuid: UUID
+    var name: String
 }

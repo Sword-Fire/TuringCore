@@ -19,10 +19,10 @@ object PlayerUuidService: IndependentService() {
     override fun onEnable() {
         Manager.connection.setUuidProvider { _, username ->
             // 先从数据库中查找，如果不存在就随机生成一个 UUID 并添加进数据库中
-            db.playerUuids.find { it.playerName eq username }?.playerUuid ?: UUID.randomUUID().also {
+            db.playerUuids.find { it.name eq username }?.uuid ?: UUID.randomUUID().also {
                 db.playerUuids.add(PlayerUuid {
-                    playerName = username
-                    playerUuid = it
+                    name = username
+                    uuid = it
                 })
             }
         }
