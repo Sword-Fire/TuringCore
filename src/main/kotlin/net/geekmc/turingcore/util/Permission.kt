@@ -4,6 +4,7 @@ import net.geekmc.turingcore.service.player.data
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.ConsoleSender
 import net.minestom.server.entity.Player
+import world.cepi.kstom.command.kommand.Kondition
 
 fun CommandSender.isOp(): Boolean {
     // TODO remove this
@@ -14,3 +15,8 @@ fun CommandSender.isOp(): Boolean {
         else -> false
     }
 }
+
+fun <T : Kondition<T>> Kondition<T>.onlyOp() =
+    condition {
+        sender.isOp()
+    }

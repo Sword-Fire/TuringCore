@@ -13,6 +13,7 @@ import net.geekmc.turingcore.command.management.CommandStop
 import net.geekmc.turingcore.db.configDatabase
 import net.geekmc.turingcore.db.migrateDatabase
 import net.geekmc.turingcore.framework.TuringFrameWork
+import net.geekmc.turingcore.service.coin.CoinService
 import net.geekmc.turingcore.service.instance.InstanceService
 import net.geekmc.turingcore.service.instance.InstanceService.MAIN_INSTANCE_ID
 import net.geekmc.turingcore.service.motd.MotdService
@@ -31,7 +32,6 @@ import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.extensions.Extension
 import net.minestom.server.utils.callback.CommandCallback
 import world.cepi.kstom.Manager
-import world.cepi.kstom.command.kommand.Kommand
 import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.util.register
 import kotlin.time.ExperimentalTime
@@ -74,6 +74,8 @@ class TuringCore : Extension() {
             player.respawnPoint = Pos(0.0, 40.0, 0.0)
             player.sendMessage("Welcome to server, ${player.username} !")
         }
+        // 货币系统。
+        CoinService.start(GLOBAL_EVENT)
         // 注册指令。
         registerCommands()
         // 注册方块。
