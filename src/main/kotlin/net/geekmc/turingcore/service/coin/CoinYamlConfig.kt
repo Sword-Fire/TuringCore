@@ -16,9 +16,8 @@ class CoinYamlConfig(override val yamlObj: CoinConfigYamlObject): BaseYamlConfig
 
     companion object {
         const val FILE_NAME = "coin-config.yml"
-        val INSTANCE by lazy { getConfig() }
 
-        private fun getConfig(): CoinYamlConfig {
+        fun getInstance(): CoinYamlConfig {
             val configYamlObj: CoinConfigYamlObject =
                 Yaml.default.decodeFromStream(TuringCore.INSTANCE.dataDirectory.resolve(FILE_NAME).inputStream())
             return CoinYamlConfig(configYamlObj)

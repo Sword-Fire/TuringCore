@@ -24,7 +24,8 @@
       "org.flywaydb:flyway-core:@!dependencyVersion@",
       "com.charleskorn.kaml:kaml:@!dependencyVersion@",
       "org.xerial:sqlite-jdbc:@!dependencyVersion@",
-      "org.ktorm:ktorm-core:@!dependencyVersion@"
+      "org.ktorm:ktorm-core:@!dependencyVersion@",
+      "org.kodein.di:kodein-di-jvm:@!dependencyVersion@"
     ]
   }
 }

@@ -15,7 +15,7 @@ import org.ktorm.schema.text
  * @see [CoinAmount]
  */
 object CoinAmounts: Table<CoinAmount>("t_coin_amount") {
-    val id = int("id").primaryKey()
+    val id = int("id").primaryKey().bindTo { it.id }
     val playerUuid = binaryUuid("player_uuid").references(PlayerUuids) { it.player }
     val typeId = text("type_id").primaryKey().references(CoinTypes) { it.type }
     val amount = long("amount").bindTo { it.amount }

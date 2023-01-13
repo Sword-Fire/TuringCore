@@ -10,8 +10,6 @@ import net.geekmc.turingcore.command.management.CommandOp
 import net.geekmc.turingcore.command.management.CommandPermission
 import net.geekmc.turingcore.command.management.CommandSave
 import net.geekmc.turingcore.command.management.CommandStop
-import net.geekmc.turingcore.db.configDatabase
-import net.geekmc.turingcore.db.migrateDatabase
 import net.geekmc.turingcore.framework.TuringFrameWork
 import net.geekmc.turingcore.service.coin.CoinService
 import net.geekmc.turingcore.service.instance.InstanceService
@@ -50,15 +48,14 @@ class TuringCore : Extension() {
 
     override fun initialize() {
         info("TuringCore initializing...")
-        initDatabase()
+        // 注册 UUID 映射。
+        PlayerUuidService.start()
         // ColorUtil 在这里的优先级最高。
         ColorUtil.init()
         // 语言工具。
         LanguageUtil.init()
         // 注册框架。
         registerFrameWork()
-        // 注册 UUID 映射。
-        PlayerUuidService.start()
         // 皮肤服务。（基于玩家名）
         SkinService.start(GLOBAL_EVENT)
         // Motd 服务。
@@ -90,11 +87,6 @@ class TuringCore : Extension() {
     }
 
     override fun terminate() {}
-
-    private fun initDatabase() {
-        migrateDatabase()
-        configDatabase()
-    }
 
     private fun registerFrameWork() {
         val registry = TuringFrameWork.registerExtension("net.geekmc.turingcore", this)

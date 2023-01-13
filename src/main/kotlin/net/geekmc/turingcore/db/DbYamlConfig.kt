@@ -18,9 +18,8 @@ class DbYamlConfig(override val yamlObj: DbYamlObject): BaseYamlConfig {
 
     companion object {
         const val FILE_NAME = "db-config.yml"
-        val INSTANCE by lazy { getConfig() }
 
-        private fun getConfig(): DbYamlConfig {
+        fun getInstance(): DbYamlConfig {
             val configYamlObj: DbYamlObject = runCatching<DbYamlObject> {
                 Yaml.default.decodeFromStream(TuringCore.INSTANCE.dataDirectory.resolve(FILE_NAME).inputStream())
             }.getOrElse {
