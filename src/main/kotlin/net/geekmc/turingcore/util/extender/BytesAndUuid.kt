@@ -9,11 +9,12 @@ internal fun UUID.asBytes(): ByteArray =
         putLong(leastSignificantBits)
     }.array()
 
+@Suppress("UsePropertyAccessSyntax")
 internal fun ByteArray.asUuid(): UUID {
     require(size == 16) { "Invalid UUID byte array size: $size" }
     ByteBuffer.wrap(this).apply {
-        val high = getLong(0)
-        val low = getLong(1)
+        val high = getLong()
+        val low = getLong()
         return UUID(high, low)
     }
 }
