@@ -8,7 +8,6 @@ import net.geekmc.turingcore.db.repo.PlayerUuidRepo
 import net.geekmc.turingcore.db.table.CoinHistoryActionType
 import net.geekmc.turingcore.di.turingCoreDi
 import net.geekmc.turingcore.util.extender.displayName
-import net.geekmc.turingcore.util.info
 import net.geekmc.turingcore.util.onlyOp
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.arguments.ArgumentString
@@ -70,9 +69,7 @@ object CommandCoin : Kommand({
                 val currentAmount =
                     coinAmountRepo.findCoinAmountByUuidAndType(playerUuidObj.uuid, coinTypeObj.id).getOrThrow()
                 val beforeAmount = currentAmount.amount
-                info { "Before: ${currentAmount.amount}" }
                 currentAmount.amount += targetAmount
-                info { "After: ${currentAmount.amount}" }
                 coinAmountRepo.updateCoinAmount(currentAmount).getOrThrow()
                 coinHistoryRepo.addCoinHistory {
                     player = playerUuidObj
