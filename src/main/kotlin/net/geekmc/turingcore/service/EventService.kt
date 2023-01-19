@@ -6,7 +6,8 @@ import net.minestom.server.event.EventNode
 /**
  * 代表一种使用了 Minestom 事件的服务。
  */
-abstract class MinestomService : Service() {
+@Deprecated("Use event nodes in EventNodes object instead.")
+abstract class EventService : Service() {
 
     protected lateinit var eventNode: EventNode<Event>
 
@@ -16,5 +17,9 @@ abstract class MinestomService : Service() {
     fun start(eventNode: EventNode<Event>) {
         this.eventNode = eventNode
         super.start()
+    }
+
+    override fun start() {
+        throw UnsupportedOperationException("You must use start(eventNode: EventNode<Event>)")
     }
 }

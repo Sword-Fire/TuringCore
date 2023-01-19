@@ -1,9 +1,8 @@
-package net.geekmc.turingcore.service.player
+package net.geekmc.turingcore.player.deprecated
 
-import com.extollit.gaming.ai.path.model.PathObject.active
 import net.geekmc.turingcore.data.json.JsonData
-import net.geekmc.turingcore.service.MinestomService
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.player.deprecated.DeprecatedPlayerDataService.Companion.register
+import net.geekmc.turingcore.service.EventService
 import net.geekmc.turingcore.util.GLOBAL_EVENT
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
@@ -19,8 +18,8 @@ import java.nio.file.Path
  * @param name 玩家数据服务的名称。仅用于输出调试信息。
  * @param pathProducer 用于生成玩家数据文件的路径。
  */
-class PlayerDataService private constructor(private val name: String, val pathProducer: (Player) -> Path) :
-    MinestomService() {
+class DeprecatedPlayerDataService private constructor(private val name: String, val pathProducer: (Player) -> Path) :
+    EventService() {
 
     companion object {
 
@@ -31,15 +30,17 @@ class PlayerDataService private constructor(private val name: String, val pathPr
          * @param pathProducer 用于生成玩家数据文件的路径。
          */
         fun register(id: String, eventNode: EventNode<Event>, pathProducer: (Player) -> Path) =
-            PlayerDataService(id, pathProducer).apply {
+            DeprecatedPlayerDataService(id, pathProducer).apply {
                 start(eventNode)
             }
     }
 
     // Player -> JsonData 的映射，用于存储每个玩家的对应数据。
     private val playerNameToDataMap = mutableMapOf<String, JsonData>()
+
     // 玩家登入时需要执行的操作，用于替代事件监听。
     private val loginFunctions = mutableListOf<PlayerLoginEvent.() -> Unit>()
+
     // 玩家登出时需要执行的操作，用于替代事件监听。
     private val disconnectFunctions = mutableListOf<PlayerDisconnectEvent.() -> Unit>()
     private val loginListener = EventListener.of(PlayerLoginEvent::class.java) {
@@ -58,6 +59,7 @@ class PlayerDataService private constructor(private val name: String, val pathPr
         it.player.unloadData()
     }
 
+    // TODO 移除GLOBAL_EVENT；重新检查优先级正确性。
     override fun onEnable() {
         GLOBAL_EVENT.addListener(loginListener)
         GLOBAL_EVENT.addListener(disconnectListener)
@@ -79,9 +81,9 @@ class PlayerDataService private constructor(private val name: String, val pathPr
     }
 
     /**
-     * 使用[PlayerDataService]时，应通过onLogin / onDisconnect来提交需要在玩家登入/登出时执行的代码，而非使用监听器监听这两个事件。
-     * 这能保证在登入时先由[PlayerDataService]加载玩家数据，再执行您的代码，
-     * 以及登出时先执行您的代码，[PlayerDataService]再卸载玩家数据。
+     * 使用[DeprecatedPlayerDataService]时，应通过onLogin / onDisconnect来提交需要在玩家登入/登出时执行的代码，而非使用监听器监听这两个事件。
+     * 这能保证在登入时先由[DeprecatedPlayerDataService]加载玩家数据，再执行您的代码，
+     * 以及登出时先执行您的代码，[DeprecatedPlayerDataService]再卸载玩家数据。
      */
     fun onLogin(block: PlayerLoginEvent.() -> Unit) {
         loginFunctions.add(block)

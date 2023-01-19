@@ -2,15 +2,14 @@ package net.geekmc.turingcore.service
 
 /**
  * 代表一种服务。
- * @see [MinestomService]
- * @see [IndependentService]
+ * @see [EventService]
  */
 abstract class Service {
 
     var isActive = false
         protected set
 
-    fun start() {
+    open fun start() {
         check(!isActive) { "Service is already started!" }
         isActive = true
         onEnable()
@@ -22,7 +21,7 @@ abstract class Service {
         onDisable()
     }
 
-    protected abstract fun onEnable()
+    protected open fun onEnable() {}
 
-    protected abstract fun onDisable()
+    protected open fun onDisable() {}
 }

@@ -11,7 +11,7 @@ import net.geekmc.turingcore.config.yaml
 import kotlin.io.path.inputStream
 
 @Suppress("PropertyName")
-class DbYamlConfig(override val yamlObj: DbYamlObject): BaseYamlConfig {
+class DbYamlConfig(override val yamlObj: DbYamlObject) : BaseYamlConfig {
     private val _DB_NAME by yaml(DbYamlObject::dbName, "data.db")
     val DB_PATH = TuringCore.INSTANCE.dataDirectory.resolve(_DB_NAME)
 
@@ -34,4 +34,4 @@ class DbYamlConfig(override val yamlObj: DbYamlObject): BaseYamlConfig {
 data class DbYamlObject(
     @SerialName("db-name")
     val dbName: String? = null,
-): BaseYamlObject
+) : BaseYamlObject

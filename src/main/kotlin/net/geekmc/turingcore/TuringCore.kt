@@ -10,16 +10,16 @@ import net.geekmc.turingcore.command.management.CommandOp
 import net.geekmc.turingcore.command.management.CommandPermission
 import net.geekmc.turingcore.command.management.CommandSave
 import net.geekmc.turingcore.command.management.CommandStop
+import net.geekmc.turingcore.data.PlayerDataService
 import net.geekmc.turingcore.db.configDatabase
 import net.geekmc.turingcore.db.migrateDatabase
+import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.framework.TuringFrameWork
-import net.geekmc.turingcore.service.instance.InstanceService
-import net.geekmc.turingcore.service.instance.InstanceService.MAIN_INSTANCE_ID
-import net.geekmc.turingcore.service.motd.MotdService
-import net.geekmc.turingcore.service.player.impl.PlayerBasicDataService
-import net.geekmc.turingcore.service.player_uuid.PlayerUuidService
-import net.geekmc.turingcore.service.skin.SkinService
-import net.geekmc.turingcore.util.GLOBAL_EVENT
+import net.geekmc.turingcore.instance.InstanceService
+import net.geekmc.turingcore.instance.InstanceService.MAIN_INSTANCE_ID
+import net.geekmc.turingcore.motd.MotdService
+import net.geekmc.turingcore.player.EssentialPlayerDataService
+import net.geekmc.turingcore.skin.SkinService
 import net.geekmc.turingcore.util.color.ColorUtil
 import net.geekmc.turingcore.util.color.toComponent
 import net.geekmc.turingcore.util.info
@@ -31,10 +31,8 @@ import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.extensions.Extension
 import net.minestom.server.utils.callback.CommandCallback
 import world.cepi.kstom.Manager
-import world.cepi.kstom.command.kommand.Kommand
 import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.util.register
-import kotlin.time.ExperimentalTime
 
 class TuringCore : Extension() {
 
@@ -51,27 +49,30 @@ class TuringCore : Extension() {
     override fun initialize() {
         info("TuringCore initializing...")
         initDatabase()
+        // 事件节点服务。
+        EventNodes.start()
         // ColorUtil 在这里的优先级最高。
         ColorUtil.init()
         // 语言工具。
         LanguageUtil.init()
         // 注册框架。
         registerFrameWork()
-        // 注册 UUID 映射。
-        PlayerUuidService.start()
         // 皮肤服务。（基于玩家名）
-        SkinService.start(GLOBAL_EVENT)
+        SkinService.start()
         // Motd 服务。
-        MotdService.start(GLOBAL_EVENT)
+        MotdService.start()
+        // 所有种类的玩家信息服务。
+        PlayerDataService.start()
         // 玩家基础信息服务。
-        PlayerBasicDataService.start(GLOBAL_EVENT)
+        EssentialPlayerDataService.start()
         // 世界服务。
         InstanceService.start()
         InstanceService.createInstanceContainer(MAIN_INSTANCE_ID)
         val world = InstanceService.getInstance(MAIN_INSTANCE_ID)
-        GLOBAL_EVENT.listenOnly<PlayerLoginEvent> {
+        EventNodes.INTERNAL_HIGHEST.listenOnly<PlayerLoginEvent> {
+//            println("listen internal highest player login event")
             setSpawningInstance(world)
-            player.respawnPoint = Pos(0.0, 40.0, 0.0)
+//            player.respawnPoint = Pos(0.0, 40.0, 0.0)
             player.sendMessage("Welcome to server, ${player.username} !")
         }
         // 注册指令。
@@ -79,7 +80,7 @@ class TuringCore : Extension() {
         // 注册方块。
         registerBlockHandlers()
         // 处理玩家聊天的临时监听器。
-        GLOBAL_EVENT.listenOnly<PlayerChatEvent> {
+        EventNodes.DEFAULT.listenOnly<PlayerChatEvent> {
             setChatFormat {
                 "${player.displayName ?: player.username}: $message".toComponent()
             }
@@ -110,23 +111,22 @@ class TuringCore : Extension() {
         GrassBlockHandler.register()
     }
 
-    @OptIn(ExperimentalTime::class)
     private fun registerCommands() {
+        // 输入未知指令时的提示信息。
         Manager.command.unknownCommandCallback = CommandCallback { sender, _ ->
             sender.sendLang("message-command-unknown")
         }
-        arrayListOf<Kommand>().apply {
-            this += CommandGamemode
-            this += CommandKill
-            this += CommandTeleport
-            this += CommandInfo
-            this += CommandOp
-            this += CommandPermission
-            this += CommandSave
-            this += CommandStop
-            this += CommandLang
-        }.forEach {
-            it.register()
-        }
+        // 注册指令。
+        arrayListOf(
+            CommandGamemode,
+            CommandKill,
+            CommandLang,
+            CommandTeleport,
+            CommandInfo,
+            CommandOp,
+            CommandPermission,
+            CommandSave,
+            CommandStop
+        ).forEach { it.register() }
     }
 }

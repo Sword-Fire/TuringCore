@@ -1,8 +1,9 @@
-package net.geekmc.turingcore.service.motd
+package net.geekmc.turingcore.motd
 
 import net.geekmc.turingcore.TuringCore
 import net.geekmc.turingcore.data.yaml.YamlData
-import net.geekmc.turingcore.service.MinestomService
+import net.geekmc.turingcore.event.EventNodes
+import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.color.toComponent
 import net.geekmc.turingcore.util.resolvePath
 import net.geekmc.turingcore.util.saveResource
@@ -14,7 +15,7 @@ import java.nio.file.Files
 import java.util.*
 import kotlin.io.path.exists
 
-object MotdService : MinestomService() {
+object MotdService : Service() {
 
     private const val ICON_PATH = "motd/icon.png"
     private const val MOTD_PATH = "motd/motd.yml"
@@ -30,7 +31,7 @@ object MotdService : MinestomService() {
             description = (descriptions[0] + "\n" + descriptions[1]).toComponent()
             favicon = getIconAsBase64() ?: return@apply
         }
-        eventNode.listenOnly<ServerListPingEvent> {
+        EventNodes.DEFAULT.listenOnly<ServerListPingEvent> {
             responseData = motdData
         }
     }

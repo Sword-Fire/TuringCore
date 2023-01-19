@@ -40,12 +40,14 @@ class JsonData private constructor(private val file: Path) {
 
     companion object {
         const val EMPTY_FILE_CONTENT = "{}"
+
         // 该属性若迁移到TuringJson，则必须放在 TURING_CORE_SERIALIZATION_MODULE 之后，否则会报错。
         val SERIALIZATION_JSON = Json {
             serializersModule = TURING_CORE_SERIALIZATION_MODULE
             isLenient = true
             ignoreUnknownKeys = true
         }
+
         fun load(file: Path): JsonData {
             return JsonData(file)
         }
@@ -79,6 +81,7 @@ class JsonData private constructor(private val file: Path) {
                 readData[key] = value
                 value
             }
+
             else -> null
         }
     }

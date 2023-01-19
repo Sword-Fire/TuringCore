@@ -1,7 +1,6 @@
 package net.geekmc.turingcore.data.json
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import net.kyori.adventure.bossbar.BossBar
@@ -53,5 +52,3 @@ val TURING_CORE_SERIALIZATION_MODULE = SerializersModule {
 
     contextual(PermissionSerializer)
 }
-
-
