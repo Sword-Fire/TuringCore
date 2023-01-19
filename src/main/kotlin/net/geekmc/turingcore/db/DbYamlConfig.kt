@@ -8,20 +8,20 @@ import net.geekmc.turingcore.TuringCore
 import net.geekmc.turingcore.config.BaseYamlConfig
 import net.geekmc.turingcore.config.BaseYamlObject
 import net.geekmc.turingcore.config.yaml
+import java.nio.file.Path
 import kotlin.io.path.inputStream
 
-@Suppress("PropertyName")
-class DbYamlConfig(override val yamlObj: DbYamlObject) : BaseYamlConfig {
+@Suppress("PropertyName", "PrivatePropertyName")
+class DbYamlConfig(override val yamlObj: DbYamlObject): BaseYamlConfig {
     private val _DB_NAME by yaml(DbYamlObject::dbName, "data.db")
-    val DB_PATH = TuringCore.INSTANCE.dataDirectory.resolve(_DB_NAME)
+    val DB_PATH: Path = TuringCore.INSTANCE.dataDirectory.resolve(_DB_NAME)
 
     companion object {
-        const val DB_CONFIG_FILE = "db-config.yml"
-        val INSTANCE by lazy { getConfig() }
+        const val FILE_NAME = "db-config.yml"
 
-        private fun getConfig(): DbYamlConfig {
+        fun getInstance(): DbYamlConfig {
             val configYamlObj: DbYamlObject = runCatching<DbYamlObject> {
-                Yaml.default.decodeFromStream(TuringCore.INSTANCE.dataDirectory.resolve(DB_CONFIG_FILE).inputStream())
+                Yaml.default.decodeFromStream(TuringCore.INSTANCE.dataDirectory.resolve(FILE_NAME).inputStream())
             }.getOrElse {
                 DbYamlObject()
             }
@@ -34,4 +34,4 @@ class DbYamlConfig(override val yamlObj: DbYamlObject) : BaseYamlConfig {
 data class DbYamlObject(
     @SerialName("db-name")
     val dbName: String? = null,
-) : BaseYamlObject
+): BaseYamlObject

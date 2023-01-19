@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.22"
@@ -35,6 +35,7 @@ dependencies {
     compileOnly("org.xerial:sqlite-jdbc:${project.ext["version.sqlite-jdbc"]}")
     compileOnly("com.charleskorn.kaml:kaml:${project.ext["version.kaml"]}")
     compileOnly("org.ktorm:ktorm-core:${project.ext["version.ktorm-core"]}")
+    compileOnly("org.kodein.di:kodein-di-jvm:${project.ext["version.kodein-di-jvm"]}")
 }
 
 @Suppress("UnstableApiUsage")

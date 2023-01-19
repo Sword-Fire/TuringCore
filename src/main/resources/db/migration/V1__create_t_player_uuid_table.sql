@@ -1,9 +1,9 @@
 create table t_player_uuid
 (
-    player_name TEXT not null
+    player_uuid TEXT not null
         primary key
         unique,
-    player_uuid TEXT not null
+    player_name TEXT not null
         unique
 );
 
