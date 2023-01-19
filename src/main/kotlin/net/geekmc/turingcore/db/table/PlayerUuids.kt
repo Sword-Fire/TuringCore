@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.db.table
 
 import net.geekmc.turingcore.db.entity.PlayerUuid
-import net.geekmc.turingcore.db.type.textUuid
+import net.geekmc.turingcore.db.type.binaryUuid
 import org.ktorm.database.Database
 import org.ktorm.entity.sequenceOf
 import org.ktorm.schema.Table

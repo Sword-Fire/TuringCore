@@ -65,6 +65,7 @@ object PlayerDataService : Service() {
     override fun onEnable() {
         // 进服时加载数据
         EventNodes.INTERNAL_HIGHEST.listenOnly<AsyncPlayerPreLoginEvent> {
+            // TODO 考虑使用UUIDProvider代替此处设置UUID。
             // 在一切的之前更新uuid
             // 事件和玩家的uuid都要更改，猜测事件结束后会用事件 uuid 覆盖玩家 uuid
             playerUuid = PlayerUUIDProvider.getUUID(player)
@@ -76,7 +77,6 @@ object PlayerDataService : Service() {
                     withContext(playerDataServiceContext) {
                         // json文件的文本内容。
                         val fileContent = if (player.dataFile.exists()) player.dataFile.readText() else "{}"
-                        println("读取内容:" + fileContent)
                         // 将文本内容转换为 Identifier -> String Map
                         val fileContentMap: LinkedHashMap<String, String> = SERIALIZATION_JSON.decodeFromString(fileContent)
                         // 为玩家创建一个新Map

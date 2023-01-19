@@ -11,8 +11,6 @@ import net.geekmc.turingcore.command.management.CommandPermission
 import net.geekmc.turingcore.command.management.CommandSave
 import net.geekmc.turingcore.command.management.CommandStop
 import net.geekmc.turingcore.data.PlayerDataService
-import net.geekmc.turingcore.db.configDatabase
-import net.geekmc.turingcore.db.migrateDatabase
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.framework.TuringFrameWork
 import net.geekmc.turingcore.instance.InstanceService
@@ -25,7 +23,6 @@ import net.geekmc.turingcore.util.color.toComponent
 import net.geekmc.turingcore.util.info
 import net.geekmc.turingcore.util.lang.LanguageUtil
 import net.geekmc.turingcore.util.lang.sendLang
-import net.minestom.server.coordinate.Pos
 import net.minestom.server.event.player.PlayerChatEvent
 import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.extensions.Extension
@@ -48,7 +45,6 @@ class TuringCore : Extension() {
 
     override fun initialize() {
         info("TuringCore initializing...")
-        initDatabase()
         // 事件节点服务。
         EventNodes.start()
         // ColorUtil 在这里的优先级最高。
@@ -89,11 +85,6 @@ class TuringCore : Extension() {
     }
 
     override fun terminate() {}
-
-    private fun initDatabase() {
-        migrateDatabase()
-        configDatabase()
-    }
 
     private fun registerFrameWork() {
         val registry = TuringFrameWork.registerExtension("net.geekmc.turingcore", this)
