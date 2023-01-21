@@ -30,7 +30,7 @@ object SkinService : Service() {
         skinData = YamlData(TuringCore.INSTANCE.resolvePath(PATH), SkinService::class.java)
         EventNodes.DEFAULT.listenOnly<PlayerSkinInitEvent> {
             // 根据玩家的用户名来获取相应皮肤。
-            val bean = skinData.get<PlayerSkinBean>(player.username)
+            val bean = skinData.getOrNull<PlayerSkinBean>(player.username)
             scope.launch {
                 if (bean != null) {
                     player.skin = bean.toPlayerSkin()

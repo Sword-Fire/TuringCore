@@ -56,37 +56,40 @@ class YamlData(path: Path, yaml: Yaml = defaultYaml) {
         }
     }
 
+    private tailrec fun <T> get(keys: Iterator<String>, mapObject: LinkedHashMap<Any, Any>): T {
+        val key = keys.next()
+        val nextMapObject = mapObject.getOrDefault(key, null).let {
+            it ?: (key.toIntOrNull()?.let { intKey ->
+                // 若将键转换为字符串对象以读取对应值失败，则转换为 Int 对象尝试读取值。
+                mapObject.getOrDefault(intKey, null)
+            } ?: error("Value not found."))
+        }
+        @Suppress("UNCHECKED_CAST")
+        return if (!keys.hasNext()) nextMapObject as T else get(keys, nextMapObject as LinkedHashMap<Any, Any>)
+    }
+
     /**
      * 根据提供的字符串形式表示的由.分隔的键，获取对应的值。每个键首先会被转换为字符串对象，以尝试从Yaml文件中读取对应值；
      * 若无法读取到值，则尝试将键转换为 Int 对象以读取对应值；若仍读取不到值，返回null。调用示例: get("a.123.c")
      */
-    operator fun <T> get(keysSplitByDoc: String): T? {
-        // 当前的 MutableMap 对象。
-        var currentMapObject = rootMapObject
-        val iter = keysSplitByDoc.split(".").iterator()
-        while (iter.hasNext()) {
-            val key = iter.next()
-            // 若将键转换为字符串对象以读取对应值失败，则转换为 Int 对象尝试读取值。
-            if (currentMapObject[key] == null) {
-                // TODO 待测试正确性
-                val keyAsInt: Int = runCatching { key.toInt() }.getOrElse { return null }
-                if (currentMapObject[keyAsInt] == null) {
-                    return null
-                }
-            }
-            if (!iter.hasNext()) {
-                @Suppress("UNCHECKED_CAST")
-                return currentMapObject[key] as? T
-            } else {
-                @Suppress("UNCHECKED_CAST")
-                currentMapObject = currentMapObject[key] as? LinkedHashMap<Any, Any> ?: return null
-            }
+    operator fun <T> get(keysSplitByDoc: String): T {
+        return get(keysSplitByDoc.splitToSequence(".").iterator(), rootMapObject)
+    }
+
+    inline fun <T> getOrElse(keysSplitByDoc: String, defaultValueBlock: (throwable: Throwable) -> T): T {
+        return runCatching {
+            this.get<T>(keysSplitByDoc)
+        }.getOrElse {
+            defaultValueBlock(it)
         }
-        return null
+    }
+
+    fun <T> getOrNull(keysSplitByDoc: String): T? {
+        return getOrElse(keysSplitByDoc) { null }
     }
 
     fun <T> get(key: String, defaultValue: T): T {
-        return get(key) ?: defaultValue
+        return getOrElse(key) { defaultValue }
     }
 
 //    fun getKeys(deep: Boolean): Set<String> {
