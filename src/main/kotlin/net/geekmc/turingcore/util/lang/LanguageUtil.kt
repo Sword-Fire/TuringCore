@@ -29,6 +29,7 @@ object LanguageUtil {
                 is String -> {
                     TypeText(v)
                 }
+
                 is List<*> -> TypeText().apply {
                     v.mapNotNull { sub ->
                         if (sub is Map<*, *>) {

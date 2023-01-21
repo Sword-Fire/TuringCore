@@ -46,6 +46,7 @@ inline fun <reified T : @Serializable Any> isMinestomObject(): Boolean {
         UUID::class,
         Vector::class,
         IntRange::class -> true
+
         else -> false
     }
 }

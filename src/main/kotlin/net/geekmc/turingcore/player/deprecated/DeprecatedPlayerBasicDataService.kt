@@ -1,10 +1,7 @@
-package net.geekmc.turingcore.service.player.impl
+package net.geekmc.turingcore.player.deprecated
 
-import net.geekmc.turingcore.service.MinestomService
-import net.geekmc.turingcore.service.Service
-import net.geekmc.turingcore.service.player.PlayerDataService
-import net.geekmc.turingcore.service.player.data
-import net.geekmc.turingcore.util.GLOBAL_EVENT
+import net.geekmc.turingcore.player.data
+import net.geekmc.turingcore.service.EventService
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
@@ -16,14 +13,14 @@ import java.nio.file.Path
 /**
  * 在玩家离线后存储玩家位置、血量、权限等信息，并在玩家登录时读取。
  */
-object PlayerBasicDataService : MinestomService() {
+object DeprecatedPlayerBasicDataService : EventService() {
 
-    lateinit var service: PlayerDataService
+    lateinit var service: DeprecatedPlayerDataService
         private set
 
     override fun onEnable() {
         // 注册服务。
-        service = PlayerDataService.register("turingcore.basic", eventNode) {
+        service = DeprecatedPlayerDataService.register("turingcore.basic", eventNode) {
             Path.of("PlayerData/${it.username}.json")
         }
         service.onLogin {

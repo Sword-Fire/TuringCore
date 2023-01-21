@@ -1,6 +1,6 @@
-package net.geekmc.turingcore.service.instance
+package net.geekmc.turingcore.instance
 
-import net.geekmc.turingcore.service.IndependentService
+import net.geekmc.turingcore.service.Service
 import net.minestom.server.MinecraftServer
 import net.minestom.server.instance.Instance
 import net.minestom.server.instance.InstanceManager
@@ -9,7 +9,7 @@ import net.minestom.server.utils.NamespaceID
 import net.minestom.server.world.DimensionType
 import world.cepi.kstom.Manager
 
-object InstanceService : IndependentService() {
+object InstanceService : Service() {
 
     const val MAIN_INSTANCE_ID = "world"
 
@@ -42,6 +42,7 @@ object InstanceService : IndependentService() {
     }
 
     fun getInstance(name: String): Instance {
-        return innerIdToInstanceMap[name] ?: throw IllegalArgumentException("(InstanceService) Instance $name doesn't exist.")
+        return innerIdToInstanceMap[name]
+            ?: throw IllegalArgumentException("(InstanceService) Instance $name doesn't exist.")
     }
 }

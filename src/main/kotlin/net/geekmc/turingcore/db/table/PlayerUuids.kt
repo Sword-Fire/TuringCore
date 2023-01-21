@@ -12,7 +12,7 @@ import org.ktorm.schema.text
  *
  * @see [PlayerUuid]
  */
-object PlayerUuids: Table<PlayerUuid>("t_player_uuid") {
+object PlayerUuids : Table<PlayerUuid>("t_player_uuid") {
     val uuid = binaryUuid("uuid").primaryKey().bindTo { it.uuid }
     val name = text("name").bindTo { it.name }
 }

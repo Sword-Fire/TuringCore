@@ -68,7 +68,8 @@ class YamlData(path: Path, yaml: Yaml = defaultYaml) {
             val key = iter.next()
             // 若将键转换为字符串对象以读取对应值失败，则转换为 Int 对象尝试读取值。
             if (currentMapObject[key] == null) {
-                val keyAsInt = runCatching { key.toInt() }.onFailure { return null }.getOrThrow()
+                // TODO 待测试正确性
+                val keyAsInt: Int = runCatching { key.toInt() }.getOrElse { return null }
                 if (currentMapObject[keyAsInt] == null) {
                     return null
                 }
@@ -112,6 +113,7 @@ class YamlData(path: Path, yaml: Yaml = defaultYaml) {
     /**
      * 存在潜在问题：纯数字的键会被转换成字符串对象再被用于访问Map，导致文件中所有数字键会被加上双引号。
      */
+    @Deprecated("Yaml file not support editing anymore.")
     operator fun <T> set(keysSplitByDoc: String, value: T): Boolean {
         var currentMapObject = rootMapObject
         val iter = keysSplitByDoc.split(".").iterator()

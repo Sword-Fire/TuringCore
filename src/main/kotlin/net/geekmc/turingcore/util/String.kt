@@ -25,7 +25,8 @@ fun String.replaceWithOrder(vararg args: Any): String {
                 i++
                 if (alias.isNotEmpty()) {
                     val str = alias.toString()
-                    builder.append((args.firstOrNull { it is Pair<*, *> && it.second == str } as? Pair<*, *>)?.first ?: "{$str}")
+                    builder.append((args.firstOrNull { it is Pair<*, *> && it.second == str } as? Pair<*, *>)?.first
+                        ?: "{$str}")
                 } else {
                     builder.append(args.getOrNull(num) ?: "{$num}")
                 }
