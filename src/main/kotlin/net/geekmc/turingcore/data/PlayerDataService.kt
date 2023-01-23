@@ -4,7 +4,6 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.serializer
-import net.geekmc.turingcore.TuringCore
 import net.geekmc.turingcore.data.json.JsonData.Companion.SERIALIZATION_JSON
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.player.PlayerUUIDProvider
@@ -28,7 +27,6 @@ inline fun <reified T : PlayerData> dataOf(player: Player): T {
 }
 
 object PlayerDataService : Service() {
-
     val uuidToDataMap = HashMap<UUID, HashMap<String, PlayerData>>()
     val clazzToIdentifierMap = HashMap<KClass<*>, String>()
 
@@ -94,7 +92,7 @@ object PlayerDataService : Service() {
                     // TODO 验证在AsyncLogin中踢出玩家会不会触发DisconnectEvent
                     // 如果会触发，则需要在此处将玩家设置数据为空，在DisconnectEvent中检查如果为空时则不保存
                     uuidToDataMap.remove(player.uuid)
-                    TuringCore.INSTANCE.logger.error("读取玩家 ${player.username} 的数据超时")
+                    logger.error("读取玩家 ${player.username} 的数据超时")
                     player.kick("读取玩家数据超时")
                 }
             }
@@ -110,7 +108,7 @@ object PlayerDataService : Service() {
         Manager.scheduler.buildTask {
             // 切到主线程
             val time = measureTime { Manager.connection.onlinePlayers.forEach { it.saveData() } }.inWholeMilliseconds
-            TuringCore.INSTANCE.logger.info("定时保存玩家数据，耗时 $time ms")
+            logger.info("定时保存玩家数据，耗时 $time ms")
         }.delay(saveInterval).repeat(saveInterval).schedule()
     }
 

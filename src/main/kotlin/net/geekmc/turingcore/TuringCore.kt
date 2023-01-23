@@ -11,6 +11,7 @@ import net.geekmc.turingcore.command.management.CommandPermission
 import net.geekmc.turingcore.command.management.CommandSave
 import net.geekmc.turingcore.command.management.CommandStop
 import net.geekmc.turingcore.data.PlayerDataService
+import net.geekmc.turingcore.di.initTuringCoreDi
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.framework.TuringFrameWork
 import net.geekmc.turingcore.instance.InstanceService
@@ -20,7 +21,6 @@ import net.geekmc.turingcore.player.EssentialPlayerDataService
 import net.geekmc.turingcore.skin.SkinService
 import net.geekmc.turingcore.util.color.ColorUtil
 import net.geekmc.turingcore.util.color.toComponent
-import net.geekmc.turingcore.util.info
 import net.geekmc.turingcore.util.lang.LanguageUtil
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.event.player.PlayerChatEvent
@@ -32,19 +32,13 @@ import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.util.register
 
 class TuringCore : Extension() {
-
-    companion object {
-        lateinit var INSTANCE: TuringCore
-            private set
-    }
-
     override fun preInitialize() {
         super.preInitialize()
-        INSTANCE = this
+        initTuringCoreDi(this)
     }
 
     override fun initialize() {
-        info("TuringCore initializing...")
+        logger.info("TuringCore initializing...")
         // 事件节点服务。
         EventNodes.start()
         // ColorUtil 在这里的优先级最高。
@@ -81,15 +75,16 @@ class TuringCore : Extension() {
                 "${player.displayName ?: player.username}: $message".toComponent()
             }
         }
-        info("TuringCore initialized.")
+        logger.info("TuringCore initialized.")
     }
 
     override fun terminate() {}
 
     private fun registerFrameWork() {
-        val registry = TuringFrameWork.registerExtension("net.geekmc.turingcore", this)
-        registry.consolePrefix = "[TuringCore] "
-        registry.playerPrefix = "&f[&gTuringCore&f] ".toComponent()
+        TuringFrameWork.registerExtension("net.geekmc.turingcore", this).apply {
+            consolePrefix = "[TuringCore] "
+            playerPrefix = "&f[&gTuringCore&f] ".toComponent()
+        }
     }
 
 

@@ -4,10 +4,10 @@ import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.geekmc.turingcore.TuringCore
 import net.geekmc.turingcore.config.BaseYamlConfig
 import net.geekmc.turingcore.config.BaseYamlObject
 import net.geekmc.turingcore.config.yaml
+import java.nio.file.Path
 import kotlin.io.path.inputStream
 
 @Suppress("PropertyName", "PrivatePropertyName")
@@ -17,9 +17,9 @@ class CoinYamlConfig(override val yamlObj: CoinConfigYamlObject): BaseYamlConfig
     companion object {
         const val FILE_NAME = "coin-config.yml"
 
-        fun getInstance(): CoinYamlConfig {
+        fun getInstance(dataDirectory: Path): CoinYamlConfig {
             val configYamlObj: CoinConfigYamlObject =
-                Yaml.default.decodeFromStream(TuringCore.INSTANCE.dataDirectory.resolve(FILE_NAME).inputStream())
+                Yaml.default.decodeFromStream(dataDirectory.resolve(FILE_NAME).inputStream())
             return CoinYamlConfig(configYamlObj)
         }
     }

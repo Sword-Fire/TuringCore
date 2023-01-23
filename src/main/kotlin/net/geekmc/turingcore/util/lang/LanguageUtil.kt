@@ -1,13 +1,18 @@
 package net.geekmc.turingcore.util.lang
 
-import net.geekmc.turingcore.TuringCore
 import net.geekmc.turingcore.data.yaml.YamlData
-import net.geekmc.turingcore.util.resolvePath
+import net.geekmc.turingcore.di.DITuringCoreAware
+import net.geekmc.turingcore.di.PathKey
 import net.geekmc.turingcore.util.saveResource
+import net.minestom.server.extensions.Extension
+import org.kodein.di.instance
+import java.nio.file.Path
 
-object LanguageUtil {
+object LanguageUtil : DITuringCoreAware {
 
     private const val PATH = "lang.yml"
+    private val extension by instance<Extension>()
+    private val dataPath by instance<Path>(tag = PathKey.DATA_FOLDER)
 
     private val languageType = hashMapOf(
         "text" to TypeText::class.java,
@@ -21,8 +26,8 @@ object LanguageUtil {
         if (messageMap.isNotEmpty()) {
             messageMap.clear()
         }
-        TuringCore.INSTANCE.saveResource(PATH)
-        val data = YamlData(TuringCore.INSTANCE.resolvePath(PATH))
+        extension.saveResource(PATH)
+        val data = YamlData(dataPath.resolve(PATH))
         data.rootMapObject.forEach { (k, v) ->
             if (k !is String) return
             messageMap[k] = when (v) {

@@ -13,18 +13,26 @@ import net.geekmc.turingcore.db.repo.impl.CoinHistoryRepoImpl
 import net.geekmc.turingcore.db.repo.impl.CoinTypeRepoImpl
 import net.geekmc.turingcore.db.repo.impl.PlayerUuidRepoImpl
 import net.geekmc.turingcore.service.coin.CoinYamlConfig
+import net.minestom.server.extensions.Extension
 import org.kodein.di.DI
 import org.kodein.di.bindEagerSingleton
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 import org.ktorm.database.Database
+import org.slf4j.Logger
+import java.nio.file.Path
+
+enum class PathKey {
+    DATA_FOLDER,
+}
 
 val baseModule by DI.Module {
-
+    bindSingleton<Logger> { instance<Extension>().logger }
+    bindSingleton<Path>(tag = PathKey.DATA_FOLDER) { instance<Extension>().dataDirectory }
 }
 
 val dbModule by DI.Module {
-    bindEagerSingleton<Database> { createDatabase(instance()) }
+    bindEagerSingleton<Database> { createDatabase(instance(), instance()) }
 
     bindSingleton<PlayerUuidRepo> { PlayerUuidRepoImpl(instance()) }
     bindSingleton<CoinTypeRepo> { CoinTypeRepoImpl(instance()) }
@@ -33,6 +41,6 @@ val dbModule by DI.Module {
 }
 
 val configModule by DI.Module {
-    bindSingleton<DbYamlConfig> { DbYamlConfig.getInstance() }
-    bindSingleton<CoinYamlConfig> { CoinYamlConfig.getInstance() }
+    bindSingleton<DbYamlConfig> { DbYamlConfig.getInstance(instance(PathKey.DATA_FOLDER)) }
+    bindSingleton<CoinYamlConfig> { CoinYamlConfig.getInstance(instance(PathKey.DATA_FOLDER)) }
 }
