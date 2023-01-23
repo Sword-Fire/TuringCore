@@ -13,7 +13,6 @@ create table t_coin_history_dg_tmp
     reason       TEXT    not null
 );
 
--- noinspection SqlResolve
 insert into t_coin_history_dg_tmp(id, player_uuid, coin_type_id, amount, time, reason)
 select id, player_uuid, type_id, amount, time, reason
 from t_coin_history;
