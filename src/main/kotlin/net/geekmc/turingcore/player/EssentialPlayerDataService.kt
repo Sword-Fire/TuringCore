@@ -45,7 +45,6 @@ object EssentialPlayerDataService : Service() {
                 }
             }
         }
-        // TODO: on Inventory Click 验证点击的所有槽，是不是有0-45？
         EventNodes.VERY_LOW.listenOnly<PlayerDisconnectEvent> {
             val data = PlayerDataService.getData<EssentialPlayerData>(player)
             with(data) {
