@@ -26,7 +26,7 @@ object MotdService : Service() {
         TuringCore.INSTANCE.saveResource(ICON_PATH)
         TuringCore.INSTANCE.saveResource(MOTD_PATH)
         val motdConfig = YamlData(TuringCore.INSTANCE.resolvePath(MOTD_PATH), MotdService.javaClass.classLoader)
-        val descriptions = motdConfig.get<List<String>>("description", emptyList())
+        val descriptions = motdConfig.getOrElse<List<String>>("description") { emptyList() }
         motdData = ResponseData().apply {
             description = (descriptions[0] + "\n" + descriptions[1]).toComponent()
             favicon = getIconAsBase64() ?: return@apply

@@ -30,7 +30,7 @@ object ColorUtil {
     fun init() {
         TuringCore.INSTANCE.saveResource(PATH)
         val data = YamlData(TuringCore.INSTANCE.resolvePath(PATH))
-        val colors = data.get<List<String>>("colors", emptyList())
+        val colors = data.getOrElse<List<String>>("colors") { emptyList() }
         colors
             .filter { it.isNotEmpty() && it.isNotBlank() }
             .forEach {
