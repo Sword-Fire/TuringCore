@@ -14,12 +14,19 @@ object EventNodes : Service() {
      * [PlayerDataService]使用这两个节点在[AsyncPlayerPreLoginEvent]与[PlayerDisconnectEvent]中读取/存放玩家数据。
      */
     lateinit var INTERNAL_HIGHEST: EventNode<Event>
+        private set
     lateinit var VERY_HIGH: EventNode<Event>
+        private set
     lateinit var HIGH: EventNode<Event>
+        private set
     lateinit var DEFAULT: EventNode<Event>
+        private set
     lateinit var LOW: EventNode<Event>
+        private set
     lateinit var VERY_LOW: EventNode<Event>
+        private set
     lateinit var INTERNAL_LOWEST: EventNode<Event>
+        private set
 
     override fun onEnable() {
         INTERNAL_HIGHEST = MinecraftServer.getGlobalEventHandler()
