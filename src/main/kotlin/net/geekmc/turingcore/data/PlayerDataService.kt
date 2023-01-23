@@ -1,6 +1,5 @@
 package net.geekmc.turingcore.data
 
-
 import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -8,15 +7,11 @@ import kotlinx.serialization.serializer
 import net.geekmc.turingcore.TuringCore
 import net.geekmc.turingcore.data.json.JsonData.Companion.SERIALIZATION_JSON
 import net.geekmc.turingcore.event.EventNodes
-import net.geekmc.turingcore.player.EssentialPlayerDataService
 import net.geekmc.turingcore.player.PlayerUUIDProvider
 import net.geekmc.turingcore.service.Service
-import net.geekmc.turingcore.util.timeOf
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.AsyncPlayerPreLoginEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
-import net.minestom.server.inventory.PlayerInventory
-import net.minestom.server.item.ItemStack
 import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
 import java.nio.file.Path
@@ -25,6 +20,8 @@ import java.util.*
 import kotlin.io.path.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createType
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 inline fun <reified T : PlayerData> dataOf(player: Player): T {
     return PlayerDataService.getData(player)
@@ -62,6 +59,7 @@ object PlayerDataService : Service() {
         return data as? T ?: error("While getting data $identifier of player ${p.username}, failed to convert PlayerData to ${T::class.simpleName}")
     }
 
+    @OptIn(ExperimentalTime::class)
     override fun onEnable() {
         // 进服时加载数据
         EventNodes.INTERNAL_HIGHEST.listenOnly<AsyncPlayerPreLoginEvent> {
@@ -111,7 +109,7 @@ object PlayerDataService : Service() {
         val saveInterval = Duration.ofMinutes(30)
         Manager.scheduler.buildTask {
             // 切到主线程
-            val time = timeOf { Manager.connection.onlinePlayers.forEach { it.saveData() } }
+            val time = measureTime { Manager.connection.onlinePlayers.forEach { it.saveData() } }.inWholeMilliseconds
             TuringCore.INSTANCE.logger.info("定时保存玩家数据，耗时 $time ms")
         }.delay(saveInterval).repeat(saveInterval).schedule()
     }
