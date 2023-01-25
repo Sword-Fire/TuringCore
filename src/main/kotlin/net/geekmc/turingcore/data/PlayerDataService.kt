@@ -26,6 +26,13 @@ inline fun <reified T : PlayerData> dataOf(player: Player): T {
     return PlayerDataService.getData(player)
 }
 
+inline fun <reified T : PlayerData> Player.getData(): T {
+    return PlayerDataService.getData(this)
+}
+
+/**
+ * 玩家数据服务。
+ */
 object PlayerDataService : Service() {
     val uuidToDataMap = HashMap<UUID, HashMap<String, PlayerData>>()
     val clazzToIdentifierMap = HashMap<KClass<*>, String>()
@@ -59,16 +66,15 @@ object PlayerDataService : Service() {
 
     @OptIn(ExperimentalTime::class)
     override fun onEnable() {
-        // 进服时加载数据
+        // 监听异步登陆事件
         EventNodes.INTERNAL_HIGHEST.listenOnly<AsyncPlayerPreLoginEvent> {
-            // TODO 考虑使用UUIDProvider代替此处设置UUID。
-            // 在一切的之前更新uuid
+            // TODO: 使用UUIDProvider代替此处设置UUID。
             // 事件和玩家的uuid都要更改，猜测事件结束后会用事件 uuid 覆盖玩家 uuid
             playerUuid = PlayerUUIDProvider.getUUID(player)
             player.uuid = playerUuid
-            // 必须等待加载数据后才能进服。
+            // 必须等待加载数据后才允许玩家进服。
             runBlocking {
-                // 允许有 3000 毫秒读取文件
+                // 允许有 5000 毫秒读取文件，超时则踢出玩家并报错
                 withTimeoutOrNull(5000L) {
                     withContext(playerDataServiceContext) {
                         // json文件的文本内容。
@@ -81,16 +87,14 @@ object PlayerDataService : Service() {
                         // 遍历所有注册过的玩家数据类型，将每个玩家数据类型的标识符作为 key 寻找对应的以 String 表示的数据，并将其转换为对应的数据类型。
                         // 转换过程中使用的反序列化器由 clazz 生成。
                         for ((clazz, identifier) in clazzToIdentifierMap) {
-                            uuidToDataMap[player.uuid]!![identifier] = SERIALIZATION_JSON.decodeFromString(
+                            uuidToDataMap[player.uuid]!![identifier] = (SERIALIZATION_JSON.decodeFromString(
                                 serializer(clazz.createType()),
                                 fileContentMap[identifier] ?: "{}"
-                            ) as PlayerData
+                            ) as PlayerData).apply { available = true }
                         }
                     }
                 } ?: run {
-                    // 如果超时了，就直接踢出玩家
-                    // TODO 验证在AsyncLogin中踢出玩家会不会触发DisconnectEvent
-                    // 如果会触发，则需要在此处将玩家设置数据为空，在DisconnectEvent中检查如果为空时则不保存
+                    // TODO: 验证在AsyncLogin中踢出玩家会不会触发DisconnectEvent。如果会触发，则需要在此处将玩家设置数据为空，在DisconnectEvent中检查如果为空时则不保存。
                     uuidToDataMap.remove(player.uuid)
                     logger.error("读取玩家 ${player.username} 的数据超时")
                     player.kick("读取玩家数据超时")
@@ -113,11 +117,8 @@ object PlayerDataService : Service() {
     }
 
     private fun Player.saveData() {
-
-        // 必须马上在主线程序列化数据，因为玩家退服后数据就会丢失。
-        // 序列化数据写入文件可以稍后再做。
+        // 在主线程将玩家数据固定到LinkedHashMap中
         val fileContentMap = LinkedHashMap<String, String>()
-        // 遍历所有玩家数据类型
         for ((clazz, identifier) in clazzToIdentifierMap) {
             // 将玩家数据序列化为字符串
             fileContentMap[identifier] = SERIALIZATION_JSON.encodeToString(

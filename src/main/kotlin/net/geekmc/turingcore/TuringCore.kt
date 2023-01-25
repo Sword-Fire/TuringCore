@@ -17,7 +17,7 @@ import net.geekmc.turingcore.framework.TuringFrameWork
 import net.geekmc.turingcore.instance.InstanceService
 import net.geekmc.turingcore.instance.InstanceService.MAIN_INSTANCE_ID
 import net.geekmc.turingcore.motd.MotdService
-import net.geekmc.turingcore.player.EssentialPlayerDataService
+import net.geekmc.turingcore.player.essentialdata.EssentialPlayerDataService
 import net.geekmc.turingcore.skin.SkinService
 import net.geekmc.turingcore.util.color.ColorUtil
 import net.geekmc.turingcore.util.color.toComponent

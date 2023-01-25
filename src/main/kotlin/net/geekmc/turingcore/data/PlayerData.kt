@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 abstract class PlayerData {
-    // 表示当前的PlayerData实例是否可用（即未因玩家退出游戏而被弃用）。
-    // TODO　实现available功能
+    // TODO: 通过注解与alias指定序列化器而不是通过@Contexual
+    // 表示当前的PlayerData实例是否可用。玩家退出游戏会导致此值变为false。在此之后，该PlayerData实例不应再被使用。
     var available = true
-        private set
+        internal set
 }

@@ -6,7 +6,6 @@ import org.slf4j.Logger
 
 /**
  * 代表一种服务。
- * @see [EventService]
  */
 abstract class Service : DITuringCoreAware {
     protected val logger: Logger by instance()

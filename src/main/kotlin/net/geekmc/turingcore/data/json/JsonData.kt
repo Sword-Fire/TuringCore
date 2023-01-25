@@ -9,11 +9,8 @@ import kotlin.io.path.*
 
 /**
  * 存储序列化数据到 Json 的数据类型。
- *
- * ```
  * 可序列化对象包括任何带有 @Serializable 注解的对象，例如 Int, ArrayList<Int> 等。
  * 和所有在 TuringJson 中具有对应序列化器的对象，以及包含它们的具有 Kotlin 原生序列化支持的容器对象。例如 ItemStack, Set<ItemStack>。
- * ```
  *
  * 你可以认为 [JsonData] 是一个简化版的 Map。
  * (String -> Serializable Object)

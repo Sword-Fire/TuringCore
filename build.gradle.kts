@@ -24,7 +24,7 @@ dependencies {
         exclude(group = "org.tinylog")
     }
 
-    // todo:把包名合并到workspace的build.gradle.kts中
+    // TODO: 把包名合并到workspace的build.gradle.kts中
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:${project.ext["version.kotlinx-coroutines-core"]}")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:${project.ext["version.kotlinx-serialization-core"]}")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:${project.ext["version.kotlinx-serialization-json"]}")
