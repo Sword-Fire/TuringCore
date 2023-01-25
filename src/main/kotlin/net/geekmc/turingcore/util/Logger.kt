@@ -3,17 +3,26 @@ package net.geekmc.turingcore.util
 import org.slf4j.Logger
 
 inline fun Logger.info(message: () -> Any) {
-    info(message().toString())
+    if (this.isInfoEnabled)
+        info(message().toString())
 }
 
 inline fun Logger.trace(message: () -> Any) {
-    trace(message().toString())
+    if (this.isTraceEnabled)
+        trace(message().toString())
 }
 
 inline fun Logger.debug(message: () -> Any) {
-    debug(message().toString())
+    if (this.isDebugEnabled)
+        debug(message().toString())
 }
 
 inline fun Logger.warn(message: () -> Any) {
-    warn(message().toString())
+    if (this.isWarnEnabled)
+        warn(message().toString())
+}
+
+inline fun Logger.error(message: () -> Any) {
+    if (this.isErrorEnabled)
+        error(message().toString())
 }
