@@ -8,7 +8,7 @@ import net.geekmc.turingcore.db.repo.PlayerUuidRepo
 import net.geekmc.turingcore.db.table.CoinHistoryActionType
 import net.geekmc.turingcore.di.turingCoreDi
 import net.geekmc.turingcore.util.extender.displayName
-import net.geekmc.turingcore.util.onlyOp
+import net.geekmc.turingcore.util.extender.onlyOp
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.arguments.ArgumentString
 import net.minestom.server.command.builder.arguments.ArgumentWord

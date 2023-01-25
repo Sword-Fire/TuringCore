@@ -6,7 +6,7 @@ import net.geekmc.turingcore.di.PathKey
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.coroutine.MinestomAsync
-import net.geekmc.turingcore.util.saveResource
+import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.event.player.PlayerSkinInitEvent
 import net.minestom.server.extensions.Extension

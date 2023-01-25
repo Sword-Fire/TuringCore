@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.util.lang
 
 import net.geekmc.turingcore.util.color.toComponent
-import net.geekmc.turingcore.util.replaceWithOrder
+import net.geekmc.turingcore.util.extender.replaceWithOrder
 import net.minestom.server.command.CommandSender
 
 class TypeActionBar : Type {

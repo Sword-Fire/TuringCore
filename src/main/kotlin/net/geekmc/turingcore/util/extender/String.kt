@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.util
+package net.geekmc.turingcore.util.extender
 
 fun String.replaceWithOrder(vararg args: Any): String {
     if (args.isEmpty() || isEmpty()) {

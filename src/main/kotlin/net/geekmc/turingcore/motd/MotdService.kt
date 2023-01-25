@@ -5,7 +5,7 @@ import net.geekmc.turingcore.di.PathKey
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.color.toComponent
-import net.geekmc.turingcore.util.saveResource
+import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.event.server.ServerListPingEvent
 import net.minestom.server.extensions.Extension
 import net.minestom.server.ping.ResponseData

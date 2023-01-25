@@ -2,7 +2,7 @@ package net.geekmc.turingcore.command.debug
 
 import net.geekmc.turingcore.command.opSyntax
 import net.geekmc.turingcore.util.color.message
-import net.geekmc.turingcore.util.getLineOfSightEntity
+import net.geekmc.turingcore.util.extender.getLineOfSightEntity
 import net.minestom.server.command.builder.arguments.ArgumentLiteral
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.kommand.Kommand

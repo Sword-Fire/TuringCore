@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.util
+package net.geekmc.turingcore.util.extender
 
 import net.geekmc.turingcore.player.data
 import net.minestom.server.command.CommandSender
@@ -7,7 +7,7 @@ import net.minestom.server.entity.Player
 import world.cepi.kstom.command.kommand.Kondition
 
 fun CommandSender.isOp(): Boolean {
-    // TODO remove this
+    // TODO: remove this
     return true
     return when (this) {
         is Player -> data["op"] ?: false

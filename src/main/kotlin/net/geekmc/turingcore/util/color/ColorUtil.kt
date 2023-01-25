@@ -3,7 +3,7 @@ package net.geekmc.turingcore.util.color
 import net.geekmc.turingcore.data.yaml.YamlData
 import net.geekmc.turingcore.di.DITuringCoreAware
 import net.geekmc.turingcore.di.PathKey
-import net.geekmc.turingcore.util.saveResource
+import net.geekmc.turingcore.util.extender.saveResource
 import net.geekmc.turingcore.util.unsafeLazy
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minestom.server.extensions.Extension

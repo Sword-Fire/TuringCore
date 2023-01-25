@@ -2,7 +2,7 @@ package net.geekmc.turingcore.db
 
 import net.geekmc.turingcore.TuringCore
 import net.geekmc.turingcore.db.java_migration.javaBasedMigrations
-import net.geekmc.turingcore.util.info
+import net.geekmc.turingcore.util.extender.info
 import org.flywaydb.core.Flyway
 import org.ktorm.database.Database
 import org.slf4j.Logger

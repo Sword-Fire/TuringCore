@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.util
+package net.geekmc.turingcore.util.extender
 
 import net.minestom.server.entity.Player
 

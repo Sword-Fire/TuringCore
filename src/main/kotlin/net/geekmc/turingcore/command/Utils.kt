@@ -1,6 +1,6 @@
 package net.geekmc.turingcore.command
 
-import net.geekmc.turingcore.util.isOp
+import net.geekmc.turingcore.util.extender.isOp
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.arguments.Argument
