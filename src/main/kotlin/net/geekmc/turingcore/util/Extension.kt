@@ -1,11 +1,12 @@
 package net.geekmc.turingcore.util
 
 import net.minestom.server.extensions.Extension
+import kotlin.io.path.exists
 
-fun Extension.saveResource(resource: String) {
+fun Extension.saveResource(resource: String, throwWhenExists: Boolean = false) {
     val target = dataDirectory.resolve(resource)
-    if (target.toFile().exists()) {
-        return
+    if (target.exists()) {
+        throwWhenExists && error("Resource $resource already exists!")
     }
     savePackagedResource(resource)
 }
