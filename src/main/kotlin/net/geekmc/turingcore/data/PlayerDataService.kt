@@ -129,7 +129,7 @@ object PlayerDataService : Service() {
         // 在玩家数据线程写入文件
         CoroutineScope(playerDataServiceContext).launch {
             val file = this@saveData.dataFile
-            if (!file.exists()) {
+            if (file.notExists()) {
                 file.parent.createDirectories()
                 file.createFile()
             }
