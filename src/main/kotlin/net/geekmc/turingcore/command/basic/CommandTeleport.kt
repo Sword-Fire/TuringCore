@@ -1,7 +1,6 @@
 package net.geekmc.turingcore.command.basic
 
 import net.geekmc.turingcore.command.opSyntax
-import net.geekmc.turingcore.util.foldToString
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec3
@@ -38,7 +37,7 @@ object CommandTeleport : Kommand({
         entities.forEach {
             it.teleport(pos)
         }
-        val name = entities.foldToString(", ") {
+        val name = entities.joinToString(", ") {
             when (it) {
                 is Player -> it.username
                 else -> it.entityType.toString()
