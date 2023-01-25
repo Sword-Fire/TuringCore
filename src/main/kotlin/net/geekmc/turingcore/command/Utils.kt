@@ -14,9 +14,9 @@ val Kommand.SyntaxContext.args
     get() = this.context
 
 @Contract(pure = true)
-fun Kommand.opSyntax(
+inline fun Kommand.opSyntax(
     vararg arguments: Argument<*> = arrayOf(),
-    executor: Kommand.SyntaxContext.() -> Unit
+    crossinline executor: Kommand.SyntaxContext.() -> Unit
 ) = syntax(*arguments, executor = {
     if (!sender.isOp()) {
         sender.sendLang("message-command-operator-only")
