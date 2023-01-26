@@ -11,9 +11,6 @@ import net.minestom.server.item.ItemStack
 import org.jglrxavpok.hephaistos.nbt.NBT
 import world.cepi.kstom.serializer.*
 
-/**
- * 在修改这个文件之前，请参考 [TURING_CORE_SERIALIZATION_MODULE]。
- */
 @OptIn(ExperimentalSerializationApi::class)
 val TURING_CORE_SERIALIZATION_MODULE = SerializersModule {
     contextual(BlockSerializer)

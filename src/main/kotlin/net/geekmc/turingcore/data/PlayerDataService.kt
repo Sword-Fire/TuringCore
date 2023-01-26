@@ -6,7 +6,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.serializer
 import net.geekmc.turingcore.data.json.JsonData.Companion.SERIALIZATION_JSON
 import net.geekmc.turingcore.event.EventNodes
-import net.geekmc.turingcore.player.PlayerUUIDProvider
 import net.geekmc.turingcore.service.Service
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.AsyncPlayerPreLoginEvent
@@ -68,10 +67,6 @@ object PlayerDataService : Service() {
     override fun onEnable() {
         // 监听异步登陆事件
         EventNodes.INTERNAL_HIGHEST.listenOnly<AsyncPlayerPreLoginEvent> {
-            // TODO: 使用UUIDProvider代替此处设置UUID。
-            // 事件和玩家的uuid都要更改，猜测事件结束后会用事件 uuid 覆盖玩家 uuid
-            playerUuid = PlayerUUIDProvider.getUUID(player)
-            player.uuid = playerUuid
             // 必须等待加载数据后才允许玩家进服。
             runBlocking {
                 // 允许有 5000 毫秒读取文件，超时则踢出玩家并报错
