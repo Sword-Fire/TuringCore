@@ -1,13 +1,13 @@
 package net.geekmc.turingcore.service
 
-import net.geekmc.turingcore.di.DITuringCoreAware
+import net.geekmc.turingcore.di.TuringCoreDIAware
 import org.kodein.di.instance
 import org.slf4j.Logger
 
 /**
  * 代表一种服务。
  */
-abstract class Service : DITuringCoreAware {
+abstract class Service : TuringCoreDIAware {
     protected val logger: Logger by instance()
 
     var isActive = false

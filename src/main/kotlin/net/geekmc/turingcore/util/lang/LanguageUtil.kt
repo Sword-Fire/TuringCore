@@ -1,14 +1,14 @@
 package net.geekmc.turingcore.util.lang
 
 import net.geekmc.turingcore.data.yaml.YamlData
-import net.geekmc.turingcore.di.DITuringCoreAware
 import net.geekmc.turingcore.di.PathKey
+import net.geekmc.turingcore.di.TuringCoreDIAware
 import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.extensions.Extension
 import org.kodein.di.instance
 import java.nio.file.Path
 
-object LanguageUtil : DITuringCoreAware {
+object LanguageUtil : TuringCoreDIAware {
 
     private const val PATH = "lang.yml"
     private val extension by instance<Extension>()

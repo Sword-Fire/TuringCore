@@ -12,9 +12,7 @@ import world.cepi.kstom.event.listenOnly
 
 // TODO 存储Instance。玩家要先设置Instance，后允许teleport。
 object EssentialPlayerDataService : Service() {
-
-
-
+    
     override fun onEnable() {
         PlayerDataService.register(EssentialPlayerData::class)
         EventNodes.VERY_HIGH.listenOnly<PlayerLoginEvent> {

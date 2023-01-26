@@ -1,8 +1,8 @@
 package net.geekmc.turingcore.util.color
 
 import net.geekmc.turingcore.data.yaml.YamlData
-import net.geekmc.turingcore.di.DITuringCoreAware
 import net.geekmc.turingcore.di.PathKey
+import net.geekmc.turingcore.di.TuringCoreDIAware
 import net.geekmc.turingcore.util.extender.saveResource
 import net.geekmc.turingcore.util.unsafeLazy
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -12,7 +12,7 @@ import org.slf4j.Logger
 import java.nio.file.Path
 import java.util.*
 
-object ColorUtil : DITuringCoreAware {
+object ColorUtil : TuringCoreDIAware {
 
     private const val PATH = "colors.yml"
     private val extension by instance<Extension>()

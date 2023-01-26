@@ -2,6 +2,7 @@
 
 package net.geekmc.turingcore.di
 
+import net.geekmc.turingcore.coin.CoinYamlConfig
 import net.geekmc.turingcore.db.DbYamlConfig
 import net.geekmc.turingcore.db.createDatabase
 import net.geekmc.turingcore.db.repo.CoinAmountRepo
@@ -12,7 +13,6 @@ import net.geekmc.turingcore.db.repo.impl.CoinAmountRepoImpl
 import net.geekmc.turingcore.db.repo.impl.CoinHistoryRepoImpl
 import net.geekmc.turingcore.db.repo.impl.CoinTypeRepoImpl
 import net.geekmc.turingcore.db.repo.impl.PlayerUuidRepoImpl
-import net.geekmc.turingcore.service.coin.CoinYamlConfig
 import net.minestom.server.extensions.Extension
 import org.kodein.di.DI
 import org.kodein.di.bindEagerSingleton

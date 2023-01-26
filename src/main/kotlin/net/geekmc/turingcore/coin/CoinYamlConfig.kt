@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.service.coin
+package net.geekmc.turingcore.coin
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
@@ -10,7 +10,7 @@ import net.geekmc.turingcore.config.yaml
 import java.nio.file.Path
 import kotlin.io.path.inputStream
 
-@Suppress("PropertyName", "PrivatePropertyName")
+@Suppress("PropertyName")
 class CoinYamlConfig(override val yamlObj: CoinConfigYamlObject): BaseYamlConfig {
     val COIN_TYPES by yaml(CoinConfigYamlObject::coinTypes)
 

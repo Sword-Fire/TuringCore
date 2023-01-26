@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.service.coin
+package net.geekmc.turingcore.coin
 
 import net.geekmc.turingcore.db.entity.CoinType
 import net.geekmc.turingcore.db.repo.CoinAmountRepo
