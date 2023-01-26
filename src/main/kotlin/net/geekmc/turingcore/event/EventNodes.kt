@@ -8,6 +8,7 @@ import net.minestom.server.event.EventNode
 /**
  * 类似Bukkit的事件优先级系统。
  */
+// TODO: 作为API
 object EventNodes : Service() {
     /**
      * 使用[INTERNAL_HIGHEST]和[INTERNAL_LOWEST]时必须在此处声明，以管理优先级。

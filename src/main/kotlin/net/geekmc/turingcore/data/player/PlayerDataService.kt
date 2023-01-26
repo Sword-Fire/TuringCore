@@ -5,6 +5,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.serializer
 import net.geekmc.turingcore.data.json.JsonData.Companion.SERIALIZATION_JSON
+import net.geekmc.turingcore.data.player.PlayerDataService.getDataOfPlayer
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.coroutine.MinestomSync
@@ -22,11 +23,17 @@ import kotlin.reflect.full.createType
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
+/**
+ * 获取玩家的某一类型的数据。只允许在主线程中使用。
+ * 警告：在你的代码段运行完毕、让出主线程控制权后，通过该方法获取的引用可能在任何时候失效。
+ * 因此，当你在某一时刻获取了主线程控制权，总是通过 [getDataOfPlayer] 方法来获取新的引用，且不要存放这个引用。
+ */
 inline fun <reified T : PlayerData> Player.getData(): T {
-    return PlayerDataService.getDataOfPlayer(this)
+    return getDataOfPlayer(this)
 }
 
 private typealias PlayerDataMap = HashMap<String, PlayerData>
+
 // TODO: 允许加载离线玩家的数据。
 /**
  * 玩家数据服务。
@@ -39,6 +46,7 @@ object PlayerDataService : Service() {
 
     /**
      * 用于玩家数据读写的协程域。单线程以保证不会出现并发读写问题。
+     * "从文件读取玩家数据并构建玩家的所有 PlayerData "，与"将玩家的所有 PlayerData 序列化并写入文件",这两个过程都应完全在此协程域进行。
      */
     @OptIn(DelicateCoroutinesApi::class)
     private val playerDataServiceContext = newSingleThreadContext("PlayerDataDispatcher")
@@ -51,15 +59,9 @@ object PlayerDataService : Service() {
         clazzToIdentifierMap[clazz] = clazz.qualifiedName!!
     }
 
-    /**
-     * 获取玩家的某一类型的数据。只允许在主线程中使用。
-     * 警告：在你的代码段运行完毕、让出主线程控制权后，通过该方法获取的引用可能在任何时候失效。
-     * 因此，当你在某一时刻获取了主线程控制权，总是通过[getDataOfPlayer]方法来获取新的引用，且不要存放这个引用。
-     */
     inline fun <reified T : PlayerData> getDataOfPlayer(p: Player): T {
         val identifier = clazzToIdentifierMap[T::class] ?: error("Identifier of Class ${T::class.qualifiedName} not exists")
         val playerDataMap = uuidToDataMap[p.uuid] ?: error("Can not find the data map of player ${p.username} with player uuid ${p.uuid} in uuidToDataMap")
-        // 获取该Data的内容，以String表示
         val data = playerDataMap[identifier] ?: error("Data with identifier $identifier not found in player ${p.username}")
         return data as? T ?: error("While getting data $identifier of player ${p.username}, failed to convert PlayerData to ${T::class.simpleName}")
     }
@@ -96,40 +98,41 @@ object PlayerDataService : Service() {
      */
     private fun loadPlayerData(uuid: UUID): Boolean {
         return runBlocking {
-            // 允许有 5000 毫秒读取文件，超时则踢出玩家并报错
-            withTimeoutOrNull(5000L) {
-                withContext(playerDataServiceContext) {
-
-                    val fileContent = if (uuid.dataFile.exists()) uuid.dataFile.readText() else "{}"
-                    val fileContentMap: LinkedHashMap<String, String> = SERIALIZATION_JSON.decodeFromString(fileContent)
-                    // 为玩家创建一个新Map
-                    val dataMap = PlayerDataMap()
-
-                    // 遍历所有注册过的玩家数据类型，将每个玩家数据类型的标识符作为 key 寻找对应的以 String 表示的数据，并将其转换为对应的数据类型。
-                    // 转换过程中使用的反序列化器由 clazz 生成。
-                    for ((clazz, identifier) in clazzToIdentifierMap) {
-                        dataMap[identifier] = (SERIALIZATION_JSON.decodeFromString(
-                            serializer(clazz.createType()),
-                            fileContentMap[identifier] ?: "{}"
-                        ) as PlayerData).apply { available = true }
+            withContext(playerDataServiceContext) {
+                var isReadFileSuccessful = true
+                val fileContent = if (uuid.dataFile.exists()) {
+                    withTimeoutOrNull(5000L) { uuid.dataFile.readText() } ?: run {
+                        isReadFileSuccessful = false
+                        "__FAILED__"
                     }
+                } else "{}"
+                // 读取文件失败，直接返回。
+                if (!isReadFileSuccessful) {
                     withContext(Dispatchers.MinestomSync) {
-                        uuidToDataMap[uuid] = dataMap
+                        uuidToDataMap.remove(uuid)
                     }
+                    return@withContext false
                 }
-            } ?: run {
-                // TODO: 验证在AsyncLogin中踢出玩家会不会触发DisconnectEvent。如果会触发，则需要在此处将玩家设置数据为空，在DisconnectEvent中检查如果为空时则不保存。
-                // ！！！！！此处在异步线程调用，可能出问题
+                val fileContentMap: LinkedHashMap<String, String> = SERIALIZATION_JSON.decodeFromString(fileContent)
+                val dataMap = PlayerDataMap()
+                // 生成所有注册过的玩家数据。
+                for ((clazz, identifier) in clazzToIdentifierMap) {
+                    dataMap[identifier] = (SERIALIZATION_JSON.decodeFromString(
+                        serializer(clazz.createType()),
+                        fileContentMap[identifier] ?: "{}"
+                    ) as PlayerData).apply { available = true }
+                }
                 withContext(Dispatchers.MinestomSync) {
-                    uuidToDataMap.remove(uuid)
+                    uuidToDataMap[uuid] = dataMap
                 }
-                logger.error("读取玩家 $uuid 的数据超时")
-                return@runBlocking false
+                true
             }
-            true
         }
     }
 
+    /**
+     * 将玩家数据序列化，随后将序列化后的数据异步写入文件。
+     */
     private fun savePlayerData(uuid: UUID) {
         // 在主线程将玩家数据固定到LinkedHashMap中
         val fileContentMap = LinkedHashMap<String, String>()
