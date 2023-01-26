@@ -13,7 +13,7 @@ abstract class Service : TuringCoreDIAware {
     var isActive = false
         protected set
 
-    open fun start() {
+    fun start() {
         check(!isActive) { "Service is already started!" }
         isActive = true
         onEnable()

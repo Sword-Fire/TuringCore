@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.data
+package net.geekmc.turingcore.data.player
 
 import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString

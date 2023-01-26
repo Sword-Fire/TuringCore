@@ -10,20 +10,21 @@ import net.geekmc.turingcore.command.management.CommandOp
 import net.geekmc.turingcore.command.management.CommandPermission
 import net.geekmc.turingcore.command.management.CommandSave
 import net.geekmc.turingcore.command.management.CommandStop
-import net.geekmc.turingcore.data.PlayerDataService
+import net.geekmc.turingcore.data.global.GlobalDataService
+import net.geekmc.turingcore.data.player.PlayerDataService
 import net.geekmc.turingcore.di.initTuringCoreDi
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.framework.TuringFrameWork
 import net.geekmc.turingcore.instance.InstanceService
 import net.geekmc.turingcore.instance.InstanceService.MAIN_INSTANCE_ID
 import net.geekmc.turingcore.motd.MotdService
+import net.geekmc.turingcore.player.ChatService
 import net.geekmc.turingcore.player.essentialdata.EssentialPlayerDataService
 import net.geekmc.turingcore.skin.SkinService
 import net.geekmc.turingcore.util.color.ColorUtil
 import net.geekmc.turingcore.util.color.toComponent
 import net.geekmc.turingcore.util.lang.LanguageUtil
 import net.geekmc.turingcore.util.lang.sendLang
-import net.minestom.server.event.player.PlayerChatEvent
 import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.extensions.Extension
 import net.minestom.server.utils.callback.CommandCallback
@@ -51,10 +52,14 @@ class TuringCore : Extension() {
         SkinService.start()
         // Motd 服务。
         MotdService.start()
-        // 所有种类的玩家信息服务。
+        // 全局数据服务。
+        GlobalDataService.start()
+        // 玩家数据服务。
         PlayerDataService.start()
-        // 玩家基础信息服务。
+        // 玩家基础数据服务。
         EssentialPlayerDataService.start()
+        // 聊天服务。
+        ChatService.start()
         // 世界服务。
         InstanceService.start()
         InstanceService.createInstanceContainer(MAIN_INSTANCE_ID)
@@ -70,15 +75,21 @@ class TuringCore : Extension() {
         // 注册方块。
         registerBlockHandlers()
         // 处理玩家聊天的临时监听器。
-        EventNodes.DEFAULT.listenOnly<PlayerChatEvent> {
-            setChatFormat {
-                "${player.displayName ?: player.username}: $message".toComponent()
-            }
-        }
+
         logger.info("TuringCore initialized.")
     }
 
-    override fun terminate() {}
+
+    override fun terminate() {
+        // 必须按启动顺序的逆顺序关闭。
+        InstanceService.stop()
+        ChatService.stop()
+        EssentialPlayerDataService.stop()
+        PlayerDataService.stop()
+        MotdService.stop()
+        SkinService.stop()
+        EventNodes.stop()
+    }
 
     private fun registerFrameWork() {
         TuringFrameWork.registerExtension("net.geekmc.turingcore", this).apply {

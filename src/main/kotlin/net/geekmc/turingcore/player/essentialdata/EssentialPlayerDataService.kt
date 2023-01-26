@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.player.essentialdata
 
-import net.geekmc.turingcore.data.PlayerDataService
-import net.geekmc.turingcore.data.dataOf
+import net.geekmc.turingcore.data.player.PlayerDataService
+import net.geekmc.turingcore.data.player.dataOf
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.service.Service
 import net.minestom.server.event.player.PlayerDisconnectEvent
@@ -10,9 +10,9 @@ import net.minestom.server.inventory.PlayerInventory
 import net.minestom.server.item.ItemStack
 import world.cepi.kstom.event.listenOnly
 
-// TODO 存储Instance。玩家要先设置Instance，后允许teleport。
+// TODO: 存储玩家所在Instance。
 object EssentialPlayerDataService : Service() {
-    
+
     override fun onEnable() {
         PlayerDataService.register(EssentialPlayerData::class)
         EventNodes.VERY_HIGH.listenOnly<PlayerLoginEvent> {

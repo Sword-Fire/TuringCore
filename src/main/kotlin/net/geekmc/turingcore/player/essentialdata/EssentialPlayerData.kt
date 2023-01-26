@@ -1,22 +1,18 @@
-@file:UseSerializers(PositionSerializer::class)
-
 package net.geekmc.turingcore.player.essentialdata
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
-import net.geekmc.turingcore.data.PlayerData
+import net.geekmc.turingcore.data.player.PlayerData
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
 import net.minestom.server.inventory.PlayerInventory
 import net.minestom.server.item.ItemStack
 import net.minestom.server.permission.Permission
-import world.cepi.kstom.serializer.PositionSerializer
 
 @Serializable
 data class EssentialPlayerData(
     var isOp: Boolean = false,
-    var position: Pos = Pos(0.0, 120.0, 0.0),
+    var position: @Contextual Pos = Pos(0.0, 120.0, 0.0),
     var gameMode: GameMode = GameMode.ADVENTURE,
     var health: Float = 20f,
     var permissions: Set<@Contextual Permission> = setOf(),
