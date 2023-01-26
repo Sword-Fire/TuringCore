@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * 玩家数据类必须继承[PlayerData]，且不允许有泛型参数。
- * 警告：使用前请参阅[PlayerDataService.getData]。
+ * 警告：使用前请参阅[PlayerDataService.getDataOfPlayer]。
  */
 @Serializable
 abstract class PlayerData {

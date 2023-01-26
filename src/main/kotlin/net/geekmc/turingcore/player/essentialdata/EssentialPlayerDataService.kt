@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.player.essentialdata
 
 import net.geekmc.turingcore.data.player.PlayerDataService
-import net.geekmc.turingcore.data.player.dataOf
+import net.geekmc.turingcore.data.player.getData
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.service.Service
 import net.minestom.server.event.player.PlayerDisconnectEvent
@@ -16,7 +16,7 @@ object EssentialPlayerDataService : Service() {
     override fun onEnable() {
         PlayerDataService.register(EssentialPlayerData::class)
         EventNodes.VERY_HIGH.listenOnly<PlayerLoginEvent> {
-            val data = dataOf<EssentialPlayerData>(player)
+            val data = player.getData<EssentialPlayerData>()
             with(player) {
                 respawnPoint = data.position
                 gameMode = data.gameMode
@@ -28,7 +28,7 @@ object EssentialPlayerDataService : Service() {
             }
         }
         EventNodes.VERY_LOW.listenOnly<PlayerDisconnectEvent> {
-            val data = PlayerDataService.getData<EssentialPlayerData>(player)
+            val data = PlayerDataService.getDataOfPlayer<EssentialPlayerData>(player)
             with(data) {
                 position = player.position
                 gameMode = player.gameMode

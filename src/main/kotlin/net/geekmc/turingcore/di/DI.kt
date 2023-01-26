@@ -13,8 +13,6 @@ fun initTuringCoreDi(extension: Extension) {
         bindSingleton<Extension> { extension }
         importAll(
             baseModule,
-            dbModule,
-            configModule,
         )
     }
 }

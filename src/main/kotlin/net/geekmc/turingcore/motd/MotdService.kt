@@ -23,7 +23,7 @@ object MotdService : Service() {
 
     private lateinit var motdData: ResponseData
     private val extension by instance<Extension>()
-    private val dataPath by instance<Path>(tag = PathKey.DATA_FOLDER)
+    private val dataPath by instance<Path>(tag = PathKey.EXTENSION_FOLDER)
 
     override fun onEnable() {
         extension.saveResource(ICON_PATH)

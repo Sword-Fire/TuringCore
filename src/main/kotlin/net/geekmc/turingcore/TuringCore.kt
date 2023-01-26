@@ -20,7 +20,7 @@ import net.geekmc.turingcore.instance.InstanceService.MAIN_INSTANCE_ID
 import net.geekmc.turingcore.motd.MotdService
 import net.geekmc.turingcore.player.ChatService
 import net.geekmc.turingcore.player.essentialdata.EssentialPlayerDataService
-import net.geekmc.turingcore.skin.SkinService
+import net.geekmc.turingcore.player.skin.SkinService
 import net.geekmc.turingcore.util.color.ColorUtil
 import net.geekmc.turingcore.util.color.toComponent
 import net.geekmc.turingcore.util.lang.LanguageUtil
@@ -74,7 +74,6 @@ class TuringCore : Extension() {
         registerCommands()
         // 注册方块。
         registerBlockHandlers()
-        // 处理玩家聊天的临时监听器。
 
         logger.info("TuringCore initialized.")
     }
@@ -97,7 +96,6 @@ class TuringCore : Extension() {
             playerPrefix = "&f[&gTuringCore&f] ".toComponent()
         }
     }
-
 
     /**
      * 注册 BlockHandler 的意义是在读取地图时，
