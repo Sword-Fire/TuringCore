@@ -44,10 +44,6 @@ inline fun <reified T : PlayerData> Player.getData(): T {
  */
 object PlayerDataService : Service() {
 
-    private val UUID.dataFile: Path
-        @Suppress("spellCheckingInspection")
-        get() = Path.of("playerdata/${this}.json")
-
     /**
      * 注册一个玩家数据类。
      * @param T 玩家数据类型
@@ -65,6 +61,7 @@ object PlayerDataService : Service() {
     }
 
     // TODO: 待测试
+
     /**
      * 在主线程中调用离线玩家的数据。文件读取会阻塞主线程，因此较慢。在传入的代码段中，使用 [OfflinePlayerDataContext.getData] 获取数据。
      */
@@ -73,7 +70,6 @@ object PlayerDataService : Service() {
         OfflinePlayerDataContext(uuid).action()
         savePlayerData(uuid)
     }
-
     class OfflinePlayerDataContext(val uuid: UUID) {
         inline fun <reified T : PlayerData> getData(): T {
             return getPlayerData(uuid)
@@ -84,7 +80,6 @@ object PlayerDataService : Service() {
     val uuidToDataMap = HashMap<UUID, PlayerDataMap>()
     val clazzToIdentifierMap = HashMap<KClass<out PlayerData>, String>()
     val clazzToAddSerializerFunctionMap = HashMap<KClass<out PlayerData>, (SerializersModuleBuilder.() -> Unit)>()
-
     // 保存玩家数据时在主线程使用
     private lateinit var mainThreadJson: Json
 
@@ -98,6 +93,10 @@ object PlayerDataService : Service() {
      */
     @OptIn(DelicateCoroutinesApi::class)
     private val playerDataServiceContext = newSingleThreadContext("PlayerDataDispatcher")
+
+    private val UUID.dataFile: Path
+        @Suppress("spellCheckingInspection")
+        get() = Path.of("playerdata/${this}.json")
 
     @OptIn(ExperimentalTime::class)
     override fun onEnable() {
@@ -197,7 +196,7 @@ object PlayerDataService : Service() {
         serviceThreadJson = buildJson()
     }
 
-    fun buildJson() = Json {
+    private fun buildJson() = Json {
         serializersModule = SerializersModule {
             addMinestomSerializers(this)
             for ((_, func) in clazzToAddSerializerFunctionMap) {
