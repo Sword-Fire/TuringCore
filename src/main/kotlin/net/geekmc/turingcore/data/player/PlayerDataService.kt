@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.serializer
-import net.geekmc.turingcore.data.player.PlayerDataService.getDataOfPlayer
+import net.geekmc.turingcore.data.player.PlayerDataService.getPlayerData
 import net.geekmc.turingcore.data.serialization.addMinestomSerializers
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.service.Service
@@ -28,30 +28,69 @@ import kotlin.reflect.full.createType
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
+private typealias PlayerDataMap = HashMap<String, PlayerData>
+
 /**
  * 获取玩家的某一类型的数据。只允许在主线程中使用。
  * 警告：在你的代码段运行完毕、让出主线程控制权后，通过该方法获取的引用可能在任何时候失效。
- * 因此，当你在某一时刻获取了主线程控制权，且想要访问玩家数据，总是应该通过 [getDataOfPlayer] 方法来获取新的引用，且不要存放这个引用。
+ * 因此，当你在某一时刻获取了主线程控制权，且想要访问玩家数据，总是应该通过 [getPlayerData] 方法来获取新的引用，且不要存放这个引用。
  */
 inline fun <reified T : PlayerData> Player.getData(): T {
-    return getDataOfPlayer(this)
+    return getPlayerData(this)
 }
 
-private typealias PlayerDataMap = HashMap<String, PlayerData>
-
-// TODO: 允许加载离线玩家的数据。
 /**
  * 玩家数据服务。
  */
 object PlayerDataService : Service() {
+
+    private val UUID.dataFile: Path
+        @Suppress("spellCheckingInspection")
+        get() = Path.of("playerdata/${this}.json")
+
+    /**
+     * 注册一个玩家数据类。
+     * @param T 玩家数据类型
+     */
+    inline fun <reified T : PlayerData> register() {
+        val clazz = T::class
+        clazzToIdentifierMap[clazz] = clazz.qualifiedName!!
+        val action: SerializersModuleBuilder.() -> Unit = {
+            @Suppress("UNCHECKED_CAST")
+            val serializer = serializer(clazz.createType()) as KSerializer<T>
+            polymorphic(PlayerData::class, clazz, serializer)
+        }
+        clazzToAddSerializerFunctionMap[clazz] = action
+        updateJson()
+    }
+
+    // TODO: 待测试
+    /**
+     * 在主线程中调用离线玩家的数据。文件读取会阻塞主线程，因此较慢。在传入的代码段中，使用 [OfflinePlayerDataContext.getData] 获取数据。
+     */
+    fun useOfflinePlayerData(uuid: UUID, action: OfflinePlayerDataContext.() -> Unit) {
+        loadPlayerData(uuid)
+        OfflinePlayerDataContext(uuid).action()
+        savePlayerData(uuid)
+    }
+
+    class OfflinePlayerDataContext(val uuid: UUID) {
+        inline fun <reified T : PlayerData> getData(): T {
+            return getPlayerData(uuid)
+        }
+    }
 
     // 存储所有玩家数据的Map，只允许在主线程中访问。
     val uuidToDataMap = HashMap<UUID, PlayerDataMap>()
     val clazzToIdentifierMap = HashMap<KClass<out PlayerData>, String>()
     val clazzToAddSerializerFunctionMap = HashMap<KClass<out PlayerData>, (SerializersModuleBuilder.() -> Unit)>()
 
+    // 保存玩家数据时在主线程使用
+    private lateinit var mainThreadJson: Json
+
+    // 加载玩家数据时在服务线程使用
     @Volatile
-    private lateinit var json: Json
+    private lateinit var serviceThreadJson: Json
 
     /**
      * 用于玩家数据读写的协程域。单线程以保证不会出现并发读写问题。
@@ -59,21 +98,6 @@ object PlayerDataService : Service() {
      */
     @OptIn(DelicateCoroutinesApi::class)
     private val playerDataServiceContext = newSingleThreadContext("PlayerDataDispatcher")
-
-    private val UUID.dataFile: Path
-        @Suppress("spellCheckingInspection")
-        get() = Path.of("playerdata/${this}.json")
-
-    inline fun <reified T : PlayerData> register() {
-        clazzToIdentifierMap[T::class] = T::class.qualifiedName!!
-        val func: SerializersModuleBuilder.() -> Unit = {
-            @Suppress("UNCHECKED_CAST")
-            val serializer = serializer(T::class.createType()) as KSerializer<T>
-            polymorphic(PlayerData::class, T::class, serializer)
-        }
-        clazzToAddSerializerFunctionMap[T::class] = func
-        updateJson()
-    }
 
     @OptIn(ExperimentalTime::class)
     override fun onEnable() {
@@ -101,15 +125,19 @@ object PlayerDataService : Service() {
         }.delay(saveInterval).repeat(saveInterval).schedule()
     }
 
-    inline fun <reified T : PlayerData> getDataOfPlayer(p: Player): T {
+    inline fun <reified T : PlayerData> getPlayerData(p: Player): T {
+        return getPlayerData(p.uuid)
+    }
+
+    inline fun <reified T : PlayerData> getPlayerData(uuid: UUID): T {
         val identifier = clazzToIdentifierMap[T::class] ?: error("Identifier of Class ${T::class.qualifiedName} not exists")
-        val playerDataMap = uuidToDataMap[p.uuid] ?: error("Can not find the data map of player ${p.username} with player uuid ${p.uuid} in uuidToDataMap")
-        val data = playerDataMap[identifier] ?: error("Data with identifier $identifier not found in player ${p.username}")
-        return data as? T ?: error("While getting data $identifier of player ${p.username}, failed to convert PlayerData to ${T::class.simpleName}")
+        val playerDataMap = uuidToDataMap[uuid] ?: error("Can not find the data map of player $uuid in uuidToDataMap")
+        val data = playerDataMap[identifier] ?: error("Data with identifier $identifier not found in player $uuid")
+        return data as? T ?: error("While getting data $identifier of player $uuid, failed to convert PlayerData to ${T::class.simpleName}")
     }
 
     /**
-     * 加载玩家数据，会阻塞调用线程，因此应在异步线程中调用。
+     * 加载玩家数据，会阻塞调用线程。可能在玩家进服时异步调用，可能在主线程需求离线玩家数据时同步调用。
      * @return 是否成功读取。
      */
     private fun loadPlayerData(uuid: UUID): Boolean {
@@ -130,7 +158,7 @@ object PlayerDataService : Service() {
                     }
                     return@withContext false
                 }
-                val dataMap: PlayerDataMap = json.decodeFromString(fileContent)
+                val dataMap: PlayerDataMap = serviceThreadJson.decodeFromString(fileContent)
                 // 将文件中没有的数据设为默认值。
                 for ((clazz, identifier) in clazzToIdentifierMap) {
                     dataMap[identifier] ?: apply {
@@ -149,7 +177,7 @@ object PlayerDataService : Service() {
      * 在主线程中将玩家数据序列化，随后将序列化后的数据异步写入文件。
      */
     private fun savePlayerData(uuid: UUID) {
-        val content = json.encodeToString(uuidToDataMap[uuid])
+        val content = mainThreadJson.encodeToString(uuidToDataMap[uuid])
         // 在玩家数据线程写入文件
         CoroutineScope(playerDataServiceContext).launch {
             val file = uuid.dataFile
@@ -165,12 +193,15 @@ object PlayerDataService : Service() {
      * 更新用于序列化和反序列化的 Json 。每次添加新的玩家数据类型后都要更新。
      */
     fun updateJson() {
-        json = Json {
-            serializersModule = SerializersModule {
-                addMinestomSerializers(this)
-                for ((_, func) in clazzToAddSerializerFunctionMap) {
-                    func(this)
-                }
+        mainThreadJson = buildJson()
+        serviceThreadJson = buildJson()
+    }
+
+    fun buildJson() = Json {
+        serializersModule = SerializersModule {
+            addMinestomSerializers(this)
+            for ((_, func) in clazzToAddSerializerFunctionMap) {
+                func(this)
             }
         }
     }
