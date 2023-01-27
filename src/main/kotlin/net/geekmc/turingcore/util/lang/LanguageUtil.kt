@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.util.lang
 
 import net.geekmc.turingcore.data.yaml.YamlData
-import net.geekmc.turingcore.di.PathKey
+import net.geekmc.turingcore.di.PathKeys
 import net.geekmc.turingcore.di.TuringCoreDIAware
 import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.extensions.Extension
@@ -12,7 +12,7 @@ object LanguageUtil : TuringCoreDIAware {
 
     private const val PATH = "lang.yml"
     private val extension by instance<Extension>()
-    private val dataPath by instance<Path>(tag = PathKey.EXTENSION_FOLDER)
+    private val dataPath by instance<Path>(tag = PathKeys.EXTENSION_FOLDER)
 
     private val languageType = hashMapOf(
         "text" to TypeText::class.java,

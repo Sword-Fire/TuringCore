@@ -29,6 +29,7 @@ dependencies {
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:${project.ext["version.kotlinx-serialization-core"]}")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:${project.ext["version.kotlinx-serialization-json"]}")
     compileOnly("org.yaml:snakeyaml:${project.ext["version.snakeyaml"]}")
+    compileOnly("com.charleskorn.kaml:kaml:${project.ext["version.kaml"]}")
     compileOnly("net.kyori:adventure-text-minimessage:${project.ext["version.adventure-text-minimessage"]}")
     compileOnly("com.github.Project-Cepi:KStom:${project.ext["version.KStom"]}")
     compileOnly("org.flywaydb:flyway-core:${project.ext["version.flyway-core"]}")

@@ -28,7 +28,7 @@ object EssentialPlayerDataService : Service() {
             }
         }
         EventNodes.VERY_LOW.listenOnly<PlayerDisconnectEvent> {
-            val data = PlayerDataService.getDataOfPlayer<EssentialPlayerData>(player)
+            val data = player.getData<EssentialPlayerData>()
             with(data) {
                 position = player.position
                 gameMode = player.gameMode

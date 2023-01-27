@@ -1,23 +1,22 @@
 package net.geekmc.turingcore.util.color
 
 import net.geekmc.turingcore.data.yaml.YamlData
-import net.geekmc.turingcore.di.PathKey
+import net.geekmc.turingcore.di.PathKeys
 import net.geekmc.turingcore.di.TuringCoreDIAware
+import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.extender.saveResource
 import net.geekmc.turingcore.util.unsafeLazy
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minestom.server.extensions.Extension
 import org.kodein.di.instance
-import org.slf4j.Logger
 import java.nio.file.Path
 import java.util.*
 
-object ColorUtil : TuringCoreDIAware {
+object ColorService : Service(), TuringCoreDIAware {
 
     private const val PATH = "colors.yml"
     private val extension by instance<Extension>()
-    private val dataPath by instance<Path>(tag = PathKey.EXTENSION_FOLDER)
-    private val logger by instance<Logger>()
+    private val dataPath by instance<Path>(tag = PathKeys.EXTENSION_FOLDER)
 
     val miniMessage by unsafeLazy {
         MiniMessage.miniMessage()
@@ -33,7 +32,7 @@ object ColorUtil : TuringCoreDIAware {
         return@TreeMap x.compareTo(y)
     }
 
-    fun init() {
+    override fun onEnable() {
         extension.saveResource(PATH)
         val data = YamlData(dataPath.resolve(PATH))
         val colors = data.getOrElse<List<String>>("colors") { emptyList() }

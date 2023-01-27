@@ -7,7 +7,4 @@ object CoinService : Service(){
     override fun onEnable() {
     }
 
-    override fun onDisable() {
-        error("CoinService cannot be disabled!")
-    }
 }

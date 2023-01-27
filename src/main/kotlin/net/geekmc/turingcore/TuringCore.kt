@@ -16,20 +16,18 @@ import net.geekmc.turingcore.di.initTuringCoreDi
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.framework.TuringFrameWork
 import net.geekmc.turingcore.instance.InstanceService
-import net.geekmc.turingcore.instance.InstanceService.MAIN_INSTANCE_ID
 import net.geekmc.turingcore.motd.MotdService
 import net.geekmc.turingcore.player.ChatService
 import net.geekmc.turingcore.player.essentialdata.EssentialPlayerDataService
 import net.geekmc.turingcore.player.skin.SkinService
-import net.geekmc.turingcore.util.color.ColorUtil
+import net.geekmc.turingcore.player.uuid.UUIDService
+import net.geekmc.turingcore.util.color.ColorService
 import net.geekmc.turingcore.util.color.toComponent
 import net.geekmc.turingcore.util.lang.LanguageUtil
 import net.geekmc.turingcore.util.lang.sendLang
-import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.extensions.Extension
 import net.minestom.server.utils.callback.CommandCallback
 import world.cepi.kstom.Manager
-import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.util.register
 
 class TuringCore : Extension() {
@@ -40,15 +38,17 @@ class TuringCore : Extension() {
 
     override fun initialize() {
         logger.info("TuringCore initializing...")
+        // 颜色服务。高优先级。
+        ColorService.start()
+        // UUID 服务。
+        UUIDService.start()
         // 事件节点服务。
         EventNodes.start()
-        // ColorUtil 在这里的优先级最高。
-        ColorUtil.init()
         // 语言工具。
         LanguageUtil.init()
         // 注册框架。
         registerFrameWork()
-        // 皮肤服务。（基于玩家名）
+        // 皮肤服务。
         SkinService.start()
         // Motd 服务。
         MotdService.start()
@@ -62,14 +62,6 @@ class TuringCore : Extension() {
         ChatService.start()
         // 世界服务。
         InstanceService.start()
-        InstanceService.createInstanceContainer(MAIN_INSTANCE_ID)
-        val world = InstanceService.getInstance(MAIN_INSTANCE_ID)
-        EventNodes.INTERNAL_HIGHEST.listenOnly<PlayerLoginEvent> {
-//            println("listen internal highest player login event")
-            setSpawningInstance(world)
-//            player.respawnPoint = Pos(0.0, 40.0, 0.0)
-            player.sendMessage("Welcome to server, ${player.username} !")
-        }
         // 注册指令。
         registerCommands()
         // 注册方块。
@@ -88,6 +80,8 @@ class TuringCore : Extension() {
         MotdService.stop()
         SkinService.stop()
         EventNodes.stop()
+        UUIDService.stop()
+        ColorService.stop()
     }
 
     private fun registerFrameWork() {

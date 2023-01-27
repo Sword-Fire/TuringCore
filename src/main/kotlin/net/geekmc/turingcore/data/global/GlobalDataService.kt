@@ -26,32 +26,18 @@ object GlobalDataService : Service() {
 
     /**
      * 注册并获取全局数据。
-     * @param path 文件在globaldata文件夹下的子路径。
+     * @param path 文件在 globaldata 文件夹下的子路径。
      */
     inline fun <reified T : GlobalData> register(subPath: String): T {
         val file = dataFolder.resolve(subPath)
-        val content = file.readText()
+        val content = if (file.exists()) file.readText() else "{}"
         val data = SERIALIZATION_JSON.decodeFromString<T>(content)
         dataSet[file] = data
         return data
     }
 
-    fun saveData() {
-        dataSet.forEach {
-            val file = it.key
-            val data = it.value
-            file.writeText(
-                SERIALIZATION_JSON.encodeToString(
-                    serializer(data.javaClass.kotlin.createType()),
-                    data
-                )
-            )
-        }
-    }
-
     @OptIn(ExperimentalTime::class)
     override fun onEnable() {
-
         dataFolder.createDirectories()
 
         // 定时保存，延时30分钟后进行第一次检查，并以后每30分钟检查一次
@@ -63,6 +49,23 @@ object GlobalDataService : Service() {
             }.inWholeMilliseconds
             logger.info("定时保存全局数据，耗时 $time ms")
         }.delay(saveInterval).repeat(saveInterval).schedule()
+    }
+
+    fun saveData() {
+        dataSet.forEach {
+            val file = it.key
+            val data = it.value
+            if (!file.exists()) {
+                file.createDirectories()
+                file.createFile()
+            }
+            file.writeText(
+                SERIALIZATION_JSON.encodeToString(
+                    serializer(data.javaClass.kotlin.createType()),
+                    data
+                )
+            )
+        }
     }
 
 }

@@ -8,16 +8,17 @@ fun CommandSender.message(vararg message: Any) {
 }
 
 /**
- * 将String对象转换为Component对象，其中 &颜色符号 会被转化为颜色代码， && 会被替换为&以使得使用者能打出&符号，&$ 会被替换为§以使得使用者能打出§符号。
+ * 将 String 对象转换为 Component 对象，其中 '&颜色符号' 会被转换为颜色代码(e.g. '&r' -> 红色颜色代码)，
+ * '&&' 会被转换为 '&' ( '&&' -> '&' )， '&$' 会被转换为 '§' ( '&$' -> '§' )。
  */
 fun String.toComponent(): Component {
     var str = this
-    str = str.replace("&&", "{§0}")
-    str = str.replace("&$", "{§1}")
-    ColorUtil.colorMap.forEach {
+    str = str.replace("&&", "{__AND_SIGN__}")
+    str = str.replace("&$", "{__SECTION_SIGN__}")
+    ColorService.colorMap.forEach {
         str = str.replace(it.key, it.value)
     }
-    str = str.replace("{§0}", "&")
-    str = str.replace("{§1}", "§")
-    return ColorUtil.miniMessage.deserialize(str)
+    str = str.replace("{__AND_SIGN__}", "&")
+    str = str.replace("{__SECTION_SIGN__}", "§")
+    return ColorService.miniMessage.deserialize(str)
 }

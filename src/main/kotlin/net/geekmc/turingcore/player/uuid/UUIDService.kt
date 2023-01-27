@@ -5,7 +5,7 @@ import net.minestom.server.entity.Player
 import world.cepi.kstom.Manager
 import java.util.*
 
-class UUIDService : Service() {
+object UUIDService : Service() {
     override fun onEnable() {
         Manager.connection.setUuidProvider { _, username ->
             getUUID(username)

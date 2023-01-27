@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.motd
 
 import net.geekmc.turingcore.data.yaml.YamlData
-import net.geekmc.turingcore.di.PathKey
+import net.geekmc.turingcore.di.PathKeys
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.color.toComponent
@@ -23,7 +23,7 @@ object MotdService : Service() {
 
     private lateinit var motdData: ResponseData
     private val extension by instance<Extension>()
-    private val dataPath by instance<Path>(tag = PathKey.EXTENSION_FOLDER)
+    private val dataPath by instance<Path>(tag = PathKeys.EXTENSION_FOLDER)
 
     override fun onEnable() {
         extension.saveResource(ICON_PATH)
