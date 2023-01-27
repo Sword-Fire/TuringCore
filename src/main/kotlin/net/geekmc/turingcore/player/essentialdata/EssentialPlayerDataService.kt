@@ -14,7 +14,7 @@ import world.cepi.kstom.event.listenOnly
 object EssentialPlayerDataService : Service() {
 
     override fun onEnable() {
-        PlayerDataService.register(EssentialPlayerData::class)
+        PlayerDataService.register<EssentialPlayerData>()
         EventNodes.VERY_HIGH.listenOnly<PlayerLoginEvent> {
             val data = player.getData<EssentialPlayerData>()
             with(player) {
