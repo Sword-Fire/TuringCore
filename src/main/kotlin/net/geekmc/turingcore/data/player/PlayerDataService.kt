@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.serializer
+import net.geekmc.turingcore.data.player.PlayerDataService.OfflinePlayerDataContext
 import net.geekmc.turingcore.data.player.PlayerDataService.getPlayerData
 import net.geekmc.turingcore.data.serialization.addMinestomSerializers
 import net.geekmc.turingcore.event.EventNodes
@@ -40,6 +41,19 @@ inline fun <reified T : PlayerData> Player.getData(): T {
 }
 
 /**
+ * 在主线程中调用离线玩家的数据。文件读取会阻塞主线程，因此较慢。在传入的代码块中，使用 [getData][OfflinePlayerDataContext.getData] 获取数据。
+ * @return 是否成功读取并执行代码块。
+ */
+fun withOfflinePlayerData(uuid: UUID, action: OfflinePlayerDataContext.() -> Unit): Boolean {
+    if (!PlayerDataService.loadPlayerData(uuid)) {
+        return false
+    }
+    OfflinePlayerDataContext(uuid).action()
+    PlayerDataService.savePlayerData(uuid)
+    return true
+}
+
+/**
  * 玩家数据服务。
  */
 object PlayerDataService : Service() {
@@ -60,16 +74,6 @@ object PlayerDataService : Service() {
         updateJson()
     }
 
-    // TODO: 待测试
-
-    /**
-     * 在主线程中调用离线玩家的数据。文件读取会阻塞主线程，因此较慢。在传入的代码段中，使用 [OfflinePlayerDataContext.getData] 获取数据。
-     */
-    fun useOfflinePlayerData(uuid: UUID, action: OfflinePlayerDataContext.() -> Unit) {
-        loadPlayerData(uuid)
-        OfflinePlayerDataContext(uuid).action()
-        savePlayerData(uuid)
-    }
     class OfflinePlayerDataContext(val uuid: UUID) {
         inline fun <reified T : PlayerData> getData(): T {
             return getPlayerData(uuid)
@@ -80,6 +84,7 @@ object PlayerDataService : Service() {
     val uuidToDataMap = HashMap<UUID, PlayerDataMap>()
     val clazzToIdentifierMap = HashMap<KClass<out PlayerData>, String>()
     val clazzToAddSerializerFunctionMap = HashMap<KClass<out PlayerData>, (SerializersModuleBuilder.() -> Unit)>()
+
     // 保存玩家数据时在主线程使用
     private lateinit var mainThreadJson: Json
 
@@ -139,7 +144,7 @@ object PlayerDataService : Service() {
      * 加载玩家数据，会阻塞调用线程。可能在玩家进服时异步调用，可能在主线程需求离线玩家数据时同步调用。
      * @return 是否成功读取。
      */
-    private fun loadPlayerData(uuid: UUID): Boolean {
+    internal fun loadPlayerData(uuid: UUID): Boolean {
         return runBlocking {
             withContext(playerDataServiceContext) {
                 var isReadFileSuccessful = true
@@ -151,7 +156,7 @@ object PlayerDataService : Service() {
                 } else "{}"
                 // 读取文件失败，直接返回。
                 if (!isReadFileSuccessful) {
-                    logger.warn("读取玩家 $uuid 的数据失败")
+                    logger.error("读取玩家 $uuid 的数据失败")
                     withContext(Dispatchers.MinestomSync) {
                         uuidToDataMap.remove(uuid)
                     }
@@ -175,7 +180,7 @@ object PlayerDataService : Service() {
     /**
      * 在主线程中将玩家数据序列化，随后将序列化后的数据异步写入文件。
      */
-    private fun savePlayerData(uuid: UUID) {
+    internal fun savePlayerData(uuid: UUID) {
         val content = mainThreadJson.encodeToString(uuidToDataMap[uuid])
         // 在玩家数据线程写入文件
         CoroutineScope(playerDataServiceContext).launch {

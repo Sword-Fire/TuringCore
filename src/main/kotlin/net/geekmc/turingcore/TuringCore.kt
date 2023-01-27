@@ -6,6 +6,7 @@ import net.geekmc.turingcore.command.basic.CommandKill
 import net.geekmc.turingcore.command.basic.CommandLang
 import net.geekmc.turingcore.command.basic.CommandTeleport
 import net.geekmc.turingcore.command.debug.CommandInfo
+import net.geekmc.turingcore.command.debug.CommandTest
 import net.geekmc.turingcore.command.management.CommandOp
 import net.geekmc.turingcore.command.management.CommandPermission
 import net.geekmc.turingcore.command.management.CommandSave
@@ -115,7 +116,8 @@ class TuringCore : Extension() {
             CommandOp,
             CommandPermission,
             CommandSave,
-            CommandStop
+            CommandStop,
+            CommandTest
         ).forEach { it.register() }
     }
 }
