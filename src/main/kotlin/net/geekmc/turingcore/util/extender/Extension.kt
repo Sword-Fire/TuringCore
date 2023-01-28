@@ -20,7 +20,7 @@ fun Extension.saveResource(source: String, target: String = source, replace: Boo
  *
  * @param source 在插件 jar 中 resource 文件夹下的相对资源路径。
  * @param target 在拓展文件夹下的相对目标路径。
- * @return 成功保存文件时返回 true ， 文件已存在且 [replace] 为 false 时返回 false ，保存失败时抛出异常。
+ * @return 成功保存文件时返回 true，文件已存在且 [replace] 为 false 时返回 false，保存失败时抛出异常。
  */
 fun Extension.saveResource(source: Path, target: Path = source, replace: Boolean): Boolean {
     val targetFile = dataDirectory.resolve(target)
