@@ -10,7 +10,7 @@ import java.nio.file.Path
 
 object LanguageUtil : TuringCoreDIAware {
 
-    private const val PATH = "lang.yml"
+    private const val CONFIG_PATH = "lang.yml"
     private val extension by instance<Extension>()
     private val dataPath by instance<Path>(tag = PathKeys.EXTENSION_FOLDER)
 
@@ -26,8 +26,8 @@ object LanguageUtil : TuringCoreDIAware {
         if (messageMap.isNotEmpty()) {
             messageMap.clear()
         }
-        extension.saveResource(PATH)
-        val data = YamlData(dataPath.resolve(PATH))
+        extension.saveResource(CONFIG_PATH, CONFIG_PATH, false)
+        val data = YamlData(dataPath.resolve(CONFIG_PATH))
         data.rootMapObject.forEach { (k, v) ->
             if (k !is String) return
             messageMap[k] = when (v) {

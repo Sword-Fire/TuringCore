@@ -31,9 +31,9 @@ import net.minestom.server.utils.callback.CommandCallback
 import world.cepi.kstom.Manager
 import world.cepi.kstom.util.register
 
+@Suppress("unused")
 class TuringCore : Extension() {
     override fun preInitialize() {
-        super.preInitialize()
         initTuringCoreDi(this)
     }
 

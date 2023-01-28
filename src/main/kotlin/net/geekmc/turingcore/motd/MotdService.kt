@@ -1,6 +1,8 @@
 package net.geekmc.turingcore.motd
 
-import net.geekmc.turingcore.data.yaml.YamlData
+import kotlinx.serialization.Serializable
+import net.geekmc.turingcore.config.Config
+import net.geekmc.turingcore.config.ConfigService
 import net.geekmc.turingcore.di.PathKeys
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.service.Service
@@ -19,20 +21,21 @@ import kotlin.io.path.readBytes
 object MotdService : Service() {
 
     private const val ICON_PATH = "motd/icon.png"
-    private const val MOTD_PATH = "motd/motd.yml"
+    private const val CONFIG_PATH = "motd/config.yml"
 
     private lateinit var motdData: ResponseData
     private val extension by instance<Extension>()
+    private val configService by instance<ConfigService>()
     private val dataPath by instance<Path>(tag = PathKeys.EXTENSION_FOLDER)
 
+     lateinit var config: MotdConfig
+
     override fun onEnable() {
-        extension.saveResource(ICON_PATH)
-        extension.saveResource(MOTD_PATH)
-        val motdConfig = YamlData(dataPath.resolve(MOTD_PATH), MotdService.javaClass.classLoader)
-        val descriptions: List<String> = motdConfig.getOrElse("description") { emptyList() }
+        extension.saveResource(ICON_PATH, ICON_PATH, false)
+        config = configService.loadConfig(extension, CONFIG_PATH)
+
         motdData = ResponseData().apply {
-            // TODO: 是否应该硬编码两行
-            description = "${descriptions[0]}\n${descriptions[1]}".toComponent()
+            description = "${config.description[0]}\n${config.description[1]}".toComponent()
             favicon = getIconAsBase64().getOrElse { "" }
         }
         EventNodes.DEFAULT.listenOnly<ServerListPingEvent> {
@@ -40,18 +43,20 @@ object MotdService : Service() {
         }
     }
 
-    override fun onDisable() {}
-
     /**
      * 获取经由 Base64 编码的图标。
      */
     private fun getIconAsBase64(): Result<String> = runCatching {
         val path = dataPath.resolve(ICON_PATH)
-        if (path.notExists()) error("Data path not exists.")
-
+        if (path.notExists()) error("Icon file not exists.")
         val base64 = path.readBytes().let { bytes ->
             Base64.getEncoder().encodeToString(bytes)
         }
         return@runCatching "data:image/png;base64,$base64"
     }
+
+    @Serializable
+    data class MotdConfig(
+        val description: ArrayList<String> = arrayListOf("A Minecraft Server", "Powered by TuringCore"),
+    ) : Config()
 }

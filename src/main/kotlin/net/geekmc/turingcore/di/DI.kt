@@ -2,6 +2,7 @@
 
 package net.geekmc.turingcore.di
 
+import net.geekmc.turingcore.config.ConfigService
 import net.minestom.server.MinecraftServer
 import net.minestom.server.advancements.AdvancementManager
 import net.minestom.server.adventure.bossbar.BossBarManager
@@ -34,6 +35,7 @@ fun initTuringCoreDi(extension: Extension) {
         bindSingleton<Extension> { extension }
         importAll(
             baseModule,
+            serviceModule,
             managerModule
         )
     }
@@ -46,6 +48,10 @@ enum class PathKeys {
 val baseModule by DI.Module {
     bindSingleton<Logger> { instance<Extension>().logger }
     bindSingleton<Path>(tag = PathKeys.EXTENSION_FOLDER) { instance<Extension>().dataDirectory }
+}
+
+val serviceModule by DI.Module {
+    bindSingleton<ConfigService> { ConfigService }
 }
 
 val managerModule by DI.Module {
