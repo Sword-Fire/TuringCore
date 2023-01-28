@@ -7,10 +7,5 @@ import net.geekmc.turingcore.di.TuringCoreDIAware
  */
 @Suppress("unused")
 object TuringCoreApi : TuringCoreDIAware {
-    /**
-     * 数据库部分
-     */
-    object Database {
 
-    }
 }
