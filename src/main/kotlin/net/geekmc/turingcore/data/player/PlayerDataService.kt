@@ -12,6 +12,7 @@ import net.geekmc.turingcore.data.player.PlayerDataService.OfflinePlayerDataCont
 import net.geekmc.turingcore.data.player.PlayerDataService.getPlayerData
 import net.geekmc.turingcore.data.serialization.addMinestomSerializers
 import net.geekmc.turingcore.event.EventNodes
+import net.geekmc.turingcore.player.uuid.UUIDService
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.coroutine.MinestomSync
 import net.minestom.server.entity.Player
@@ -38,6 +39,10 @@ private typealias PlayerDataMap = HashMap<String, PlayerData>
  */
 inline fun <reified T : PlayerData> Player.getData(): T {
     return getPlayerData(this)
+}
+
+fun withOfflinePlayerData(username: String, action: OfflinePlayerDataContext.() -> Unit): Boolean {
+    return withOfflinePlayerData(UUIDService.getUUID(username), action)
 }
 
 /**

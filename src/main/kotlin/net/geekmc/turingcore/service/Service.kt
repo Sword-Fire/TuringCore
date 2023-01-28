@@ -4,6 +4,7 @@ import net.geekmc.turingcore.di.TuringCoreDIAware
 import org.kodein.di.instance
 import org.slf4j.Logger
 
+// TODO: 其他插件也有服务，不应该使用TuringCoreDIAware而是注入DI.
 /**
  * 代表一种服务。
  */

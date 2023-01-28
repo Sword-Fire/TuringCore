@@ -1,22 +1,23 @@
 package net.geekmc.turingcore.util.color
 
-import net.geekmc.turingcore.data.yaml.YamlData
-import net.geekmc.turingcore.di.PathKeys
+import kotlinx.serialization.Serializable
+import net.geekmc.turingcore.config.Config
+import net.geekmc.turingcore.config.ConfigService
 import net.geekmc.turingcore.di.TuringCoreDIAware
 import net.geekmc.turingcore.service.Service
-import net.geekmc.turingcore.util.extender.saveResource
 import net.geekmc.turingcore.util.unsafeLazy
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minestom.server.extensions.Extension
 import org.kodein.di.instance
-import java.nio.file.Path
 import java.util.*
 
 object ColorService : Service(), TuringCoreDIAware {
 
-    private const val PATH = "colors.yml"
+    private const val CONFIG_PATH = "colors.yml"
+
     private val extension by instance<Extension>()
-    private val dataPath by instance<Path>(tag = PathKeys.EXTENSION_FOLDER)
+    private val configService by instance<ConfigService>()
+    lateinit var config: ColorServiceConfig
 
     val miniMessage by unsafeLazy {
         MiniMessage.miniMessage()
@@ -33,18 +34,20 @@ object ColorService : Service(), TuringCoreDIAware {
     }
 
     override fun onEnable() {
-        extension.saveResource(PATH)
-        val data = YamlData(dataPath.resolve(PATH))
-        val colors = data.getOrElse<List<String>>("colors") { emptyList() }
-        colors
-            .filter { it.isNotEmpty() && it.isNotBlank() }
-            .forEach {
-                val split = it.split("@")
-                if (split.size != 2) {
-                    logger.warn("无法解析颜色格式: $it")
-                    return@forEach
-                }
-                colorMap[split[0]] = "<${split[1]}>"
+
+        config = configService.loadConfig(extension, CONFIG_PATH)
+        for (format in config.colors) {
+            val split = format.split("@")
+            if (split.size != 2) {
+                logger.warn("无法解析颜色格式: $format")
+                continue
             }
+            colorMap[split[0]] = "<${split[1]}>"
+        }
     }
+
+    @Serializable
+    data class ColorServiceConfig(
+        val colors: List<String> = emptyList()
+    ) : Config()
 }
