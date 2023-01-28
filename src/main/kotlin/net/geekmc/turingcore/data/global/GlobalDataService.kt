@@ -22,11 +22,14 @@ object GlobalDataService : Service() {
     val dataSet = HashMap<Path, GlobalData>()
 
     @Suppress("spellCheckingInspection")
-    val dataFolder = Path.of("globaldata")
+    val dataFolder: Path = Path.of("globaldata")
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private val singleThreadContext = newSingleThreadContext("PlayerDataDispatcher")
 
     /**
      * 注册并获取全局数据。
-     * @param path 文件在 globaldata 文件夹下的子路径。
+     * @param subPath 文件在 globaldata 文件夹下的子路径。
      */
     inline fun <reified T : GlobalData> register(subPath: String): T {
         val file = dataFolder.resolve(subPath)
@@ -51,20 +54,21 @@ object GlobalDataService : Service() {
         }.delay(saveInterval).repeat(saveInterval).schedule()
     }
 
-    fun saveData() {
+    /**
+     * 保存数据，在主线程序列化数据并异步写入文件。
+     */
+    private fun saveData() {
         dataSet.forEach {
             val file = it.key
             val data = it.value
+            val content = SERIALIZATION_JSON.encodeToString(serializer(data.javaClass.kotlin.createType()), data)
             if (!file.exists()) {
                 file.createDirectories()
                 file.createFile()
             }
-            file.writeText(
-                SERIALIZATION_JSON.encodeToString(
-                    serializer(data.javaClass.kotlin.createType()),
-                    data
-                )
-            )
+            CoroutineScope(singleThreadContext).launch {
+                file.writeText(content)
+            }
         }
     }
 
