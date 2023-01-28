@@ -22,6 +22,7 @@ import net.minestom.server.event.player.PlayerDisconnectEvent
 import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
 import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 import java.time.Duration
 import java.util.*
 import kotlin.io.path.*
@@ -104,11 +105,14 @@ object PlayerDataService : Service() {
      * "从文件读取玩家数据并构建玩家的所有 PlayerData "，与"将玩家的所有 PlayerData 序列化并写入文件",这两个过程都应完全在此协程域进行。
      */
     @OptIn(DelicateCoroutinesApi::class)
-    private val playerDataServiceContext = newSingleThreadContext("PlayerDataDispatcher")
+    private val singleThreadContext = newSingleThreadContext("PlayerDataDispatcher")
 
     private val UUID.dataFile: Path
         @Suppress("spellCheckingInspection")
         get() = Path.of("playerdata/${this}.json")
+    private val UUID.tempDataFile: Path
+        @Suppress("spellCheckingInspection")
+        get() = Path.of("playerdata/${this}.json.tmp")
 
     @OptIn(ExperimentalTime::class)
     override fun onEnable() {
@@ -153,7 +157,7 @@ object PlayerDataService : Service() {
      */
     internal fun loadPlayerData(uuid: UUID): Boolean {
         return runBlocking {
-            withContext(playerDataServiceContext) {
+            withContext(singleThreadContext) {
                 var isReadFileSuccessful = true
                 val fileContent = if (uuid.dataFile.exists()) {
                     withTimeoutOrNull(5000L) { uuid.dataFile.readText() } ?: run {
@@ -190,13 +194,14 @@ object PlayerDataService : Service() {
     internal fun savePlayerData(uuid: UUID) {
         val content = mainThreadJson.encodeToString(uuidToDataMap[uuid])
         // 在玩家数据线程写入文件
-        CoroutineScope(playerDataServiceContext).launch {
-            val file = uuid.dataFile
-            if (file.notExists()) {
-                file.parent.createDirectories()
-                file.createFile()
+        CoroutineScope(singleThreadContext).launch {
+            val tempFile = uuid.tempDataFile
+            if (tempFile.notExists()) {
+                tempFile.parent.createDirectories()
+                tempFile.createFile()
             }
-            file.writeText(content)
+            tempFile.writeText(content)
+            tempFile.moveTo(uuid.dataFile, StandardCopyOption.REPLACE_EXISTING)
         }
     }
 
@@ -211,8 +216,8 @@ object PlayerDataService : Service() {
     private fun buildJson() = Json {
         serializersModule = SerializersModule {
             addMinestomSerializers(this)
-            for ((_, func) in clazzToAddSerializerFunctionMap) {
-                func(this)
+            for ((_, action) in clazzToAddSerializerFunctionMap) {
+                action(this)
             }
         }
     }

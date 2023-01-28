@@ -8,6 +8,7 @@ import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.extensions.Extension
 import java.nio.file.Path
+import kotlin.io.path.moveTo
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.reflect.KClass
@@ -50,7 +51,9 @@ object ConfigService : Service() {
         requireNotNull(file) { "YamlConfig ${config::class} is not registered yet!" }
         CoroutineScope(singleThreadContext).run {
             runCatching {
-                file.writeText(content)
+                val tempFile = file.resolveSibling("${file.fileName}.tmp")
+                tempFile.writeText(content)
+                tempFile.moveTo(file, true)
             }.onFailure {
                 logger.warn("保存配置文件失败", it)
             }

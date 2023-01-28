@@ -19,7 +19,7 @@ object ColorService : Service(), TuringCoreDIAware {
 
     private val extension by instance<Extension>()
     private val configService by instance<ConfigService>()
-    lateinit var config: ColorServiceConfig
+    private lateinit var config: ColorServiceConfig
 
     val miniMessage by unsafeLazy {
         MiniMessage.miniMessage()
@@ -50,6 +50,6 @@ object ColorService : Service(), TuringCoreDIAware {
 
     @Serializable
     data class ColorServiceConfig(
-        val colors: List<String> = emptyList()
+        val colors: ArrayList<String> = ArrayList()
     ) : Config()
 }
