@@ -1,5 +1,7 @@
 package net.geekmc.turingcore.event
 
+import net.geekmc.turingcore.framework.AutoRegister
+import net.geekmc.turingcore.framework.AutoRegisterPriority
 import net.geekmc.turingcore.service.Service
 import net.minestom.server.MinecraftServer
 import net.minestom.server.event.Event
@@ -9,6 +11,7 @@ import net.minestom.server.event.EventNode
  * 类似Bukkit的事件优先级系统。
  */
 // TODO: 作为API
+@AutoRegister(priority = AutoRegisterPriority.HIGHEST)
 object EventNodes : Service() {
     /**
      * 使用[INTERNAL_HIGHEST]和[INTERNAL_LOWEST]时必须在此处声明，以管理优先级。

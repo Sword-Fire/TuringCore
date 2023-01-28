@@ -1,10 +1,12 @@
 package net.geekmc.turingcore.player.uuid
 
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.service.Service
 import net.minestom.server.entity.Player
 import world.cepi.kstom.Manager
 import java.util.*
 
+@AutoRegister
 object UUIDService : Service() {
     override fun onEnable() {
         Manager.connection.setUuidProvider { _, username ->

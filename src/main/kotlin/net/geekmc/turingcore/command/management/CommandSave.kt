@@ -1,12 +1,14 @@
 package net.geekmc.turingcore.command.management
 
 import net.geekmc.turingcore.command.opSyntax
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.instance.InstanceService
 import net.geekmc.turingcore.util.color.message
 import world.cepi.kstom.command.kommand.Kommand
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
+@AutoRegister
 @OptIn(ExperimentalTime::class)
 object CommandSave : Kommand({
 

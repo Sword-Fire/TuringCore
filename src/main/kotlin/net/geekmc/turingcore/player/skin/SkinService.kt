@@ -2,6 +2,7 @@ package net.geekmc.turingcore.player.skin
 
 import kotlinx.coroutines.*
 import net.geekmc.turingcore.event.EventNodes
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.coroutine.MinestomAsync
 import net.geekmc.turingcore.util.coroutine.MinestomSync
@@ -12,6 +13,7 @@ import world.cepi.kstom.event.listenOnly
 /**
  * 基于玩家名的皮肤服务。
  */
+@AutoRegister
 object SkinService : Service() {
 
     private lateinit var scope: CoroutineScope

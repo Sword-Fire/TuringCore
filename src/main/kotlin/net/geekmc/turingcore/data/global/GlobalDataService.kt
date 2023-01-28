@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.serializer
 import net.geekmc.turingcore.data.json.JsonData.Companion.SERIALIZATION_JSON
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.service.Service
 import world.cepi.kstom.Manager
 import java.nio.file.Path
@@ -17,6 +18,7 @@ import kotlin.time.measureTime
 /**
  * 全局数据服务。关闭后不允许再开启。
  */
+@AutoRegister
 object GlobalDataService : Service() {
 
     val dataSet = HashMap<Path, GlobalData>()

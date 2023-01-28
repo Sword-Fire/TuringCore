@@ -1,6 +1,7 @@
 package net.geekmc.turingcore.command.management
 
 import net.geekmc.turingcore.command.opSyntax
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.util.color.message
 import net.geekmc.turingcore.util.color.toComponent
 import net.minestom.server.MinecraftServer
@@ -8,6 +9,7 @@ import net.minestom.server.timer.TaskSchedule
 import world.cepi.kstom.Manager
 import world.cepi.kstom.command.kommand.Kommand
 
+@AutoRegister
 object CommandStop : Kommand({
 
     opSyntax {

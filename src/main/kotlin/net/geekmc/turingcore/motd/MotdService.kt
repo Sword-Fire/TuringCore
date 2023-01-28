@@ -5,6 +5,7 @@ import net.geekmc.turingcore.config.Config
 import net.geekmc.turingcore.config.ConfigService
 import net.geekmc.turingcore.di.PathKeys
 import net.geekmc.turingcore.event.EventNodes
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.color.toComponent
 import net.geekmc.turingcore.util.extender.saveResource
@@ -20,6 +21,7 @@ import kotlin.io.path.fileSize
 import kotlin.io.path.notExists
 import kotlin.io.path.readBytes
 
+@AutoRegister
 object MotdService : Service() {
 
     private const val ICON_PATH = "motd/icon.png"

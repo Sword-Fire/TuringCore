@@ -12,6 +12,7 @@ import net.geekmc.turingcore.data.player.PlayerDataService.OfflinePlayerDataCont
 import net.geekmc.turingcore.data.player.PlayerDataService.getPlayerData
 import net.geekmc.turingcore.data.serialization.addMinestomSerializers
 import net.geekmc.turingcore.event.EventNodes
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.player.uuid.UUIDService
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.coroutine.MinestomSync
@@ -61,6 +62,7 @@ fun withOfflinePlayerData(uuid: UUID, action: OfflinePlayerDataContext.() -> Uni
 /**
  * 玩家数据服务。
  */
+@AutoRegister
 object PlayerDataService : Service() {
 
     /**

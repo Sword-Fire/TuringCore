@@ -37,6 +37,7 @@ dependencies {
     compileOnly("com.charleskorn.kaml:kaml:${project.ext["version.kaml"]}")
     compileOnly("org.ktorm:ktorm-core:${project.ext["version.ktorm-core"]}")
     compileOnly("org.kodein.di:kodein-di-jvm:${project.ext["version.kodein-di-jvm"]}")
+    compileOnly("org.reflections:reflections:${project.ext["version.reflections"]}")
 }
 
 @Suppress("UnstableApiUsage")

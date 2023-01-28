@@ -4,6 +4,7 @@ import net.geekmc.turingcore.command.args
 import net.geekmc.turingcore.command.findPlayers
 import net.geekmc.turingcore.command.opSyntax
 import net.geekmc.turingcore.command.setDefaultValueToSelf
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.util.color.message
 import net.minestom.server.command.builder.arguments.ArgumentLiteral
 import net.minestom.server.command.builder.arguments.ArgumentWord
@@ -12,6 +13,7 @@ import net.minestom.server.entity.Player
 import world.cepi.kstom.command.kommand.Kommand
 import world.cepi.kstom.util.addPermission
 
+@AutoRegister
 object CommandPermission : Kommand({
 
     val addArg = ArgumentLiteral("add")

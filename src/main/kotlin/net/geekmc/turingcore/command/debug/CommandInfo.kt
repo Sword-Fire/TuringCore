@@ -1,11 +1,13 @@
 package net.geekmc.turingcore.command.debug
 
 import net.geekmc.turingcore.command.opSyntax
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.util.color.message
 import net.geekmc.turingcore.util.extender.getLineOfSightEntity
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.kommand.Kommand
 
+@AutoRegister
 @Suppress("UnstableApiUsage")
 object CommandInfo : Kommand({
 

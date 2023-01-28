@@ -3,6 +3,7 @@ package net.geekmc.turingcore.command.basic
 import net.geekmc.turingcore.command.args
 import net.geekmc.turingcore.command.findPlayers
 import net.geekmc.turingcore.command.opSyntax
+import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.arguments.ArgumentWord
@@ -12,6 +13,7 @@ import net.minestom.server.entity.Player
 import world.cepi.kstom.command.kommand.Kommand
 
 @Suppress("SpellCheckingInspection")
+@AutoRegister
 object CommandGamemode : Kommand({
 
     val targetArg = ArgumentEntity("target").onlyPlayers(true)
