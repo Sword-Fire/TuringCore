@@ -41,35 +41,37 @@ dependencies {
 
 @Suppress("UnstableApiUsage")
 tasks.withType<ProcessResources> {
-    filter {
+    filesMatching("extension.json") {
+        filter {
 
-        val extensionVersionPlaceholder = "@!extensionVersion@"
-        val dependencyVersionPlaceholder = "@!dependencyVersion@"
+            val extensionVersionPlaceholder = "@!extensionVersion@"
+            val dependencyVersionPlaceholder = "@!dependencyVersion@"
 
-        // 替换拓展版本。
-        var ret = it
-        if (extensionVersionPlaceholder in ret) {
-            ret = ret.replace(extensionVersionPlaceholder, version as String)
-        }
+            // 替换拓展版本。
+            var ret = it
+            if (extensionVersionPlaceholder in ret) {
+                ret = ret.replace(extensionVersionPlaceholder, version as String)
+            }
 
-        // 替换Maven依赖版本。
-        @Suppress("UNCHECKED_CAST")
-        val dependencyToVersionMap = project.ext["version.dependencyToVersionMap"] as Map<String, String>
+            // 替换Maven依赖版本。
+            @Suppress("UNCHECKED_CAST")
+            val dependencyToVersionMap = project.ext["version.dependencyToVersionMap"] as Map<String, String>
 
-        if ("@!dependencyVersion@" in ret) {
-            var replaced = false
-            for ((dependency, version) in dependencyToVersionMap) {
-                if (dependency in ret) {
-                    ret = ret.replace(dependencyVersionPlaceholder, version)
-                    replaced = true
-                    break
+            if ("@!dependencyVersion@" in ret) {
+                var replaced = false
+                for ((dependency, version) in dependencyToVersionMap) {
+                    if (dependency in ret) {
+                        ret = ret.replace(dependencyVersionPlaceholder, version)
+                        replaced = true
+                        break
+                    }
+                }
+                if (!replaced) {
+                    throw IllegalStateException("Dependency not found in dependencyToVersionMap: $ret")
                 }
             }
-            if (!replaced) {
-                throw IllegalStateException("Dependency not found in dependencyToVersionMap: $ret")
-            }
+            return@filter ret
         }
-        return@filter ret
     }
 }
 
