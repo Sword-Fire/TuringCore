@@ -3,6 +3,7 @@ package net.geekmc.turingcore.framework
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.extender.info
 import net.minestom.server.command.builder.Command
+import net.minestom.server.extensions.Extension
 import net.minestom.server.instance.block.BlockHandler
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
@@ -137,5 +138,18 @@ class AutoRegisterFramework(
     fun unregisterAll() {
         unregisterCommands()
         stopServices()
+    }
+}
+
+abstract class AutoRegisterExtension(basePackageName: String) : Extension() {
+    private val autoRegisterFramework =
+        AutoRegisterFramework(origin.classLoader, basePackageName, logger)
+
+    override fun initialize() {
+        autoRegisterFramework.registerAll()
+    }
+
+    override fun terminate() {
+        autoRegisterFramework.unregisterAll()
     }
 }
