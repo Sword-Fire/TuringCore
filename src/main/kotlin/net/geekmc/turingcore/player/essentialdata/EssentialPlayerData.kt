@@ -17,7 +17,5 @@ data class EssentialPlayerData(
     var health: Float = 20f,
     var permissions: Set<@Contextual Permission> = setOf(),
     // 注意： player.inventory.size == INVENTORY_SIZE == 46 != INNER_INVENTORY_SIZE == 36
-    var inventory: ArrayList<ItemStack> = ArrayList<ItemStack>(PlayerInventory.INVENTORY_SIZE).apply {
-        fill(ItemStack.AIR)
-    }
+    var inventory: MutableList<ItemStack> = MutableList(PlayerInventory.INVENTORY_SIZE) { ItemStack.AIR }
 ) : PlayerData()
