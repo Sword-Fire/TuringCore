@@ -29,6 +29,8 @@ interface PlayerDataService {
     fun withOfflinePlayerData(username: String, action: OfflinePlayerDataContext.() -> Unit): Boolean
 }
 
+inline fun <reified T : PlayerData> PlayerDataService.register() = register(T::class)
+
 inline fun <reified T : PlayerData> Player.getData(): T {
     return playerDataService.getPlayerData(this.uuid, T::class)
 }
