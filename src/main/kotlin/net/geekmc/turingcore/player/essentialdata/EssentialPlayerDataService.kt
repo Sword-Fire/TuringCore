@@ -2,6 +2,7 @@ package net.geekmc.turingcore.player.essentialdata
 
 import net.geekmc.turingcore.data.player.PlayerDataService
 import net.geekmc.turingcore.data.player.getData
+import net.geekmc.turingcore.di.TuringCoreDIAware
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.service.Service
@@ -9,14 +10,17 @@ import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.inventory.PlayerInventory
 import net.minestom.server.item.ItemStack
+import org.kodein.di.instance
 import world.cepi.kstom.event.listenOnly
 
 // TODO: 存储玩家所在Instance。
 @AutoRegister
-object EssentialPlayerDataService : Service() {
+object EssentialPlayerDataService : Service(), TuringCoreDIAware {
+
+    private val playerDataService: PlayerDataService by instance()
 
     override fun onEnable() {
-        PlayerDataService.register<EssentialPlayerData>()
+        playerDataService.register(EssentialPlayerData::class)
         EventNodes.VERY_HIGH.listenOnly<PlayerLoginEvent> {
             val data = player.getData<EssentialPlayerData>()
             with(player) {

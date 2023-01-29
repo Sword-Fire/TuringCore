@@ -12,7 +12,6 @@ import net.minestom.server.item.ItemStack
 import org.jglrxavpok.hephaistos.nbt.NBT
 import world.cepi.kstom.serializer.*
 
-@OptIn(ExperimentalSerializationApi::class)
 val TURING_CORE_SERIALIZATION_MODULE = SerializersModule {
     addMinestomSerializers(this)
 }

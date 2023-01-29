@@ -1,9 +1,11 @@
 package net.geekmc.turingcore.data.global
 
 import kotlinx.coroutines.*
-import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
-import net.geekmc.turingcore.data.json.JsonData.Companion.SERIALIZATION_JSON
+import net.geekmc.turingcore.data.serialization.addMinestomSerializers
+import net.geekmc.turingcore.di.TuringCoreDIAware
 import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.service.Service
 import world.cepi.kstom.Manager
@@ -11,6 +13,7 @@ import java.nio.file.Path
 import java.time.Duration
 import java.util.*
 import kotlin.io.path.*
+import kotlin.reflect.KClass
 import kotlin.reflect.full.createType
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
@@ -19,26 +22,30 @@ import kotlin.time.measureTime
  * 全局数据服务。关闭后不允许再开启。
  */
 @AutoRegister
-object GlobalDataService : Service() {
+object GlobalDataService : Service(), TuringCoreDIAware {
 
-    val dataSet = HashMap<Path, GlobalData>()
+    @Suppress("UNCHECKED_CAST")
+    fun <T : GlobalData> register(clazz: KClass<T>): T {
+        val fileName = clazz.qualifiedName!! + ".json"
+        val file = dataFolder.resolve(fileName)
+        val content = if (file.exists()) file.readText() else "{}"
+        val data = json.decodeFromString(serializer(clazz.createType()), content) as? T ?: error("Failed to decode global data ${clazz.qualifiedName}")
+        fileToDataMap[file] = data
+        return data
+    }
+
+    private val fileToDataMap = HashMap<Path, GlobalData>()
 
     @Suppress("spellCheckingInspection")
-    val dataFolder: Path = Path.of("globaldata")
+    private val dataFolder: Path = Path.of("globaldata")
 
     @OptIn(DelicateCoroutinesApi::class)
     private val singleThreadContext = newSingleThreadContext("PlayerDataDispatcher")
 
-    /**
-     * 注册并获取全局数据。
-     * @param subPath 文件在 globaldata 文件夹下的子路径。
-     */
-    inline fun <reified T : GlobalData> register(subPath: String): T {
-        val file = dataFolder.resolve(subPath)
-        val content = if (file.exists()) file.readText() else "{}"
-        val data = SERIALIZATION_JSON.decodeFromString<T>(content)
-        dataSet[file] = data
-        return data
+    private val json = Json {
+        serializersModule = SerializersModule {
+            addMinestomSerializers(this)
+        }
     }
 
     @OptIn(ExperimentalTime::class)
@@ -54,22 +61,29 @@ object GlobalDataService : Service() {
             }.inWholeMilliseconds
             logger.info("定时保存全局数据，耗时 $time ms")
         }.delay(saveInterval).repeat(saveInterval).schedule()
+
+    }
+
+    override fun onDisable() {
+        saveData()
     }
 
     /**
      * 保存数据，在主线程序列化数据并异步写入文件。
      */
     private fun saveData() {
-        dataSet.forEach {
+        fileToDataMap.forEach {
             val file = it.key
+            val tempFile = file.resolveSibling(file.fileName.toString() + ".tmp")
             val data = it.value
-            val content = SERIALIZATION_JSON.encodeToString(serializer(data.javaClass.kotlin.createType()), data)
-            if (!file.exists()) {
-                file.createDirectories()
-                file.createFile()
-            }
+            val content = json.encodeToString(serializer(data.javaClass.kotlin.createType()), data)
             CoroutineScope(singleThreadContext).launch {
-                file.writeText(content)
+                if (!tempFile.exists()) {
+                    tempFile.parent.createDirectories()
+                    tempFile.createFile()
+                }
+                tempFile.writeText(content)
+                tempFile.moveTo(file, overwrite = true)
             }
         }
     }

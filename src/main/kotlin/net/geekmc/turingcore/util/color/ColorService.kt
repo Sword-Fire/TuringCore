@@ -19,8 +19,6 @@ object ColorService : Service(), TuringCoreDIAware {
 
     private val extension by instance<Extension>()
     private val configService by instance<ConfigService>()
-    private lateinit var config: ColorServiceConfig
-
     val miniMessage by unsafeLazy {
         MiniMessage.miniMessage()
     }
@@ -34,6 +32,8 @@ object ColorService : Service(), TuringCoreDIAware {
         }
         return@TreeMap x.compareTo(y)
     }
+
+    private lateinit var config: ColorServiceConfig
 
     override fun onEnable() {
 
