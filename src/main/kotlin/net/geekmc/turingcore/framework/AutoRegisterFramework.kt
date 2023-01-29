@@ -14,7 +14,12 @@ import world.cepi.kstom.command.unregister
 import world.cepi.kstom.util.register
 import kotlin.reflect.KClass
 
-enum class AutoRegisterPriority(val priority: Long) {
+/**
+ * 自动注册优先度
+ *
+ * @param priority 优先度
+ */
+enum class AutoRegisterPriority(private val priority: Long) {
     HIGHEST(Long.MAX_VALUE),
     HIGH(+1000),
     DEFAULT(0),
@@ -22,6 +27,11 @@ enum class AutoRegisterPriority(val priority: Long) {
     LOWEST(Long.MIN_VALUE)
 }
 
+/**
+ * 自动注册标记注解
+ *
+ * @see [AutoRegisterFramework]
+ */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented
@@ -45,18 +55,23 @@ private class AutoRegisterScanner(
     }
 }
 
-private enum class AutoRegisterType {
-    COMMAND,
-    KOMMAND,
-    SERVICE,
-    BLOCK_HANDLER
-}
-
+/**
+ * 自动注册框架，用于自动注册指令、服务与方块处理器等。
+ *
+ * @sample [AutoRegisterExtension]
+ */
 class AutoRegisterFramework(
     classLoader: ClassLoader,
     private val basePackageName: String,
     private val logger: Logger? = null
 ) {
+    private enum class AutoRegisterType {
+        COMMAND,
+        KOMMAND,
+        SERVICE,
+        BLOCK_HANDLER
+    }
+
     private val scanner = AutoRegisterScanner(classLoader)
     private val registerObjs by lazy {
         scanner.scanClazzes(basePackageName).map {
@@ -86,6 +101,9 @@ class AutoRegisterFramework(
     private val blockHandlerObjs
         get() = registerObjs[AutoRegisterType.BLOCK_HANDLER] ?: emptyList()
 
+    /**
+     * 注册所有命令
+     */
     fun registerCommands() {
         commandObjs.forEach {
             logger?.info { "Registering command ${it::class.qualifiedName}." }
@@ -97,6 +115,9 @@ class AutoRegisterFramework(
         }
     }
 
+    /**
+     * 反注册所有命令
+     */
     fun unregisterCommands() {
         kommandObjs.reversed().forEach {
             logger?.info { "Unregistering kommand ${it::class.qualifiedName}." }
@@ -108,6 +129,9 @@ class AutoRegisterFramework(
         }
     }
 
+    /**
+     * 启动所有服务
+     */
     fun startServices() {
         serviceObjs.forEach {
             logger?.info { "Starting service ${it::class.qualifiedName}." }
@@ -115,6 +139,9 @@ class AutoRegisterFramework(
         }
     }
 
+    /**
+     * 停止所有服务
+     */
     fun stopServices() {
         serviceObjs.reversed().forEach {
             logger?.info { "Stopping service ${it::class.qualifiedName}." }
@@ -122,6 +149,11 @@ class AutoRegisterFramework(
         }
     }
 
+    /**
+     * 注册所有 [BlockHandler]
+     *
+     * 注意，[BlockHandler] 无法反注册
+     */
     fun registerBlockHandlers() {
         blockHandlerObjs.forEach {
             logger?.info { "Registering block handler ${it::class.qualifiedName}." }
@@ -129,18 +161,33 @@ class AutoRegisterFramework(
         }
     }
 
+    /**
+     * 注册所有标记了 [AutoRegister] 的项目
+     */
     fun registerAll() {
         startServices()
         registerCommands()
         registerBlockHandlers()
     }
 
+    /**
+     * 反注册所有标记了 [AutoRegister] 的项目
+     *
+     * 由于 [BlockHandler] 无法反注册，因此不会反注册 [BlockHandler]
+     */
     fun unregisterAll() {
         unregisterCommands()
         stopServices()
+        logger?.info("Block handlers are not able to unregister.")
     }
 }
 
+/**
+ * 作为一个扩展的基类，自动注册所有标记了 [AutoRegister] 的类
+ *
+ * @param [basePackageName] 扫描的包名
+ * @see [AutoRegisterFramework]
+ */
 abstract class AutoRegisterExtension(basePackageName: String) : Extension() {
     private val autoRegisterFramework =
         AutoRegisterFramework(origin.classLoader, basePackageName, logger)
