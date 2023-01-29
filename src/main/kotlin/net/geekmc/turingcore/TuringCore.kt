@@ -2,8 +2,6 @@ package net.geekmc.turingcore
 
 import net.geekmc.turingcore.di.initTuringCoreDi
 import net.geekmc.turingcore.framework.AutoRegisterExtension
-import net.geekmc.turingcore.framework.TuringFrameWork
-import net.geekmc.turingcore.util.color.toComponent
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.utils.callback.CommandCallback
 import world.cepi.kstom.Manager
@@ -20,13 +18,6 @@ class TuringCore : AutoRegisterExtension("net.geekmc.turingcore") {
         registerUnknownCommandCallback()
 
         logger.info("TuringCore initialized.")
-    }
-
-    private fun registerFrameWork() {
-        TuringFrameWork.registerExtension("net.geekmc.turingcore", this).apply {
-            consolePrefix = "[TuringCore] "
-            playerPrefix = "&f[&gTuringCore&f] ".toComponent()
-        }
     }
 
     private fun registerUnknownCommandCallback() {
