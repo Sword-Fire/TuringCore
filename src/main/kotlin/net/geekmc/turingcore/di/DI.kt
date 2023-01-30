@@ -3,8 +3,6 @@
 package net.geekmc.turingcore.di
 
 import net.geekmc.turingcore.config.ConfigService
-import net.geekmc.turingcore.data.player.PlayerDataService
-import net.geekmc.turingcore.data.player.PlayerDataServiceImpl
 import net.minestom.server.MinecraftServer
 import net.minestom.server.advancements.AdvancementManager
 import net.minestom.server.adventure.bossbar.BossBarManager
@@ -54,7 +52,6 @@ val baseModule by DI.Module {
 
 val serviceModule by DI.Module {
     bindSingleton<ConfigService> { ConfigService }
-    bindSingleton<PlayerDataService> { PlayerDataServiceImpl }
 }
 
 val managerModule by DI.Module {

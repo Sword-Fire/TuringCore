@@ -10,16 +10,13 @@ import net.geekmc.turingcore.service.Service
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.inventory.PlayerInventory
-import org.kodein.di.instance
 import world.cepi.kstom.event.listenOnly
 
 // TODO: 存储玩家所在Instance。
 @AutoRegister
 object EssentialPlayerDataService : Service(), TuringCoreDIAware {
-    private val playerDataService by instance<PlayerDataService>()
-
     override fun onEnable() {
-        playerDataService.register<EssentialPlayerData>()
+        PlayerDataService.register<EssentialPlayerData>()
         EventNodes.VERY_HIGH.listenOnly<PlayerLoginEvent> {
             val data = player.getData<EssentialPlayerData>()
             player.apply {
