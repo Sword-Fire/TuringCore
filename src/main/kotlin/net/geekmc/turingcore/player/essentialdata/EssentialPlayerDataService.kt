@@ -1,8 +1,6 @@
 package net.geekmc.turingcore.player.essentialdata
 
-import net.geekmc.turingcore.data.player.PlayerDataService
 import net.geekmc.turingcore.data.player.getData
-import net.geekmc.turingcore.data.player.register
 import net.geekmc.turingcore.di.TuringCoreDIAware
 import net.geekmc.turingcore.event.EventNodes
 import net.geekmc.turingcore.framework.AutoRegister
@@ -16,7 +14,6 @@ import world.cepi.kstom.event.listenOnly
 @AutoRegister
 object EssentialPlayerDataService : Service(), TuringCoreDIAware {
     override fun onEnable() {
-        PlayerDataService.register<EssentialPlayerData>()
         EventNodes.VERY_HIGH.listenOnly<PlayerLoginEvent> {
             val data = player.getData<EssentialPlayerData>()
             player.apply {

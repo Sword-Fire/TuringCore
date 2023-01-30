@@ -1,5 +1,9 @@
 package net.geekmc.turingcore.framework
 
+import net.geekmc.turingcore.data.global.GlobalData
+import net.geekmc.turingcore.data.global.GlobalDataService
+import net.geekmc.turingcore.data.player.PlayerData
+import net.geekmc.turingcore.data.player.PlayerDataService
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.extender.info
 import net.minestom.server.command.builder.Command
@@ -13,6 +17,7 @@ import world.cepi.kstom.command.register
 import world.cepi.kstom.command.unregister
 import world.cepi.kstom.util.register
 import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 /**
  * 自动注册优先度
@@ -69,37 +74,52 @@ class AutoRegisterFramework(
         COMMAND,
         KOMMAND,
         SERVICE,
-        BLOCK_HANDLER
+        BLOCK_HANDLER,
+        PLAYER_DATA,
+        GLOBAL_DATA
     }
 
-    private val scanner = AutoRegisterScanner(classLoader)
-    private val registerObjs by lazy {
-        scanner.scanClazzes(basePackageName).map {
+    private val List<KClass<*>>.objects: List<Any>
+        get() = map {
             it.objectInstance ?: error("AutoRegister class ${it.qualifiedName} must be an object.")
-        }.sortedBy { item ->
-            ((item::class.annotations.first { it is AutoRegister }) as AutoRegister).priority
+        }
+
+    private val scanner = AutoRegisterScanner(classLoader)
+    private val registerClazzes by lazy {
+        scanner.scanClazzes(basePackageName).sortedBy { item ->
+            ((item.annotations.first { it is AutoRegister }) as AutoRegister).priority
         }.groupBy {
-            when (it) {
-                is Command -> AutoRegisterType.COMMAND
-                is Kommand -> AutoRegisterType.KOMMAND
-                is Service -> AutoRegisterType.SERVICE
-                is BlockHandler -> AutoRegisterType.BLOCK_HANDLER
-                else -> error("Unsupported AutoRegister type: ${it::class.qualifiedName}.")
+            when {
+                it.isSubclassOf(Command::class) -> AutoRegisterType.COMMAND
+                it.isSubclassOf(Kommand::class) -> AutoRegisterType.KOMMAND
+                it.isSubclassOf(Service::class) -> AutoRegisterType.SERVICE
+                it.isSubclassOf(BlockHandler::class) -> AutoRegisterType.BLOCK_HANDLER
+                it.isSubclassOf(PlayerData::class) -> AutoRegisterType.PLAYER_DATA
+                it.isSubclassOf(GlobalData::class) -> AutoRegisterType.GLOBAL_DATA
+                else -> error("Unsupported AutoRegister type: ${it.qualifiedName}.")
             }
         }
     }
 
     private val commandObjs
-        get() = registerObjs[AutoRegisterType.COMMAND] ?: emptyList()
+        get() = registerClazzes[AutoRegisterType.COMMAND]?.objects ?: emptyList()
 
     private val kommandObjs
-        get() = registerObjs[AutoRegisterType.KOMMAND] ?: emptyList()
+        get() = registerClazzes[AutoRegisterType.KOMMAND]?.objects ?: emptyList()
 
     private val serviceObjs
-        get() = registerObjs[AutoRegisterType.SERVICE] ?: emptyList()
+        get() = registerClazzes[AutoRegisterType.SERVICE]?.objects ?: emptyList()
 
     private val blockHandlerObjs
-        get() = registerObjs[AutoRegisterType.BLOCK_HANDLER] ?: emptyList()
+        get() = registerClazzes[AutoRegisterType.BLOCK_HANDLER]?.objects ?: emptyList()
+
+    @Suppress("UNCHECKED_CAST")
+    private val playerDataClazzes
+        get() = registerClazzes[AutoRegisterType.PLAYER_DATA] as? List<KClass<PlayerData>> ?: emptyList()
+
+    @Suppress("UNCHECKED_CAST")
+    private val globalDataClazzes
+        get() = registerClazzes[AutoRegisterType.GLOBAL_DATA] as? List<KClass<GlobalData>> ?: emptyList()
 
     /**
      * 注册所有命令
@@ -161,6 +181,20 @@ class AutoRegisterFramework(
         }
     }
 
+    fun registerPlayerData() {
+        playerDataClazzes.forEach {
+            logger?.info { "Registering player data ${it.qualifiedName}." }
+            PlayerDataService.register(it)
+        }
+    }
+
+    fun registerGlobalData() {
+        globalDataClazzes.forEach {
+            logger?.info { "Registering global data ${it.qualifiedName}." }
+            GlobalDataService.register(it)
+        }
+    }
+
     /**
      * 注册所有标记了 [AutoRegister] 的项目
      */
@@ -168,6 +202,8 @@ class AutoRegisterFramework(
         startServices()
         registerCommands()
         registerBlockHandlers()
+        registerPlayerData()
+        registerGlobalData()
     }
 
     /**
@@ -176,9 +212,11 @@ class AutoRegisterFramework(
      * 由于 [BlockHandler] 无法反注册，因此不会反注册 [BlockHandler]
      */
     fun unregisterAll() {
+        logger?.info("Global data are not able to unregister.")
+        logger?.info("Player data are not able to unregister.")
+        logger?.info("Block handlers are not able to unregister.")
         unregisterCommands()
         stopServices()
-        logger?.info("Block handlers are not able to unregister.")
     }
 }
 
