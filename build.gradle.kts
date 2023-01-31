@@ -19,6 +19,13 @@ repositories {
 }
 
 dependencies {
+    if (parent?.name == "swork-fire-workspace") {
+        compileOnly(project(":kstom"))
+    } else {
+        // TODO: pin version
+        compileOnly("org.ktorm:ktorm-core:${project.ext["version.ktorm-core"]}")
+    }
+
     // TODO: pin version
     compileOnly("com.github.Minestom:Minestom:-SNAPSHOT") {
         exclude(group = "org.tinylog")
@@ -35,7 +42,6 @@ dependencies {
     compileOnly("org.flywaydb:flyway-core:${project.ext["version.flyway-core"]}")
     compileOnly("org.xerial:sqlite-jdbc:${project.ext["version.sqlite-jdbc"]}")
     compileOnly("com.charleskorn.kaml:kaml:${project.ext["version.kaml"]}")
-    compileOnly("org.ktorm:ktorm-core:${project.ext["version.ktorm-core"]}")
     compileOnly("org.kodein.di:kodein-di-jvm:${project.ext["version.kodein-di-jvm"]}")
     compileOnly("org.reflections:reflections:${project.ext["version.reflections"]}")
 }
