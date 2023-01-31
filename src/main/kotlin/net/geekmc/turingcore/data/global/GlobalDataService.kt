@@ -6,7 +6,6 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.geekmc.turingcore.data.serialization.addMinestomSerializers
 import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.service.Service
 import world.cepi.kstom.Manager
 import java.nio.file.Path
@@ -21,12 +20,11 @@ import kotlin.time.measureTime
 /**
  * 全局数据服务。关闭后不允许再开启。
  */
-@AutoRegister
 object GlobalDataService : Service(), TuringCoreDIAware {
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : GlobalData> register(clazz: KClass<T>): T {
-        val fileName = clazz.qualifiedName!! + ".json"
+    fun <T : GlobalData> register(clazz: KClass<T>, identifier: String): T {
+        val fileName = "$identifier.json"
         val file = dataFolder.resolve(fileName)
         val content = if (file.exists()) file.readText() else "{}"
         val data = json.decodeFromString(serializer(clazz.createType()), content) as? T ?: error("Failed to decode global data ${clazz.qualifiedName}")

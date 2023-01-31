@@ -3,14 +3,12 @@ package net.geekmc.turingcore.util.lang
 import net.geekmc.turingcore.data.yaml.YamlData
 import net.geekmc.turingcore.di.PathKeys
 import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.extensions.Extension
 import org.kodein.di.instance
 import java.nio.file.Path
 
-@AutoRegister
 object LanguageService : Service(), TuringCoreDIAware {
 
     private const val CONFIG_PATH = "lang.yml"

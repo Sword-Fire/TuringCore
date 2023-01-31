@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 import net.geekmc.turingcore.config.Config
 import net.geekmc.turingcore.config.ConfigService
 import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.unsafeLazy
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -12,7 +11,6 @@ import net.minestom.server.extensions.Extension
 import org.kodein.di.instance
 import java.util.*
 
-@AutoRegister
 object ColorService : Service(), TuringCoreDIAware {
 
     private const val CONFIG_PATH = "colors.yml"

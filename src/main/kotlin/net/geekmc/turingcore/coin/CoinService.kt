@@ -5,6 +5,7 @@ import net.geekmc.turingcore.service.Service
 object CoinService : Service(){
 
     override fun onEnable() {
+
     }
 
 }

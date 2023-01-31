@@ -12,7 +12,6 @@ import net.geekmc.turingcore.data.serialization.addMinestomSerializers
 import net.geekmc.turingcore.di.TuringCoreDIAware
 import net.geekmc.turingcore.di.turingCoreDi
 import net.geekmc.turingcore.event.EventNodes
-import net.geekmc.turingcore.framework.AutoRegister
 import net.geekmc.turingcore.player.uuid.UUIDService
 import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.coroutine.MinestomSync
@@ -37,15 +36,14 @@ private typealias PlayerDataMap = HashMap<String, PlayerData>
 /**
  * 玩家数据服务。
  */
-@AutoRegister
 object PlayerDataService : Service(), TuringCoreDIAware {
 
     /**
      * 注册一个玩家数据类。
      * @param T 玩家数据类型
      */
-    fun <T : PlayerData> register(clazz: KClass<T>) {
-        clazzToIdentifierMap[clazz] = clazz.qualifiedName!!
+    fun <T : PlayerData> register(clazz: KClass<T>, identifier: String) {
+        clazzToIdentifierMap[clazz] = identifier
         val action: SerializersModuleBuilder.() -> Unit = {
             @Suppress("UNCHECKED_CAST")
             val serializer = serializer(clazz.createType()) as KSerializer<T>
@@ -201,8 +199,6 @@ object PlayerDataService : Service(), TuringCoreDIAware {
         }
     }
 }
-
-inline fun <reified T : PlayerData> PlayerDataService.register() = register(T::class)
 
 inline fun <reified T : PlayerData> Player.getData(): T {
     return PlayerDataService.getPlayerData(this.uuid, T::class)

@@ -20,35 +20,21 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 /**
- * 自动注册优先度
- *
- * @param priority 优先度
- */
-enum class AutoRegisterPriority(private val priority: Long) {
-    HIGHEST(Long.MAX_VALUE),
-    HIGH(+1000),
-    DEFAULT(0),
-    LOW(-1000),
-    LOWEST(Long.MIN_VALUE)
-}
-
-/**
  * 自动注册标记注解
- *
+ * @param id 注册使用的标识符。目前仅对 [PlayerData] 与 [GlobalData] 有效。可能添加对 BlockHandler的支持。
  * @see [AutoRegisterFramework]
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented
 annotation class AutoRegister(
-    val priority: AutoRegisterPriority = AutoRegisterPriority.DEFAULT
+    val id: String = ""
 )
-
 
 private class AutoRegisterScanner(
     private val classLoader: ClassLoader
 ) {
-    fun scanClazzes(basePackageName: String): List<KClass<*>> {
+    fun scanClasses(basePackageName: String): List<KClass<*>> {
         val reflections = Reflections(
             ConfigurationBuilder
                 .build(basePackageName)
@@ -62,8 +48,6 @@ private class AutoRegisterScanner(
 
 /**
  * 自动注册框架，用于自动注册指令、服务与方块处理器等。
- *
- * @sample [AutoRegisterExtension]
  */
 class AutoRegisterFramework(
     classLoader: ClassLoader,
@@ -85,10 +69,8 @@ class AutoRegisterFramework(
         }
 
     private val scanner = AutoRegisterScanner(classLoader)
-    private val registerClazzes by lazy {
-        scanner.scanClazzes(basePackageName).sortedBy { item ->
-            ((item.annotations.first { it is AutoRegister }) as AutoRegister).priority
-        }.groupBy {
+    private val registerClasses by lazy {
+        scanner.scanClasses(basePackageName).groupBy {
             when {
                 it.isSubclassOf(Command::class) -> AutoRegisterType.COMMAND
                 it.isSubclassOf(Kommand::class) -> AutoRegisterType.KOMMAND
@@ -102,24 +84,27 @@ class AutoRegisterFramework(
     }
 
     private val commandObjs
-        get() = registerClazzes[AutoRegisterType.COMMAND]?.objects ?: emptyList()
+        get() = registerClasses[AutoRegisterType.COMMAND]?.objects ?: emptyList()
 
     private val kommandObjs
-        get() = registerClazzes[AutoRegisterType.KOMMAND]?.objects ?: emptyList()
+        get() = registerClasses[AutoRegisterType.KOMMAND]?.objects ?: emptyList()
 
     private val serviceObjs
-        get() = registerClazzes[AutoRegisterType.SERVICE]?.objects ?: emptyList()
+        get() = registerClasses[AutoRegisterType.SERVICE]?.objects ?: emptyList()
 
     private val blockHandlerObjs
-        get() = registerClazzes[AutoRegisterType.BLOCK_HANDLER]?.objects ?: emptyList()
+        get() = registerClasses[AutoRegisterType.BLOCK_HANDLER]?.objects ?: emptyList()
 
     @Suppress("UNCHECKED_CAST")
-    private val playerDataClazzes
-        get() = registerClazzes[AutoRegisterType.PLAYER_DATA] as? List<KClass<PlayerData>> ?: emptyList()
+    private val playerDataClasses
+        get() = registerClasses[AutoRegisterType.PLAYER_DATA] as? List<KClass<PlayerData>> ?: emptyList()
 
     @Suppress("UNCHECKED_CAST")
-    private val globalDataClazzes
-        get() = registerClazzes[AutoRegisterType.GLOBAL_DATA] as? List<KClass<GlobalData>> ?: emptyList()
+    private val globalDataClassess
+        get() = registerClasses[AutoRegisterType.GLOBAL_DATA] as? List<KClass<GlobalData>> ?: emptyList()
+
+    private val KClass<*>.identifer
+        get() = ((this.annotations.first { it is AutoRegister }) as AutoRegister).id
 
     /**
      * 注册所有命令
@@ -182,16 +167,18 @@ class AutoRegisterFramework(
     }
 
     fun registerPlayerData() {
-        playerDataClazzes.forEach {
+        playerDataClasses.forEach {
             logger?.info { "Registering player data ${it.qualifiedName}." }
-            PlayerDataService.register(it)
+            require(it.identifer.isNotBlank()) { "Player data ${it.qualifiedName} must have an identifier." }
+            PlayerDataService.register(it, it.identifer)
         }
     }
 
     fun registerGlobalData() {
-        globalDataClazzes.forEach {
+        globalDataClassess.forEach {
             logger?.info { "Registering global data ${it.qualifiedName}." }
-            GlobalDataService.register(it)
+            require(it.identifer.isNotBlank()) { "Global data ${it.qualifiedName} must have an identifier." }
+            GlobalDataService.register(it, it.identifer)
         }
     }
 
@@ -200,41 +187,31 @@ class AutoRegisterFramework(
      */
     fun registerAll() {
         startServices()
+        registerGlobalData()
+        registerPlayerData()
         registerCommands()
         registerBlockHandlers()
-        registerPlayerData()
-        registerGlobalData()
     }
 
     /**
      * 反注册所有标记了 [AutoRegister] 的项目
      *
-     * 由于 [BlockHandler] 无法反注册，因此不会反注册 [BlockHandler]
+     * 由于无法反注册，因此不会反注册 [BlockHandler] [PlayerData] [GlobalData]
      */
     fun unregisterAll() {
-        logger?.info("Global data are not able to unregister.")
-        logger?.info("Player data are not able to unregister.")
-        logger?.info("Block handlers are not able to unregister.")
         unregisterCommands()
         stopServices()
     }
-}
 
-/**
- * 作为一个扩展的基类，自动注册所有标记了 [AutoRegister] 的类
- *
- * @param [basePackageName] 扫描的包名
- * @see [AutoRegisterFramework]
- */
-abstract class AutoRegisterExtension(basePackageName: String) : Extension() {
-    private val autoRegisterFramework =
-        AutoRegisterFramework(origin.classLoader, basePackageName, logger)
-
-    override fun initialize() {
-        autoRegisterFramework.registerAll()
-    }
-
-    override fun terminate() {
-        autoRegisterFramework.unregisterAll()
+    companion object {
+        /**
+         * 作为一个扩展的基类，自动注册所有标记了 [AutoRegister] 的类
+         *
+         * @param [basePackageName] 扫描的包名
+         * @see [AutoRegisterFramework]
+         */
+        fun load(extension: Extension, basePackageName: String): AutoRegisterFramework {
+            return AutoRegisterFramework(extension.origin.classLoader, basePackageName, extension.logger)
+        }
     }
 }

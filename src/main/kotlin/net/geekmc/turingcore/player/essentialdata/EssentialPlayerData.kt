@@ -10,7 +10,7 @@ import net.minestom.server.inventory.PlayerInventory
 import net.minestom.server.item.ItemStack
 import net.minestom.server.permission.Permission
 
-@AutoRegister
+@AutoRegister(id = "TuringCore:EssentialPlayerData")
 @Serializable
 data class EssentialPlayerData(
     var isOp: Boolean = false,
