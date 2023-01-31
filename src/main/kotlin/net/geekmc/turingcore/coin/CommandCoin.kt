@@ -2,7 +2,6 @@ package net.geekmc.turingcore.coin
 
 
 import net.geekmc.turingcore.util.extender.onlyOp
-import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.arguments.ArgumentWord
 import net.minestom.server.command.builder.arguments.number.ArgumentLong
 import world.cepi.kstom.command.arguments.literal
@@ -12,8 +11,7 @@ object CommandCoin : Kommand({
 
     val help by literal
 
-    fun showHelp(sender: CommandSender) {
-        // TODO: i18n(sendLang)
+    commandHelpMessage = { sender ->
         sender.sendMessage("Usage: add|remove|set <amount> <coin> <player>")
         sender.sendMessage("Usage: show [id|name] <player>")
         sender.sendMessage("Usage: help")
@@ -33,10 +31,6 @@ object CommandCoin : Kommand({
 //        playerUuidRepo.findAllPlayerUuids().getOrThrow().map { it.name }.map { SuggestionEntry(it) }
 //            .forEach(suggestion::addEntry)
 //    }
-
-    syntax {
-        showHelp(sender)
-    }
 
     subcommand("add") {
         syntax(amountArg, coinArg, playerArg) {
@@ -145,8 +139,4 @@ object CommandCoin : Kommand({
 //            showCoin(player, !idOrName)
 //        }.onlyPlayers()
 //    }
-
-    syntax(help) {
-        showHelp(sender)
-    }
 }, name = "coin")
