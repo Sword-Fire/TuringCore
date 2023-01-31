@@ -2,7 +2,9 @@
   "entrypoint": "net.geekmc.turingcore.TuringCore",
   "name": "TuringCore",
   "version": "@!extensionVersion@",
-  "dependencies": [],
+  "dependencies": [
+    "KStom"
+  ],
   "externalDependencies": {
     "repositories": [
       {

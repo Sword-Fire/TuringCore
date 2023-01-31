@@ -20,10 +20,10 @@ repositories {
 
 dependencies {
     if (parent?.name == "swork-fire-workspace") {
-        implementation(project(":kstom"))
+        compileOnly(project(":kstom"))
     } else {
         // TODO: pin version
-        implementation("com.github.Project-Cepi:KStom:${project.ext["version.KStom"]}")
+        compileOnly("com.github.Project-Cepi:KStom:${project.ext["version.KStom"]}")
     }
 
     // TODO: pin version
