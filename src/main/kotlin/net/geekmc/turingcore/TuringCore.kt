@@ -1,13 +1,13 @@
 package net.geekmc.turingcore
 
-import net.geekmc.turingcore.data.global.GlobalDataService
-import net.geekmc.turingcore.data.player.PlayerDataService
-import net.geekmc.turingcore.di.initTuringCoreDi
-import net.geekmc.turingcore.event.EventNodes
-import net.geekmc.turingcore.framework.AutoRegisterFramework
 import net.geekmc.turingcore.instance.InstanceService
+import net.geekmc.turingcore.library.color.ColorService
+import net.geekmc.turingcore.library.data.global.GlobalDataService
+import net.geekmc.turingcore.library.data.player.PlayerDataService
+import net.geekmc.turingcore.library.di.initTuringCoreDi
+import net.geekmc.turingcore.library.event.EventNodes
+import net.geekmc.turingcore.library.framework.AutoRegisterFramework
 import net.geekmc.turingcore.player.uuid.UUIDService
-import net.geekmc.turingcore.util.color.ColorService
 import net.geekmc.turingcore.util.lang.LanguageService
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.extensions.Extension

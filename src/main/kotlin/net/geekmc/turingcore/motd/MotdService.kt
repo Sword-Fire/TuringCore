@@ -1,13 +1,13 @@
 package net.geekmc.turingcore.motd
 
 import kotlinx.serialization.Serializable
-import net.geekmc.turingcore.config.Config
-import net.geekmc.turingcore.config.ConfigService
-import net.geekmc.turingcore.di.PathKeys
-import net.geekmc.turingcore.event.EventNodes
-import net.geekmc.turingcore.framework.AutoRegister
-import net.geekmc.turingcore.service.Service
-import net.geekmc.turingcore.util.color.toComponent
+import net.geekmc.turingcore.library.color.toComponent
+import net.geekmc.turingcore.library.config.Config
+import net.geekmc.turingcore.library.config.ConfigService
+import net.geekmc.turingcore.library.di.PathKeys
+import net.geekmc.turingcore.library.event.EventNodes
+import net.geekmc.turingcore.library.framework.AutoRegister
+import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.event.server.ServerListPingEvent
 import net.minestom.server.extensions.Extension

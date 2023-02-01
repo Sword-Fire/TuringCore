@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.data.json
+package net.geekmc.turingcore.library.data.json
 
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer

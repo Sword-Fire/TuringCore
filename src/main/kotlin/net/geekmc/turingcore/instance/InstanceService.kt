@@ -1,8 +1,8 @@
 package net.geekmc.turingcore.instance
 
-import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.event.EventNodes
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.event.EventNodes
+import net.geekmc.turingcore.library.service.Service
 import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.instance.Instance
 import net.minestom.server.instance.InstanceManager

@@ -1,9 +1,9 @@
 package net.geekmc.turingcore.player.skin
 
 import kotlinx.coroutines.*
-import net.geekmc.turingcore.event.EventNodes
-import net.geekmc.turingcore.framework.AutoRegister
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.event.EventNodes
+import net.geekmc.turingcore.library.framework.AutoRegister
+import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.util.coroutine.MinestomAsync
 import net.geekmc.turingcore.util.coroutine.MinestomSync
 import net.minestom.server.entity.PlayerSkin

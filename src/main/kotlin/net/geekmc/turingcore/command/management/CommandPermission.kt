@@ -4,8 +4,8 @@ import net.geekmc.turingcore.command.args
 import net.geekmc.turingcore.command.findPlayers
 import net.geekmc.turingcore.command.opSyntax
 import net.geekmc.turingcore.command.setDefaultValueToSelf
-import net.geekmc.turingcore.framework.AutoRegister
-import net.geekmc.turingcore.util.color.message
+import net.geekmc.turingcore.library.color.message
+import net.geekmc.turingcore.library.framework.AutoRegister
 import net.minestom.server.command.builder.arguments.ArgumentLiteral
 import net.minestom.server.command.builder.arguments.ArgumentWord
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity

@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.block
 
-import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.framework.AutoRegister
+import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.framework.AutoRegister
 import net.minestom.server.instance.block.BlockHandler
 import net.minestom.server.utils.NamespaceID
 import org.kodein.di.instance

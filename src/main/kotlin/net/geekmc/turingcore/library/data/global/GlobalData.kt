@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.data.global
+package net.geekmc.turingcore.library.data.global
 
 import kotlinx.serialization.Serializable
 

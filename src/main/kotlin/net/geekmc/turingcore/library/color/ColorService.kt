@@ -1,10 +1,10 @@
-package net.geekmc.turingcore.util.color
+package net.geekmc.turingcore.library.color
 
 import kotlinx.serialization.Serializable
-import net.geekmc.turingcore.config.Config
-import net.geekmc.turingcore.config.ConfigService
-import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.config.Config
+import net.geekmc.turingcore.library.config.ConfigService
+import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.util.unsafeLazy
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minestom.server.extensions.Extension

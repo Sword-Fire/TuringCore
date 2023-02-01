@@ -1,9 +1,9 @@
 package net.geekmc.turingcore.util.lang
 
-import net.geekmc.turingcore.data.yaml.YamlData
-import net.geekmc.turingcore.di.PathKeys
-import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.data.yaml.YamlData
+import net.geekmc.turingcore.library.di.PathKeys
+import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.extensions.Extension
 import org.kodein.di.instance

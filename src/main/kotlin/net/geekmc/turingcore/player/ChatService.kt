@@ -1,9 +1,9 @@
 package net.geekmc.turingcore.player
 
-import net.geekmc.turingcore.event.EventNodes
-import net.geekmc.turingcore.framework.AutoRegister
-import net.geekmc.turingcore.service.Service
-import net.geekmc.turingcore.util.color.toComponent
+import net.geekmc.turingcore.library.color.toComponent
+import net.geekmc.turingcore.library.event.EventNodes
+import net.geekmc.turingcore.library.framework.AutoRegister
+import net.geekmc.turingcore.library.service.Service
 import net.minestom.server.event.player.PlayerChatEvent
 import world.cepi.kstom.event.listenOnly
 

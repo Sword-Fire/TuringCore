@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.util.color
+package net.geekmc.turingcore.library.color
 
 import net.kyori.adventure.text.Component
 import net.minestom.server.command.CommandSender

@@ -1,9 +1,9 @@
 package net.geekmc.turingcore.command.management
 
 import net.geekmc.turingcore.command.opSyntax
-import net.geekmc.turingcore.framework.AutoRegister
-import net.geekmc.turingcore.util.color.message
-import net.geekmc.turingcore.util.color.toComponent
+import net.geekmc.turingcore.library.color.message
+import net.geekmc.turingcore.library.color.toComponent
+import net.geekmc.turingcore.library.framework.AutoRegister
 import net.minestom.server.MinecraftServer
 import net.minestom.server.timer.TaskSchedule
 import world.cepi.kstom.Manager

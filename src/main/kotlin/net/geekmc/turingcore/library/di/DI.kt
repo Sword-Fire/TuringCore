@@ -1,8 +1,8 @@
 @file:Suppress("RemoveExplicitTypeArguments")
 
-package net.geekmc.turingcore.di
+package net.geekmc.turingcore.library.di
 
-import net.geekmc.turingcore.config.ConfigService
+import net.geekmc.turingcore.library.config.ConfigService
 import net.minestom.server.MinecraftServer
 import net.minestom.server.advancements.AdvancementManager
 import net.minestom.server.adventure.bossbar.BossBarManager

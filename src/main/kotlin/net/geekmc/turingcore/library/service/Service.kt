@@ -1,6 +1,6 @@
-package net.geekmc.turingcore.service
+package net.geekmc.turingcore.library.service
 
-import net.geekmc.turingcore.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.di.TuringCoreDIAware
 import org.kodein.di.instance
 import org.slf4j.Logger
 

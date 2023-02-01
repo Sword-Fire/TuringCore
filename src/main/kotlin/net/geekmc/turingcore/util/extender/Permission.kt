@@ -1,6 +1,6 @@
 package net.geekmc.turingcore.util.extender
 
-import net.geekmc.turingcore.data.player.getData
+import net.geekmc.turingcore.library.data.player.getData
 import net.geekmc.turingcore.player.essentialdata.EssentialPlayerData
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.ConsoleSender

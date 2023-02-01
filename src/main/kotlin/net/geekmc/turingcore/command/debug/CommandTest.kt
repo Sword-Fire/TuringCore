@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.command.debug
 
 import net.geekmc.turingcore.command.opSyntax
-import net.geekmc.turingcore.framework.AutoRegister
+import net.geekmc.turingcore.library.framework.AutoRegister
 import world.cepi.kstom.command.kommand.Kommand
 
 @AutoRegister

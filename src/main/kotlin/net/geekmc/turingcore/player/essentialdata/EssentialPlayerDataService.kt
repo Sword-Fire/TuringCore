@@ -1,10 +1,10 @@
 package net.geekmc.turingcore.player.essentialdata
 
-import net.geekmc.turingcore.data.player.getData
-import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.event.EventNodes
-import net.geekmc.turingcore.framework.AutoRegister
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.data.player.getData
+import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.event.EventNodes
+import net.geekmc.turingcore.library.framework.AutoRegister
+import net.geekmc.turingcore.library.service.Service
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerLoginEvent
 import net.minestom.server.inventory.PlayerInventory

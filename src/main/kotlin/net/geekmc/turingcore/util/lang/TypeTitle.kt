@@ -1,6 +1,6 @@
 package net.geekmc.turingcore.util.lang
 
-import net.geekmc.turingcore.util.color.toComponent
+import net.geekmc.turingcore.library.color.toComponent
 import net.kyori.adventure.title.Title
 import net.minestom.server.command.CommandSender
 import java.time.Duration

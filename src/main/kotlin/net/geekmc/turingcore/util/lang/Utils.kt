@@ -1,6 +1,6 @@
 package net.geekmc.turingcore.util.lang
 
-import net.geekmc.turingcore.util.color.message
+import net.geekmc.turingcore.library.color.message
 import net.geekmc.turingcore.util.extender.replaceWithOrder
 import net.minestom.server.command.CommandSender
 

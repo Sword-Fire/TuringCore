@@ -2,8 +2,8 @@ package net.geekmc.turingcore.player.essentialdata
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import net.geekmc.turingcore.data.player.PlayerData
-import net.geekmc.turingcore.framework.AutoRegister
+import net.geekmc.turingcore.library.data.player.PlayerData
+import net.geekmc.turingcore.library.framework.AutoRegister
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
 import net.minestom.server.inventory.PlayerInventory

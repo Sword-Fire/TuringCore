@@ -1,12 +1,12 @@
-package net.geekmc.turingcore.data.global
+package net.geekmc.turingcore.library.data.global
 
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
-import net.geekmc.turingcore.data.serialization.addMinestomSerializers
-import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.data.serialization.addMinestomSerializers
+import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.service.Service
 import world.cepi.kstom.Manager
 import java.nio.file.Path
 import java.time.Duration

@@ -1,10 +1,10 @@
-package net.geekmc.turingcore.config
+package net.geekmc.turingcore.library.config
 
 import com.charleskorn.kaml.Yaml
 import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.serializer
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.extensions.Extension
 import java.nio.file.Path

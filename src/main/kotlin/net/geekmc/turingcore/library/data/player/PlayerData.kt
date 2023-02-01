@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.data.player
+package net.geekmc.turingcore.library.data.player
 
 import kotlinx.serialization.Serializable
 

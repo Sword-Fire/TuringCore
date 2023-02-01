@@ -1,6 +1,6 @@
 package net.geekmc.turingcore.player.uuid
 
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.service.Service
 import net.minestom.server.entity.Player
 import world.cepi.kstom.Manager
 import java.util.*

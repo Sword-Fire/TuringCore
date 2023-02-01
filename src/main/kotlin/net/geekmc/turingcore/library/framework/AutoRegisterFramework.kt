@@ -1,16 +1,14 @@
-package net.geekmc.turingcore.framework
+package net.geekmc.turingcore.library.framework
 
-import net.geekmc.turingcore.data.global.GlobalData
-import net.geekmc.turingcore.data.global.GlobalDataService
-import net.geekmc.turingcore.data.player.PlayerData
-import net.geekmc.turingcore.data.player.PlayerDataService
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.data.global.GlobalData
+import net.geekmc.turingcore.library.data.global.GlobalDataService
+import net.geekmc.turingcore.library.data.player.PlayerData
+import net.geekmc.turingcore.library.data.player.PlayerDataService
+import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.util.extender.info
 import net.minestom.server.command.builder.Command
 import net.minestom.server.extensions.Extension
 import net.minestom.server.instance.block.BlockHandler
-import org.reflections.Reflections
-import org.reflections.util.ConfigurationBuilder
 import org.slf4j.Logger
 import world.cepi.kstom.command.kommand.Kommand
 import world.cepi.kstom.command.register
@@ -20,33 +18,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 /**
- * 自动注册标记注解
- * @param id 注册使用的标识符。目前仅对 [PlayerData] 与 [GlobalData] 有效。可能添加对 BlockHandler的支持。
- * @see [AutoRegisterFramework]
- */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-@MustBeDocumented
-annotation class AutoRegister(
-    val id: String = ""
-)
-
-private class AutoRegisterScanner(
-    private val classLoader: ClassLoader
-) {
-    fun scanClasses(basePackageName: String): List<KClass<*>> {
-        val reflections = Reflections(
-            ConfigurationBuilder
-                .build(basePackageName)
-                .setClassLoaders(arrayOf(classLoader))
-        )
-        return reflections.getTypesAnnotatedWith(AutoRegister::class.java).map {
-            it.kotlin
-        }
-    }
-}
-
-/**
  * 自动注册框架，用于自动注册指令、服务与方块处理器等。
  */
 class AutoRegisterFramework(
@@ -54,6 +25,20 @@ class AutoRegisterFramework(
     private val basePackageName: String,
     private val logger: Logger? = null
 ) {
+
+    companion object {
+        /**
+         * 注册在指定包路径下所有标记了 [AutoRegister] 的可自动注册类。
+         *
+         * @param extension 扩展
+         * @param basePackageName 扫描的包名
+         * @see [AutoRegisterFramework]
+         */
+        fun load(extension: Extension, basePackageName: String): AutoRegisterFramework {
+            return AutoRegisterFramework(extension.origin.classLoader, basePackageName, extension.logger)
+        }
+    }
+
     private enum class AutoRegisterType {
         COMMAND,
         KOMMAND,
@@ -203,15 +188,4 @@ class AutoRegisterFramework(
         stopServices()
     }
 
-    companion object {
-        /**
-         * 作为一个扩展的基类，自动注册所有标记了 [AutoRegister] 的类
-         *
-         * @param [basePackageName] 扫描的包名
-         * @see [AutoRegisterFramework]
-         */
-        fun load(extension: Extension, basePackageName: String): AutoRegisterFramework {
-            return AutoRegisterFramework(extension.origin.classLoader, basePackageName, extension.logger)
-        }
-    }
 }

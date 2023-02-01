@@ -1,6 +1,6 @@
-package net.geekmc.turingcore.event
+package net.geekmc.turingcore.library.event
 
-import net.geekmc.turingcore.service.Service
+import net.geekmc.turingcore.library.service.Service
 import net.minestom.server.MinecraftServer
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode

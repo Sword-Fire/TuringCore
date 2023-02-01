@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.data.yaml
+package net.geekmc.turingcore.library.data.yaml
 
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml

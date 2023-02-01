@@ -1,4 +1,4 @@
-package net.geekmc.turingcore.data.player
+package net.geekmc.turingcore.library.data.player
 
 import kotlinx.coroutines.*
 import kotlinx.serialization.KSerializer
@@ -8,12 +8,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.serializer
-import net.geekmc.turingcore.data.serialization.addMinestomSerializers
-import net.geekmc.turingcore.di.TuringCoreDIAware
-import net.geekmc.turingcore.di.turingCoreDi
-import net.geekmc.turingcore.event.EventNodes
+import net.geekmc.turingcore.library.data.serialization.addMinestomSerializers
+import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.di.turingCoreDi
+import net.geekmc.turingcore.library.event.EventNodes
+import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.player.uuid.UUIDService
-import net.geekmc.turingcore.service.Service
 import net.geekmc.turingcore.util.coroutine.MinestomSync
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.AsyncPlayerPreLoginEvent
