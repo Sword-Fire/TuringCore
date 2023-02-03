@@ -10,10 +10,12 @@ import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.extensions.Extension
 import org.kodein.di.instance
+import org.slf4j.Logger
 import java.nio.file.Path
 import kotlin.io.path.inputStream
 
 object LanguageService : Service(turingCoreDi), TuringCoreDIAware {
+    private val logger by instance<Logger>()
 
     private val CONFIG_PATH = Path.of("lang.yml")
     private val extension by instance<Extension>()
