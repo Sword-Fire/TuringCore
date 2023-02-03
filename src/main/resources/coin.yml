@@ -1,0 +1,4 @@
+coins:
+  silver:
+    name: "银币"
+    color: "&gr"

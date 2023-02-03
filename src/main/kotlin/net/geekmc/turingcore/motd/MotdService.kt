@@ -5,6 +5,8 @@ import net.geekmc.turingcore.library.color.toComponent
 import net.geekmc.turingcore.library.config.Config
 import net.geekmc.turingcore.library.config.ConfigService
 import net.geekmc.turingcore.library.di.PathKeys
+import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.framework.AutoRegister
 import net.geekmc.turingcore.library.service.Service
@@ -22,7 +24,7 @@ import kotlin.io.path.notExists
 import kotlin.io.path.readBytes
 
 @AutoRegister
-object MotdService : Service() {
+object MotdService : Service(turingCoreDi), TuringCoreDIAware {
 
     private const val ICON_PATH = "motd/icon.png"
     private const val CONFIG_PATH = "motd/config.yml"
@@ -41,7 +43,7 @@ object MotdService : Service() {
         val motdData = ResponseData().apply {
             description = config.description.joinToString("\n").toComponent()
             favicon = getIconAsBase64().getOrElse {
-                logger.warn("Failed to load icon. Use empty.", it)
+                serviceLogger.warn("Failed to load icon. Use empty.", it)
                 ""
             }
         }
@@ -58,7 +60,7 @@ object MotdService : Service() {
         if (path.notExists()) error("Icon file not exists.")
 
         if (path.fileSize() > 64 * 1024.0)
-            logger.warn("Icon size is larger than 64KB. Watch out for performance issues.")
+            serviceLogger.warn("Icon size is larger than 64KB. Watch out for performance issues.")
 
         val base64 = path.readBytes().let { bytes ->
             Base64.getEncoder().encodeToString(bytes)

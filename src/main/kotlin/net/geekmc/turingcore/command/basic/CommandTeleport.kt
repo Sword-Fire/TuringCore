@@ -15,7 +15,7 @@ object CommandTeleport : Kommand({
     val vecArg = ArgumentRelativeVec3("vec")
     val targetArg = ArgumentEntity("target")
 
-    playerCallbackFailMessage = {
+    notPlayerAction = {
         it.sendLang("message-command-player-only")
     }
 

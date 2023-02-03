@@ -15,7 +15,7 @@ import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.player.uuid.UUIDService
 import net.geekmc.turingcore.util.coroutine.MinestomSync
-import net.minestom.server.entity.Player
+import net.minestom.server.event.EventDispatcher
 import net.minestom.server.event.player.AsyncPlayerPreLoginEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import world.cepi.kstom.Manager
@@ -33,14 +33,18 @@ import kotlin.time.measureTime
 
 private typealias PlayerDataMap = HashMap<String, PlayerData>
 
+val di = turingCoreDi
+
 /**
  * 玩家数据服务。
  */
-object PlayerDataService : Service(), TuringCoreDIAware {
+object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
 
     /**
      * 注册一个玩家数据类。
      * @param T 玩家数据类型
+     * @param clazz 玩家数据类
+     * @param identifier 数据标识符，会被用作存储文件命名。应当使用 [插件名:数据类名] 的形式 (e.g. TuringCore:EssentialPlayerData)
      */
     fun <T : PlayerData> register(clazz: KClass<T>, identifier: String) {
         clazzToIdentifierMap[clazz] = identifier
@@ -79,32 +83,6 @@ object PlayerDataService : Service(), TuringCoreDIAware {
         @Suppress("spellCheckingInspection")
         get() = Path.of("playerdata/${this}.json.tmp")
 
-    @OptIn(ExperimentalTime::class)
-    override fun onEnable() {
-
-        // 最高优先级。
-        EventNodes.INTERNAL_HIGHEST.listenOnly<AsyncPlayerPreLoginEvent> {
-            if (!loadPlayerData(player.uuid)) {
-                player.kick("读取数据超时")
-            }
-        }
-
-        // 最低优先级，待其他插件处理完毕后再保存数据。
-        EventNodes.INTERNAL_LOWEST.listenOnly<PlayerDisconnectEvent> {
-            savePlayerData(player.uuid)
-        }
-
-        // 定时保存，延时30分钟后进行第一次检查，并以后每30分钟检查一次
-        val saveInterval = Duration.ofMinutes(30)
-        Manager.scheduler.buildTask {
-            // 切到主线程
-            val time = measureTime {
-                Manager.connection.onlinePlayers.forEach { savePlayerData(it.uuid) }
-            }.inWholeMilliseconds
-            logger.info("定时保存玩家数据，耗时 $time ms")
-        }.delay(saveInterval).repeat(saveInterval).schedule()
-    }
-
     fun <T : PlayerData> getPlayerData(uuid: UUID, clazz: KClass<out PlayerData>): T {
         val identifier = clazzToIdentifierMap[clazz] ?: error("Identifier of Class ${clazz.qualifiedName} not exists")
         val playerDataMap = uuidToDataMap[uuid] ?: error("Can not find the data map of player $uuid in uuidToDataMap")
@@ -128,12 +106,39 @@ object PlayerDataService : Service(), TuringCoreDIAware {
         return withOfflinePlayerData(UUIDService.getUUID(username), action)
     }
 
+    @OptIn(ExperimentalTime::class)
+    override fun onEnable() {
+
+        // 最高优先级。
+        EventNodes.INTERNAL_HIGHEST.listenOnly<AsyncPlayerPreLoginEvent> {
+            if (!loadPlayerData(player.uuid)) {
+                player.kick("读取数据超时")
+            }
+        }
+
+        // 最低优先级，待其他插件处理完毕后再保存数据。
+        EventNodes.INTERNAL_LOWEST.listenOnly<PlayerDisconnectEvent> {
+            savePlayerData(player.uuid)
+            unloadPlayerData(player.uuid)
+        }
+
+        // 定时保存，延时30分钟后进行第一次检查，并以后每30分钟检查一次
+        val saveInterval = Duration.ofMinutes(30)
+        Manager.scheduler.buildTask {
+            // 切到主线程
+            val time = measureTime {
+                Manager.connection.onlinePlayers.forEach { savePlayerData(it.uuid) }
+            }.inWholeMilliseconds
+            serviceLogger.info("定时保存玩家数据，耗时 $time ms")
+        }.delay(saveInterval).repeat(saveInterval).schedule()
+    }
+
     /**
      * 加载玩家数据，会阻塞调用线程。可能在玩家进服时异步调用，可能在主线程需求离线玩家数据时同步调用。
      * @return 是否成功读取。
      */
     private fun loadPlayerData(uuid: UUID): Boolean {
-        return runBlocking {
+        val result = runBlocking {
             withContext(singleThreadContext) {
                 var isReadFileSuccessful = true
                 val fileContent = if (uuid.dataFile.exists()) {
@@ -144,7 +149,7 @@ object PlayerDataService : Service(), TuringCoreDIAware {
                 } else "{}"
                 // 读取文件失败，直接返回。
                 if (!isReadFileSuccessful) {
-                    logger.error("读取玩家 $uuid 的数据失败")
+                    serviceLogger.error("读取玩家 $uuid 的数据失败")
                     withContext(Dispatchers.MinestomSync) {
                         uuidToDataMap.remove(uuid)
                     }
@@ -163,6 +168,8 @@ object PlayerDataService : Service(), TuringCoreDIAware {
                 true
             }
         }
+        EventDispatcher.call(PlayerDataLoadEvent(uuid))
+        return result
     }
 
     /**
@@ -180,6 +187,10 @@ object PlayerDataService : Service(), TuringCoreDIAware {
             tempFile.writeText(content)
             tempFile.moveTo(uuid.dataFile, StandardCopyOption.REPLACE_EXISTING)
         }
+    }
+
+    private fun unloadPlayerData(uuid: UUID) {
+        uuidToDataMap.remove(uuid)
     }
 
     /**
@@ -200,22 +211,3 @@ object PlayerDataService : Service(), TuringCoreDIAware {
     }
 }
 
-inline fun <reified T : PlayerData> Player.getData(): T {
-    return PlayerDataService.getPlayerData(this.uuid, T::class)
-}
-
-fun withOfflinePlayerData(username: String, action: OfflinePlayerDataContext.() -> Unit): Boolean {
-    return PlayerDataService.withOfflinePlayerData(username, action)
-}
-
-fun withOfflinePlayerData(uuid: UUID, action: OfflinePlayerDataContext.() -> Unit): Boolean {
-    return PlayerDataService.withOfflinePlayerData(uuid, action)
-}
-
-class OfflinePlayerDataContext(val uuid: UUID) {
-    inline fun <reified T : PlayerData> getData(): T {
-        return PlayerDataService.getPlayerData(uuid, T::class)
-    }
-}
-
-val di = turingCoreDi

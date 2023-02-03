@@ -1,5 +1,6 @@
 package net.geekmc.turingcore.library.event
 
+import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.service.Service
 import net.minestom.server.MinecraftServer
 import net.minestom.server.event.Event
@@ -9,7 +10,7 @@ import net.minestom.server.event.EventNode
  * 类似Bukkit的事件优先级系统。
  */
 // TODO: 作为API
-object EventNodes : Service() {
+object EventNodes : Service(turingCoreDi) {
     /**
      * 使用[INTERNAL_HIGHEST]和[INTERNAL_LOWEST]时必须在此处声明，以管理优先级。
      * [PlayerDataService]使用这两个节点在[AsyncPlayerPreLoginEvent]与[PlayerDisconnectEvent]中读取/存放玩家数据。

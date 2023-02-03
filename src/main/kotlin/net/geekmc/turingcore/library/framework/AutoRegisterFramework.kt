@@ -5,7 +5,6 @@ import net.geekmc.turingcore.library.data.global.GlobalDataService
 import net.geekmc.turingcore.library.data.player.PlayerData
 import net.geekmc.turingcore.library.data.player.PlayerDataService
 import net.geekmc.turingcore.library.service.Service
-import net.geekmc.turingcore.util.extender.info
 import net.minestom.server.command.builder.Command
 import net.minestom.server.extensions.Extension
 import net.minestom.server.instance.block.BlockHandler
@@ -96,11 +95,9 @@ class AutoRegisterFramework(
      */
     fun registerCommands() {
         commandObjs.forEach {
-            logger?.info { "Registering command ${it::class.qualifiedName}." }
             (it as Command).register()
         }
         kommandObjs.forEach {
-            logger?.info { "Registering kommand ${it::class.qualifiedName}." }
             (it as Kommand).register()
         }
     }
@@ -110,11 +107,9 @@ class AutoRegisterFramework(
      */
     fun unregisterCommands() {
         kommandObjs.reversed().forEach {
-            logger?.info { "Unregistering kommand ${it::class.qualifiedName}." }
             (it as Kommand).unregister()
         }
         commandObjs.reversed().forEach {
-            logger?.info { "Unregistering command ${it::class.qualifiedName}." }
             (it as Command).unregister()
         }
     }
@@ -124,7 +119,6 @@ class AutoRegisterFramework(
      */
     fun startServices() {
         serviceObjs.forEach {
-            logger?.info { "Starting service ${it::class.qualifiedName}." }
             (it as Service).start()
         }
     }
@@ -134,7 +128,6 @@ class AutoRegisterFramework(
      */
     fun stopServices() {
         serviceObjs.reversed().forEach {
-            logger?.info { "Stopping service ${it::class.qualifiedName}." }
             (it as Service).stop()
         }
     }
@@ -146,14 +139,12 @@ class AutoRegisterFramework(
      */
     fun registerBlockHandlers() {
         blockHandlerObjs.forEach {
-            logger?.info { "Registering block handler ${it::class.qualifiedName}." }
             (it as BlockHandler).register()
         }
     }
 
     fun registerPlayerData() {
         playerDataClasses.forEach {
-            logger?.info { "Registering player data ${it.qualifiedName}." }
             require(it.identifer.isNotBlank()) { "Player data ${it.qualifiedName} must have an identifier." }
             PlayerDataService.register(it, it.identifer)
         }
@@ -161,7 +152,6 @@ class AutoRegisterFramework(
 
     fun registerGlobalData() {
         globalDataClassess.forEach {
-            logger?.info { "Registering global data ${it.qualifiedName}." }
             require(it.identifer.isNotBlank()) { "Global data ${it.qualifiedName} must have an identifier." }
             GlobalDataService.register(it, it.identifer)
         }

@@ -15,7 +15,7 @@ object CommandInfo : Kommand({
     val block by literal
     val entity by literal
 
-    playerCallbackFailMessage = {
+    notPlayerAction = {
         it.message("&r只有玩家能使用这个命令。")
     }
 

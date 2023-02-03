@@ -9,14 +9,15 @@ import net.minestom.server.entity.Player
 import net.minestom.server.utils.entity.EntityFinder
 import org.jetbrains.annotations.Contract
 import world.cepi.kstom.command.kommand.Kommand
+import world.cepi.kstom.command.kommand.SyntaxContext
 
-val Kommand.SyntaxContext.args
+val SyntaxContext.args
     get() = this.context
 
 @Contract(pure = true)
 inline fun Kommand.opSyntax(
     vararg arguments: Argument<*> = arrayOf(),
-    crossinline executor: Kommand.SyntaxContext.() -> Unit
+    crossinline executor: SyntaxContext.() -> Unit
 ) = syntax(*arguments, executor = {
     if (!sender.isOp()) {
         sender.sendLang("message-command-operator-only")
@@ -25,6 +26,9 @@ inline fun Kommand.opSyntax(
     executor()
 })
 
+/**
+ * 查找在 [sender] 所在世界内的所有匹配的玩家。
+ */
 fun EntityFinder.findPlayers(sender: CommandSender): List<Player> {
     return find(sender).filterIsInstance<Player>()
 }

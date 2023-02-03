@@ -1,6 +1,7 @@
 package net.geekmc.turingcore.player.skin
 
 import kotlinx.coroutines.*
+import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.framework.AutoRegister
 import net.geekmc.turingcore.library.service.Service
@@ -14,7 +15,7 @@ import world.cepi.kstom.event.listenOnly
  * 基于玩家名的皮肤服务。
  */
 @AutoRegister
-object SkinService : Service() {
+object SkinService : Service(turingCoreDi) {
 
     private lateinit var scope: CoroutineScope
 

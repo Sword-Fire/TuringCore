@@ -19,7 +19,7 @@ object CommandOp : Kommand({
         .singleEntity(true)
     val booleanArg = ArgumentBoolean("boolean").defaultValue(true)
 
-    commandHelpMessage = { sender ->
+    help { sender ->
         sender.message("&r命令用法不正确: /${context.input}")
         sender.message("&r正确用法: /op <Player> [Boolean]")
     }

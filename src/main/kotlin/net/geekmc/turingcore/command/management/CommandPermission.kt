@@ -22,11 +22,11 @@ object CommandPermission : Kommand({
     val targetArg = ArgumentEntity("target").onlyPlayers(true).setDefaultValueToSelf()
     val permArg = ArgumentWord("perm")
 
-    playerCallbackFailMessage = {
+    notPlayerAction = {
         it.message("&r只有玩家能使用这个命令.")
     }
 
-    commandHelpMessage = { sender ->
+    help { sender ->
         sender.message("&r命令用法不正确: /${context.input}")
         sender.message("&r输入 /perm help 来了解用法.")
     }

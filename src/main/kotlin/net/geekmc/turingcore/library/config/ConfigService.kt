@@ -4,6 +4,7 @@ import com.charleskorn.kaml.Yaml
 import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.serializer
+import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.util.extender.saveResource
 import net.minestom.server.extensions.Extension
@@ -17,7 +18,7 @@ import kotlin.reflect.full.createType
 /**
  * 全局数据服务。关闭后不允许再开启。
  */
-object ConfigService : Service() {
+object ConfigService : Service(turingCoreDi) {
 
     /**
      * 加载并获取配置文件。
@@ -55,7 +56,7 @@ object ConfigService : Service() {
                 tempFile.writeText(content)
                 tempFile.moveTo(file, true)
             }.onFailure {
-                logger.warn("保存配置文件失败", it)
+                serviceLogger.warn("保存配置文件失败", it)
             }
         }
     }

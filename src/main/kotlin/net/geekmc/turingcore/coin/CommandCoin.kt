@@ -1,87 +1,100 @@
 package net.geekmc.turingcore.coin
 
 
+import net.geekmc.turingcore.coin.CoinService.coins
+import net.geekmc.turingcore.library.data.player.withOfflinePlayerData
+import net.geekmc.turingcore.library.framework.AutoRegister
 import net.geekmc.turingcore.util.extender.onlyOp
+import net.geekmc.turingcore.util.extender.whenFalse
 import net.minestom.server.command.builder.arguments.ArgumentWord
 import net.minestom.server.command.builder.arguments.number.ArgumentLong
-import world.cepi.kstom.command.arguments.literal
+import net.minestom.server.command.builder.suggestion.SuggestionEntry
+import world.cepi.kstom.Manager
 import world.cepi.kstom.command.kommand.Kommand
 
+// TODO: Lang
+@AutoRegister
 object CommandCoin : Kommand({
 
-    val help by literal
-
-    commandHelpMessage = { sender ->
+    help { sender ->
         sender.sendMessage("Usage: add|remove|set <amount> <coin> <player>")
         sender.sendMessage("Usage: show [id|name] <player>")
         sender.sendMessage("Usage: help")
     }
 
     val amountArg = ArgumentLong("amount")
-    // Kstom 的 [world.cepi.kstom.command.arguments.suggest] 实现有问题，直接调用 MineStom 的 API
+
     val coinArg = ArgumentWord("coin")
-//        .setSuggestionCallback{ _, _, suggestion ->
-//        coinTypeRepo.findAllCoinTypes().getOrThrow().map { it.id }.map { SuggestionEntry(it) }
-//            .forEach(suggestion::addEntry)
-//    }
-    // [ArgumentPlayer] 只能用来指定在线玩家，所以自己实现了一个
+    val playerArg = ArgumentWord("player").setSuggestionCallback { _, _, suggestion ->
+        Manager.connection.onlinePlayers.forEach { suggestion.addEntry(SuggestionEntry(it.username)) }
+    }
+
     // Kstom 的 [world.cepi.kstom.command.arguments.suggest] 实现有问题，直接调用 MineStom 的 API
-    val playerArg = ArgumentWord("player")
 //        .setSuggestionCallback { _, _, suggestion ->
 //        playerUuidRepo.findAllPlayerUuids().getOrThrow().map { it.name }.map { SuggestionEntry(it) }
 //            .forEach(suggestion::addEntry)
 //    }
 
-    subcommand("add") {
-        syntax(amountArg, coinArg, playerArg) {
-            val targetAmount = !amountArg
-            val targetCoin = !coinArg
-            val targetPlayer = !playerArg
+    // TODO: subcommand 失配的时候不会发送 commandHelpMessage
+    subcommand("see") {
 
-            require(targetAmount > 0) { "Amount must be positive!" }
+        help { sender ->
+            sender.sendMessage("66666666666")
+        }
 
-            // TODO: i18n(sendLang)
-            sender.sendMessage("Success!")
+        syntax(coinArg, playerArg) {
+            println("test1")
+            val coin = !coinArg
+            if (!CoinService.isCoinExist(coin)) {
+                sender.sendMessage("货币 $coin 不存在。")
+                return@syntax
+            }
+            var amount: Long = 0
+            val player = Manager.connection.findPlayer(!playerArg)
+            if (player != null) {
+                amount = player.coins[coin]
+            } else {
+                withOfflinePlayerData(!playerArg) {
+                    amount = getData<CoinData>().coins[coin]!!
+                }.whenFalse {
+                    sender.sendMessage("&dr读取数据失败")
+                    return@syntax
+                }
+            }
+            sender.sendMessage("${!playerArg} 的 $coin 余额为 $amount")
+
         }.onlyOp()
     }
 
-    subcommand("remove") {
-        syntax(amountArg, coinArg, playerArg) {
-            val targetAmount = !amountArg
-            val targetCoin = !coinArg
-            val targetPlayer = !playerArg
+//    subcommand("add") {
+//        syntax(amountArg, coinArg, playerArg) {
+//            val targetAmount = !amountArg
+//            val targetCoin = !coinArg
+//            val targetPlayer = !playerArg
+//
+//            require(targetAmount > 0) { "Amount must be positive!" }
+//
+//            sender.sendMessage("Success!")
+//        }.onlyOp()
+//    }
 
-            require(targetAmount > 0) { "Amount must be positive!" }
+//    subcommand("remove") {
+//        syntax(amountArg, coinArg, playerArg) {
+//            val targetAmount = !amountArg
+//            val targetCoin = !coinArg
+//            val targetPlayer = !playerArg
+//
+//            require(targetAmount > 0) { "Amount must be positive!" }
+//            // TODO: i18n(sendLang)
+//            sender.sendMessage("Success!")
+//        }.onlyOp()
+//    }
 
-            // 确保一致性，使用事务
-//            db.useTransaction {
-//                val playerUuidObj = playerUuidRepo.findPlayerUuidByName(targetPlayer).getOrThrow()
-//                val coinTypeObj = coinTypeRepo.findCoinTypeById(targetCoin).getOrThrow()
-//                val currentAmount =
-//                    coinAmountRepo.findCoinAmountByUuidAndType(playerUuidObj.uuid, coinTypeObj.id).getOrThrow()
-//                val beforeAmount = currentAmount.amount
-//                currentAmount.amount -= targetAmount
-//                coinAmountRepo.updateCoinAmount(currentAmount).getOrThrow()
-//                coinHistoryRepo.addCoinHistory {
-//                    player = playerUuidObj
-//                    coinType = coinTypeObj
-//                    actionType = CoinHistoryActionType.REMOVE
-//                    before = beforeAmount
-//                    amount = -targetAmount
-//                    time = Instant.now()
-//                    reason = "Remove Command, sender: ${sender.displayName}"
-//                }.getOrThrow()
-//            }
-            // TODO: i18n(sendLang)
-            sender.sendMessage("Success!")
-        }.onlyOp()
-    }
-
-    subcommand("set") {
-        syntax(amountArg, coinArg, playerArg) {
-            val targetAmount = !amountArg
-            val targetCoin = !coinArg
-            val targetPlayer = !playerArg
+//    subcommand("set") {
+//        syntax(amountArg, coinArg, playerArg) {
+//            val targetAmount = !amountArg
+//            val targetCoin = !coinArg
+//            val targetPlayer = !playerArg
 
             // 确保一致性，使用事务
 //            db.useTransaction {
@@ -102,10 +115,10 @@ object CommandCoin : Kommand({
 //                    reason = "Set Command, sender: $sender"
 //                }.getOrThrow()
 //            }
-            // TODO: i18n(sendLang)
-            sender.sendMessage("Success!")
-        }.onlyOp()
-    }
+//            // TODO: i18n(sendLang)
+//            sender.sendMessage("Success!")
+//        }.onlyOp()
+//    }
 
 //    subcommand("show") {
 //        // TODO: impl suggest

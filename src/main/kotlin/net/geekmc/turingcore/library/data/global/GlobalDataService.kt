@@ -6,6 +6,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.geekmc.turingcore.library.data.serialization.addMinestomSerializers
 import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.service.Service
 import world.cepi.kstom.Manager
 import java.nio.file.Path
@@ -20,8 +21,14 @@ import kotlin.time.measureTime
 /**
  * 全局数据服务。关闭后不允许再开启。
  */
-object GlobalDataService : Service(), TuringCoreDIAware {
+object GlobalDataService : Service(turingCoreDi), TuringCoreDIAware {
 
+    /**
+     * 注册一个全局数据类。
+     * @param T 全局数据类型
+     * @param clazz 玩家数据类
+     * @param identifier 数据标识符，会被用作存储文件命名。应当使用 [插件名:数据类名] 的形式 (e.g. TuringCore:WorldData)
+     */
     @Suppress("UNCHECKED_CAST")
     fun <T : GlobalData> register(clazz: KClass<T>, identifier: String): T {
         val fileName = "$identifier.json"
@@ -57,7 +64,7 @@ object GlobalDataService : Service(), TuringCoreDIAware {
             val time = measureTime {
                 saveData()
             }.inWholeMilliseconds
-            logger.info("定时保存全局数据，耗时 $time ms")
+            serviceLogger.info("定时保存全局数据，耗时 $time ms")
         }.delay(saveInterval).repeat(saveInterval).schedule()
 
     }

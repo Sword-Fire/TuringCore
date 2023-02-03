@@ -1,15 +1,16 @@
 package net.geekmc.turingcore.library.service
 
-import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.minestom.server.extensions.Extension
+import org.kodein.di.DI
 import org.kodein.di.instance
-import org.slf4j.Logger
 
-// TODO: 其他插件也有服务，不应该使用TuringCoreDIAware而是注入DI.
 /**
  * 代表一种服务。
+ * @param di 依赖注入容器。需要提供 Extension 。
  */
-abstract class Service : TuringCoreDIAware {
-    protected val logger: Logger by instance()
+abstract class Service(private val serviceDi: DI) {
+    protected val serviceExtension by serviceDi.instance<Extension>()
+    protected val serviceLogger by lazy { serviceExtension.logger }
 
     var isActive = false
         protected set

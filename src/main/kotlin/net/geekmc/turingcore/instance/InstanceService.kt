@@ -1,6 +1,7 @@
 package net.geekmc.turingcore.instance
 
 import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.service.Service
 import net.minestom.server.event.player.PlayerLoginEvent
@@ -13,7 +14,7 @@ import org.kodein.di.instance
 import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
 
-object InstanceService : Service(), TuringCoreDIAware {
+object InstanceService : Service(turingCoreDi), TuringCoreDIAware {
 
     const val MAIN_INSTANCE_ID = "world"
 

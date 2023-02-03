@@ -1,7 +1,7 @@
 package net.geekmc.turingcore.player.essentialdata
 
 import net.geekmc.turingcore.library.data.player.getData
-import net.geekmc.turingcore.library.di.TuringCoreDIAware
+import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.framework.AutoRegister
 import net.geekmc.turingcore.library.service.Service
@@ -12,7 +12,7 @@ import world.cepi.kstom.event.listenOnly
 
 // TODO: 存储玩家所在Instance。
 @AutoRegister
-object EssentialPlayerDataService : Service(), TuringCoreDIAware {
+object EssentialPlayerDataService : Service(turingCoreDi) {
     override fun onEnable() {
         EventNodes.VERY_HIGH.listenOnly<PlayerLoginEvent> {
             val data = player.getData<EssentialPlayerData>()
