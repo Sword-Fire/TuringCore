@@ -40,6 +40,15 @@ dependencies {
     compileOnly("com.charleskorn.kaml:kaml:${project.ext["version.kaml"]}")
     compileOnly("org.kodein.di:kodein-di-jvm:${project.ext["version.kodein-di-jvm"]}")
     compileOnly("org.reflections:reflections:${project.ext["version.reflections"]}")
+
+    testImplementation("io.kotest:kotest-assertions-core:5.5.4")
+    testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
+}
+
+configurations {
+    testImplementation {
+        extendsFrom(configurations.compileOnly.get())
+    }
 }
 
 @Suppress("UnstableApiUsage")
