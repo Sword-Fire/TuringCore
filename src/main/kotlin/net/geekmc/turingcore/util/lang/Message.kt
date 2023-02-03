@@ -19,9 +19,6 @@ import net.minestom.server.command.CommandSender
  *   fadeout: 0
  *  ```
  */
-interface Type {
-
-    fun init(source: Map<String, Any>): Boolean
-
+sealed interface Message {
     fun send(sender: CommandSender, vararg args: Any)
 }
