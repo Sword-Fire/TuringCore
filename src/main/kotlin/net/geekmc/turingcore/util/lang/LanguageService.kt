@@ -30,10 +30,15 @@ object LanguageService : Service(turingCoreDi), TuringCoreDIAware {
         extension.saveResource(CONFIG_PATH, CONFIG_PATH, false)
 
         val configPath = dataPath.resolve(CONFIG_PATH)
-        val root = Yaml.default.parseToYamlNode(configPath.inputStream())
-        root.yamlMap.entries.forEach { (key, value) ->
-            val keyStr = key.content
-            val obj = if (value is YamlScalar) {
+        parseLangYaml(configPath).forEach { (k, v) ->
+            messageMap[k] = v
+        }
+    }
+
+    fun parseLangYaml(langYaml: Path): Map<String, Message> {
+        val root = Yaml.default.parseToYamlNode(langYaml.inputStream())
+        return root.yamlMap.entries.map { (key, value) ->
+            key.content to if (value is YamlScalar) {
                 MessageText(value.content)
             } else {
                 when (val typeId = value.yamlMap.get<YamlScalar>("type")!!.content) {
@@ -44,9 +49,7 @@ object LanguageService : Service(turingCoreDi), TuringCoreDIAware {
                     else -> error("Unknown message type: $typeId")
                 }
             }
-            messageMap[keyStr] = obj
-            logger.info("Loaded message: $keyStr")
-        }
+        }.toMap()
     }
 
     override fun onEnable() {
