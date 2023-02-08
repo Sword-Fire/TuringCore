@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import net.geekmc.turingcore.library.color.toComponent
 import net.geekmc.turingcore.library.config.Config
 import net.geekmc.turingcore.library.config.ConfigService
-import net.geekmc.turingcore.library.di.PathKeys
+import net.geekmc.turingcore.library.di.PathTags
 import net.geekmc.turingcore.library.di.TuringCoreDIAware
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
@@ -31,7 +31,7 @@ object MotdService : Service(turingCoreDi), TuringCoreDIAware {
 
     private val extension by instance<Extension>()
     private val configService by instance<ConfigService>()
-    private val dataPath by instance<Path>(tag = PathKeys.EXTENSION_FOLDER)
+    private val dataPath by instance<Path>(tag = PathTags.EXTENSION_FOLDER)
 
     lateinit var config: MotdConfig
 

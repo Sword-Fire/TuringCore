@@ -5,19 +5,23 @@ import net.geekmc.turingcore.library.color.ColorService
 import net.geekmc.turingcore.library.data.global.GlobalDataService
 import net.geekmc.turingcore.library.data.player.PlayerDataService
 import net.geekmc.turingcore.library.di.initTuringCoreDi
+import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.framework.AutoRegisterFramework
 import net.geekmc.turingcore.player.uuid.UUIDService
+import net.geekmc.turingcore.util.lang.GlobalLang
 import net.geekmc.turingcore.util.lang.LanguageService
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.extensions.Extension
 import net.minestom.server.utils.callback.CommandCallback
+import org.kodein.di.instance
 import world.cepi.kstom.Manager
 
 @Suppress("unused")
 class TuringCore : Extension() {
 
     private val autoRegisterFramework by lazy { AutoRegisterFramework.load(this, "net.geekmc.turingcore") }
+    private val globalLang: GlobalLang by turingCoreDi.instance()
 
     override fun preInitialize() {
         initTuringCoreDi(this)
@@ -53,7 +57,7 @@ class TuringCore : Extension() {
     private fun registerUnknownCommandCallback() {
         // 输入未知指令时的提示信息。
         Manager.command.unknownCommandCallback = CommandCallback { sender, _ ->
-            sender.sendLang("message-command-unknown")
+            sender.sendLang(globalLang, "global-message-command-unknown")
         }
     }
 

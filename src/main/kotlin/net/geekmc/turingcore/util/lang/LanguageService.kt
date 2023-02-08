@@ -3,7 +3,7 @@ package net.geekmc.turingcore.util.lang
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlScalar
 import com.charleskorn.kaml.yamlMap
-import net.geekmc.turingcore.library.di.PathKeys
+import net.geekmc.turingcore.library.di.PathTags
 import net.geekmc.turingcore.library.di.TuringCoreDIAware
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.service.Service
@@ -17,9 +17,9 @@ import kotlin.io.path.inputStream
 object LanguageService : Service(turingCoreDi), TuringCoreDIAware {
     private val logger by instance<Logger>()
 
-    private val GLOBAL_LANG_FILE_PATH = Path.of("lang.yml")
+    private val GLOBAL_LANG_FILE_PATH = Path.of("global-lang.yml")
     private val extension by instance<Extension>()
-    private val dataPath by instance<Path>(tag = PathKeys.EXTENSION_FOLDER)
+    private val dataPath by instance<Path>(tag = PathTags.EXTENSION_FOLDER)
     val GLOBAL_LANG_PATH = dataPath.resolve(GLOBAL_LANG_FILE_PATH)
 
     private val langMap = mutableMapOf<String, Lang>()

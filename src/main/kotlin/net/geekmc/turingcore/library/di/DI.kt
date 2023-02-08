@@ -3,6 +3,10 @@
 package net.geekmc.turingcore.library.di
 
 import net.geekmc.turingcore.library.config.ConfigService
+import net.geekmc.turingcore.util.extender.saveResource
+import net.geekmc.turingcore.util.lang.ExtensionLang
+import net.geekmc.turingcore.util.lang.GlobalLang
+import net.geekmc.turingcore.util.lang.LanguageService
 import net.minestom.server.MinecraftServer
 import net.minestom.server.advancements.AdvancementManager
 import net.minestom.server.adventure.bossbar.BossBarManager
@@ -27,6 +31,7 @@ import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 import org.slf4j.Logger
 import java.nio.file.Path
+import kotlin.io.path.div
 
 val turingCoreDi: LateInitDI = LateInitDI()
 
@@ -41,13 +46,22 @@ fun initTuringCoreDi(extension: Extension) {
     }
 }
 
-enum class PathKeys {
+enum class PathTags {
     EXTENSION_FOLDER,
 }
 
 val baseModule by DI.Module {
     bindSingleton<Logger> { instance<Extension>().logger }
-    bindSingleton<Path>(tag = PathKeys.EXTENSION_FOLDER) { instance<Extension>().dataDirectory }
+    bindSingleton<Path>(tag = PathTags.EXTENSION_FOLDER) { instance<Extension>().dataDirectory }
+    bindSingleton<GlobalLang> { LanguageService.getGlobalLang() }
+    bindSingleton<ExtensionLang> {
+        LanguageService.getExtensionLang(instance<Extension>()).also {
+            val ext = instance<Extension>()
+            val path = Path.of("lang.yml")
+            ext.saveResource(path, path, replace = false)
+            it.addLoadPath(instance<Path>(tag = PathTags.EXTENSION_FOLDER) / path)
+        }
+    }
 }
 
 val serviceModule by DI.Module {

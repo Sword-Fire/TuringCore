@@ -11,7 +11,7 @@ sealed class Lang {
     abstract operator fun get(key: String): Message?
 }
 
-class GlobalLang : Lang() {
+class GlobalLang internal constructor() : Lang() {
     override var messages = LanguageService.parseLangYaml(LanguageService.GLOBAL_LANG_PATH)
     override val namespace = "global"
 
@@ -27,7 +27,7 @@ class GlobalLang : Lang() {
     override operator fun get(key: String): Message? = messages[key]
 }
 
-class ExtensionLang(extension: Extension) : Lang() {
+class ExtensionLang internal constructor(extension: Extension) : Lang() {
     override var messages = emptyMap<String, Message>()
     override val namespace = extension.origin.name
 
