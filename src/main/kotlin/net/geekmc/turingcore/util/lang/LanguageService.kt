@@ -17,22 +17,27 @@ import kotlin.io.path.inputStream
 object LanguageService : Service(turingCoreDi), TuringCoreDIAware {
     private val logger by instance<Logger>()
 
-    private val CONFIG_PATH = Path.of("lang.yml")
+    private val GLOBAL_LANG_FILE_PATH = Path.of("lang.yml")
     private val extension by instance<Extension>()
     private val dataPath by instance<Path>(tag = PathKeys.EXTENSION_FOLDER)
+    val GLOBAL_LANG_PATH = dataPath.resolve(GLOBAL_LANG_FILE_PATH)
 
-    val messageMap = mutableMapOf<String, Message>()
+    private val langMap = mutableMapOf<String, Lang>()
 
     private fun init() {
-        if (messageMap.isNotEmpty()) {
-            messageMap.clear()
-        }
-        extension.saveResource(CONFIG_PATH, CONFIG_PATH, false)
+        extension.saveResource(GLOBAL_LANG_FILE_PATH, GLOBAL_LANG_FILE_PATH, false)
+    }
 
-        val configPath = dataPath.resolve(CONFIG_PATH)
-        parseLangYaml(configPath).forEach { (k, v) ->
-            messageMap[k] = v
-        }
+    fun getGlobalLang(): GlobalLang {
+        return langMap.getOrPut("global") {
+            GlobalLang()
+        } as GlobalLang
+    }
+
+    fun getExtensionLang(extension: Extension): ExtensionLang {
+        return langMap.getOrPut(extension.origin.name) {
+            ExtensionLang(extension)
+        } as ExtensionLang
     }
 
     fun parseLangYaml(langYaml: Path): Map<String, Message> {
