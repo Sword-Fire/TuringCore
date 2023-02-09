@@ -5,7 +5,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import net.geekmc.turingcore.library.data.serialization.addMinestomSerializers
-import net.geekmc.turingcore.library.di.TuringCoreDIAware
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.service.Service
 import world.cepi.kstom.Manager
@@ -21,7 +20,7 @@ import kotlin.time.measureTime
 /**
  * 全局数据服务。关闭后不允许再开启。
  */
-object GlobalDataService : Service(turingCoreDi), TuringCoreDIAware {
+object GlobalDataService : Service(turingCoreDi) {
 
     /**
      * 注册一个全局数据类。

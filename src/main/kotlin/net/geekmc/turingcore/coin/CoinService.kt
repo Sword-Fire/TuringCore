@@ -3,7 +3,6 @@ package net.geekmc.turingcore.coin
 import net.geekmc.turingcore.library.config.ConfigService
 import net.geekmc.turingcore.library.data.player.PlayerDataLoadEvent
 import net.geekmc.turingcore.library.data.player.getData
-import net.geekmc.turingcore.library.di.TuringCoreDIAware
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.framework.AutoRegister
@@ -13,8 +12,23 @@ import net.minestom.server.extensions.Extension
 import org.kodein.di.instance
 import world.cepi.kstom.event.listenOnly
 
+/**
+ * 在线玩家用法：
+ * ```
+ * player.coins[coinName] += 100
+ * ```
+ *
+ * 离线玩家用法：
+ * ```
+ * withOfflinePlayerData(username) {
+ *      getData<CoinData>().coins[coinName] +100
+ * }.onFailure {
+ *      println("&读取离线玩家数据失败")
+ * }
+ * ```
+ */
 @AutoRegister
-object CoinService : Service(turingCoreDi), TuringCoreDIAware {
+object CoinService : Service(turingCoreDi) {
 
     private val extension: Extension by instance()
     private lateinit var config: CoinConfig
@@ -23,11 +37,12 @@ object CoinService : Service(turingCoreDi), TuringCoreDIAware {
         return config.coins.contains(type)
     }
 
+    fun getCoins(): List<String> = config.coins.map { it.key }
+
     override fun onEnable() {
         loadConfig()
         // --- 加载时若某种货币的数据不存在，则初始化为0 ---
         EventNodes.VERY_HIGH.listenOnly<PlayerDataLoadEvent> {
-            println("监听到 PlayerDataLoadEvent")
             val data = getData<CoinData>()
             for ((type, _) in config.coins) {
                 if (!data.coins.contains(type)) {

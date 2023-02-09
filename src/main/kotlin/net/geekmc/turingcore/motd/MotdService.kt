@@ -5,7 +5,6 @@ import net.geekmc.turingcore.library.color.toComponent
 import net.geekmc.turingcore.library.config.Config
 import net.geekmc.turingcore.library.config.ConfigService
 import net.geekmc.turingcore.library.di.PathKeys
-import net.geekmc.turingcore.library.di.TuringCoreDIAware
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.framework.AutoRegister
@@ -24,7 +23,7 @@ import kotlin.io.path.notExists
 import kotlin.io.path.readBytes
 
 @AutoRegister
-object MotdService : Service(turingCoreDi), TuringCoreDIAware {
+object MotdService : Service(turingCoreDi) {
 
     private const val ICON_PATH = "motd/icon.png"
     private const val CONFIG_PATH = "motd/config.yml"

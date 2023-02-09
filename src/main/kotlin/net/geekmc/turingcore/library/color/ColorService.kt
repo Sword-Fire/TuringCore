@@ -3,7 +3,6 @@ package net.geekmc.turingcore.library.color
 import kotlinx.serialization.Serializable
 import net.geekmc.turingcore.library.config.Config
 import net.geekmc.turingcore.library.config.ConfigService
-import net.geekmc.turingcore.library.di.TuringCoreDIAware
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.util.unsafeLazy
@@ -12,7 +11,7 @@ import net.minestom.server.extensions.Extension
 import org.kodein.di.instance
 import java.util.*
 
-object ColorService : Service(turingCoreDi), TuringCoreDIAware {
+object ColorService : Service(turingCoreDi) {
 
     private const val CONFIG_PATH = "colors.yml"
 

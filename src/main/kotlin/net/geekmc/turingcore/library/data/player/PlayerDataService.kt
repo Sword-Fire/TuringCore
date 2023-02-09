@@ -9,21 +9,23 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.serializer
 import net.geekmc.turingcore.library.data.serialization.addMinestomSerializers
-import net.geekmc.turingcore.library.di.TuringCoreDIAware
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.service.Service
 import net.geekmc.turingcore.player.uuid.UUIDService
 import net.geekmc.turingcore.util.coroutine.MinestomSync
+import net.minestom.server.entity.Player
 import net.minestom.server.event.EventDispatcher
 import net.minestom.server.event.player.AsyncPlayerPreLoginEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.minestom.server.event.player.PlayerLoginEvent
 import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.time.Duration
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -31,14 +33,43 @@ import kotlin.reflect.full.createType
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-private typealias PlayerDataMap = HashMap<String, PlayerData>
 
-val di = turingCoreDi
+inline fun <reified T : PlayerData> Player.getData(): T {
+    return PlayerDataService.getPlayerData(this.uuid, T::class)
+}
+
+class OfflinePlayerDataContext(val uuid: UUID) {
+    inline fun <reified T : PlayerData> getData(): T {
+        return PlayerDataService.getPlayerData(uuid, T::class)
+    }
+}
+
+/**
+ * 尝试加载离线玩家的数据并执行 [action] 。
+ * 如果加载数据失败，则不会执行 [action] 而是返回 [Result.failure] 。
+ */
+fun <T> withOfflinePlayerData(uuid: UUID, action: OfflinePlayerDataContext.() -> T): Result<T> {
+    if (!PlayerDataService.loadPlayerDataSync(uuid)) {
+        return Result.failure(IllegalStateException("Failed to load player data of player $uuid"))
+    }
+    val value = OfflinePlayerDataContext(uuid).action()
+    if (!PlayerDataService.asyncLoginingPlayers.contains(uuid)) {
+        PlayerDataService.savePlayerData(uuid)
+        PlayerDataService.unloadPlayerData(uuid)
+    }
+    return Result.success(value)
+}
+
+fun <T> withOfflinePlayerData(username: String, action: OfflinePlayerDataContext.() -> T): Result<T> {
+    return withOfflinePlayerData(UUIDService.getUUID(username), action)
+}
+
+private typealias PlayerDataMap = HashMap<String, PlayerData>
 
 /**
  * 玩家数据服务。
  */
-object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
+object PlayerDataService : Service(turingCoreDi) {
 
     /**
      * 注册一个玩家数据类。
@@ -57,8 +88,11 @@ object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
         updateJson()
     }
 
+    // 表示玩家是否在异步登陆加载数据的过程。如果是，则主线程请求离线玩家数据后，数据不会被卸载。
+    internal val asyncLoginingPlayers = ConcurrentHashMap.newKeySet<UUID>()
+
     // 存储所有玩家数据的Map，只允许在主线程中访问。
-    private val uuidToDataMap = HashMap<UUID, PlayerDataMap>()
+    private val uuidToDataMap = ConcurrentHashMap<UUID, PlayerDataMap>()
     private val clazzToIdentifierMap = HashMap<KClass<out PlayerData>, String>()
     private val clazzToAddSerializerActionMap = HashMap<KClass<out PlayerData>, (SerializersModuleBuilder.() -> Unit)>()
 
@@ -84,6 +118,7 @@ object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
         get() = Path.of("playerdata/${this}.json.tmp")
 
     fun <T : PlayerData> getPlayerData(uuid: UUID, clazz: KClass<out PlayerData>): T {
+        Thread.yield()
         val identifier = clazzToIdentifierMap[clazz] ?: error("Identifier of Class ${clazz.qualifiedName} not exists")
         val playerDataMap = uuidToDataMap[uuid] ?: error("Can not find the data map of player $uuid in uuidToDataMap")
         val data = playerDataMap[identifier] ?: error("Data with identifier $identifier not found in player $uuid")
@@ -93,27 +128,20 @@ object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
             ?: error("While getting data $identifier of player $uuid, failed to convert PlayerData to ${clazz.simpleName}")
     }
 
-    fun withOfflinePlayerData(uuid: UUID, action: OfflinePlayerDataContext.() -> Unit): Boolean {
-        if (!loadPlayerData(uuid)) {
-            return false
-        }
-        OfflinePlayerDataContext(uuid).action()
-        savePlayerData(uuid)
-        return true
-    }
-
-    fun withOfflinePlayerData(username: String, action: OfflinePlayerDataContext.() -> Unit): Boolean {
-        return withOfflinePlayerData(UUIDService.getUUID(username), action)
-    }
-
     @OptIn(ExperimentalTime::class)
     override fun onEnable() {
 
         // 最高优先级。
         EventNodes.INTERNAL_HIGHEST.listenOnly<AsyncPlayerPreLoginEvent> {
-            if (!loadPlayerData(player.uuid)) {
+            asyncLoginingPlayers.add(player.uuid)
+            if (!loadPlayerDataAsync(player.uuid)) {
                 player.kick("读取数据超时")
+                asyncLoginingPlayers.remove(player.uuid)
             }
+        }
+
+        EventNodes.INTERNAL_HIGHEST.listenOnly<PlayerLoginEvent> {
+            asyncLoginingPlayers.remove(player.uuid)
         }
 
         // 最低优先级，待其他插件处理完毕后再保存数据。
@@ -134,10 +162,10 @@ object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
     }
 
     /**
-     * 加载玩家数据，会阻塞调用线程。可能在玩家进服时异步调用，可能在主线程需求离线玩家数据时同步调用。
+     * 加载玩家数据，会阻塞调用线程。在玩家进服时异步调用。同步调用该方法会导致死锁。
      * @return 是否成功读取。
      */
-    private fun loadPlayerData(uuid: UUID): Boolean {
+    internal fun loadPlayerDataAsync(uuid: UUID): Boolean {
         val result = runBlocking {
             withContext(singleThreadContext) {
                 var isReadFileSuccessful = true
@@ -150,9 +178,7 @@ object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
                 // 读取文件失败，直接返回。
                 if (!isReadFileSuccessful) {
                     serviceLogger.error("读取玩家 $uuid 的数据失败")
-                    withContext(Dispatchers.MinestomSync) {
-                        uuidToDataMap.remove(uuid)
-                    }
+                    withContext(Dispatchers.MinestomSync) { uuidToDataMap.remove(uuid) }
                     return@withContext false
                 }
                 val dataMap: PlayerDataMap = serviceThreadJson.decodeFromString(fileContent)
@@ -162,9 +188,39 @@ object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
                         dataMap[identifier] = clazz.createInstance()
                     }
                 }
-                withContext(Dispatchers.MinestomSync) {
-                    uuidToDataMap[uuid] = dataMap
+                withContext(Dispatchers.MinestomSync) { uuidToDataMap[uuid] = dataMap }
+                true
+            }
+
+        }
+        EventDispatcher.call(PlayerDataLoadEvent(uuid))
+        return result
+    }
+
+    internal fun loadPlayerDataSync(uuid: UUID): Boolean {
+        val result = runBlocking {
+            withContext(singleThreadContext) {
+                var isReadFileSuccessful = true
+                val fileContent = if (uuid.dataFile.exists()) {
+                    withTimeoutOrNull(5000L) { uuid.dataFile.readText() } ?: run {
+                        isReadFileSuccessful = false
+                        "__FAILED__"
+                    }
+                } else "{}"
+                // 读取文件失败，直接返回。
+                if (!isReadFileSuccessful) {
+                    serviceLogger.error("读取玩家 $uuid 的数据失败")
+                    uuidToDataMap.remove(uuid)
+                    return@withContext false
                 }
+                val dataMap: PlayerDataMap = serviceThreadJson.decodeFromString(fileContent)
+                // 将文件中没有的数据设为默认值。
+                for ((clazz, identifier) in clazzToIdentifierMap) {
+                    dataMap[identifier] ?: apply {
+                        dataMap[identifier] = clazz.createInstance()
+                    }
+                }
+                uuidToDataMap[uuid] = dataMap
                 true
             }
         }
@@ -175,9 +231,10 @@ object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
     /**
      * 在主线程中将玩家数据序列化，随后将序列化后的数据异步写入文件。
      */
-    private fun savePlayerData(uuid: UUID) {
+    internal fun savePlayerData(uuid: UUID) {
         val content = mainThreadJson.encodeToString(uuidToDataMap[uuid])
         // 在玩家数据线程写入文件
+        // 问题：协程并不能保证执行顺序，可能
         CoroutineScope(singleThreadContext).launch {
             val tempFile = uuid.tempDataFile
             if (tempFile.notExists()) {
@@ -189,7 +246,7 @@ object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
         }
     }
 
-    private fun unloadPlayerData(uuid: UUID) {
+    internal fun unloadPlayerData(uuid: UUID) {
         uuidToDataMap.remove(uuid)
     }
 
@@ -210,4 +267,3 @@ object PlayerDataService : Service(turingCoreDi), TuringCoreDIAware {
         }
     }
 }
-

@@ -2,13 +2,15 @@ package net.geekmc.turingcore.library.service
 
 import net.minestom.server.extensions.Extension
 import org.kodein.di.DI
+import org.kodein.di.DIAware
 import org.kodein.di.instance
 
 /**
  * 代表一种服务。
- * @param di 依赖注入容器。需要提供 Extension 。
+ * @param [serviceDi] 依赖注入容器。需要提供 Extension 。
  */
-abstract class Service(private val serviceDi: DI) {
+abstract class Service(serviceDi: DI) : DIAware {
+    override val di: DI = serviceDi
     protected val serviceExtension by serviceDi.instance<Extension>()
     protected val serviceLogger by lazy { serviceExtension.logger }
 
