@@ -1,8 +1,5 @@
 message-command-gamemode-unknown: "&r[System] &gr{0} 是未知的游戏模式."
 message-command-gamemode-succ: "&r[System] &gr已将 {0} 的游戏模式设置为 {1}."
-
 message-command-kill-succ: "&r[System] &gr已成功杀死玩家: {0}"
-
 message-command-lang-reload-succ: "&r[System] &gr已成功重载语言模块."
-
 message-command-teleport-succ: "&r[System] &gr已将玩家 {0} 传送到坐标 {1}."

@@ -55,8 +55,8 @@ val baseModule by DI.Module {
     bindSingleton<Path>(tag = PathTags.EXTENSION_FOLDER) { instance<Extension>().dataDirectory }
     bindSingleton<GlobalLang> { LanguageService.getGlobalLang() }
     bindSingleton<ExtensionLang> {
-        LanguageService.getExtensionLang(instance<Extension>()).also {
-            val ext = instance<Extension>()
+        val ext = instance<Extension>()
+        LanguageService.getExtensionLang(ext).also {
             val path = Path.of("lang.yml")
             ext.saveResource(path, path, replace = false)
             it.addLoadPath(instance<Path>(tag = PathTags.EXTENSION_FOLDER) / path)
