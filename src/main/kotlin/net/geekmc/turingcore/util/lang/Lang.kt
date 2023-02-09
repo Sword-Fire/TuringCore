@@ -14,11 +14,11 @@ sealed class Lang {
 }
 
 class GlobalLang internal constructor() : Lang() {
-    override var messages = LanguageService.parseLangYaml(LanguageService.GLOBAL_LANG_PATH)
+    override var messages = LanguageParser.parseLangYaml(LanguageService.GLOBAL_LANG_PATH)
     override val namespace = "global"
 
     override fun reload() {
-        messages = LanguageService.parseLangYaml(LanguageService.GLOBAL_LANG_PATH)
+        messages = LanguageParser.parseLangYaml(LanguageService.GLOBAL_LANG_PATH)
             .onEach { (t, _) ->
                 check(t.startsWith("global-") || t.startsWith(GLOBAL_PREFIX)) {
                     "The key of global lang must start with `$GLOBAL_PREFIX`."
@@ -44,7 +44,7 @@ class ExtensionLang internal constructor(extension: Extension) : Lang() {
 
     override fun reload() {
         messages = loadPaths.map {
-            LanguageService.parseLangYaml(it)
+            LanguageParser.parseLangYaml(it)
         }.reduce(Map<String, Message>::plus)
     }
 

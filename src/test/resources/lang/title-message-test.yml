@@ -1,0 +1,7 @@
+title-message:
+  type: title
+  title: test title
+  subtitle: test subtitle
+  fadein: 10
+  duration: 20
+  fadeout: 30

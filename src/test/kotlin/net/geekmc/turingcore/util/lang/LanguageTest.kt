@@ -1,54 +1,59 @@
 package net.geekmc.turingcore.util.lang
 
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.engine.spec.tempfile
+import io.kotest.matchers.shouldBe
+import net.geekmc.turingcore.readResourceAsString
+import kotlin.io.path.writeText
 
-class LanguageTest : FunSpec({
-//    val textFile = tempfile("turing-core-lang-text-message-test").toPath()
-//    val actionFile = tempfile("turing-core-lang-actionbar-message-test").toPath()
-//    val titleFile = tempfile("turing-core-lang-title-message-test").toPath()
-//
-//    beforeSpec {
-//        textFile.writeText(
-//            """
-//            |text-message: test message
-//            """.trimMargin()
-//        )
-//        actionFile.writeText(
-//            """
-//            |actionbar-message:
-//            |  type: actionbar
-//            |  msg: test message
-//            |  duration: 10
-//            """.trimMargin()
-//        )
-//        titleFile.writeText(
-//            """
-//            |title-message:
-//            |  type: title
-//            |  title: test title
-//            |  subtitle: test subtitle
-//            |  fadein: 10
-//            |  duration: 20
-//            |  fadeout: 30
-//            """.trimMargin()
-//        )
-//    }
-//
-//    test("parse text message should works") {
-//        LanguageService.parseLangYaml(textFile)["text-message"] shouldBe MessageText("test message")
-//    }
-//
-//    test("parse actionbar message should works") {
-//        LanguageService.parseLangYaml(actionFile)["actionbar-message"] shouldBe MessageActionBar("test message", 10)
-//    }
-//
-//    test("parse title message should works") {
-//        LanguageService.parseLangYaml(titleFile)["title-message"] shouldBe MessageTitle(
-//            "test title",
-//            "test subtitle",
-//            10,
-//            20,
-//            30
-//        )
-//    }
+class LanguageTest : StringSpec({
+    val textPath = tempfile("turing-core-lang-text-message-test").toPath()
+    val actionPath = tempfile("turing-core-lang-actionbar-message-test").toPath()
+    val titlePath = tempfile("turing-core-lang-title-message-test").toPath()
+
+    val textString = readResourceAsString("/lang/text-message-test.yml")
+    val actionString = readResourceAsString("/lang/actionbar-message-test.yml")
+    val titleString = readResourceAsString("/lang/title-message-test.yml")
+
+    beforeSpec {
+        textPath.writeText(textString)
+        actionPath.writeText(actionString)
+        titlePath.writeText(titleString)
+    }
+
+    "parse text message from file should works" {
+        LanguageParser.parseLangYaml(textPath)["text-message"] shouldBe MessageText("test message")
+    }
+
+    "parse text message from string should works" {
+        LanguageParser.parseLangYaml(textString)["text-message"] shouldBe MessageText("test message")
+    }
+
+    "parse actionbar message from file should works" {
+        LanguageParser.parseLangYaml(actionPath)["actionbar-message"] shouldBe MessageActionBar("test message", 10)
+    }
+
+    "parse actionbar message from string should works" {
+        LanguageParser.parseLangYaml(actionString)["actionbar-message"] shouldBe MessageActionBar("test message", 10)
+    }
+
+    "parse title message from file should works" {
+        LanguageParser.parseLangYaml(titlePath)["title-message"] shouldBe MessageTitle(
+            "test title",
+            "test subtitle",
+            10,
+            20,
+            30
+        )
+    }
+
+    "parse title message from string should works" {
+        LanguageParser.parseLangYaml(titleString)["title-message"] shouldBe MessageTitle(
+            "test title",
+            "test subtitle",
+            10,
+            20,
+            30
+        )
+    }
 })

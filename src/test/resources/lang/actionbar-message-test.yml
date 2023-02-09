@@ -1,0 +1,4 @@
+actionbar-message:
+  type: actionbar
+  msg: test message
+  duration: 10
