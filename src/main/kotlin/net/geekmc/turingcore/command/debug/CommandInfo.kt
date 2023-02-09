@@ -4,6 +4,7 @@ import net.geekmc.turingcore.command.opSyntax
 import net.geekmc.turingcore.library.color.message
 import net.geekmc.turingcore.library.framework.AutoRegister
 import net.geekmc.turingcore.util.extender.getLineOfSightEntity
+import net.geekmc.turingcore.util.extender.onlyPlayer
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.kommand.Kommand
 
@@ -15,14 +16,14 @@ object CommandInfo : Kommand({
     val block by literal
     val entity by literal
 
-    notPlayerAction = {
-        it.message("&r只有玩家能使用这个命令。")
+    help {
+
     }
 
     opSyntax(hand) {
         player.message("&y手中物品信息:")
         player.message("&rNbt: " + player.itemInMainHand.toItemNBT().toString())
-    }.onlyPlayers()
+    }.onlyPlayer()
 
     opSyntax(block) {
         player.message("&y指向方块信息:")
@@ -32,10 +33,10 @@ object CommandInfo : Kommand({
         player.message("&gNamespaceId: " + b.registry().namespace())
         player.message("&gBlockEntity: " + b.registry().blockEntity())
         player.message("&rNbt: " + b.nbt().toString())
-    }.onlyPlayers()
+    }.onlyPlayer()
 
     opSyntax(entity) {
         player.message("&y指向生物信息:")
         player.message("&rNbt: " + player.getLineOfSightEntity(20.0))
-    }.onlyPlayers()
+    }.onlyPlayer()
 }, name = "information", aliases = arrayOf("info"))

@@ -8,6 +8,6 @@ fun CommandSender.sendLang(lang: Lang, node: String, vararg args: Any) {
     if (msg != null) {
         msg.send(this, *args)
     } else {
-        message(node)
+        message("&r错误: 找不到语言节点 &w$node")
     }
 }

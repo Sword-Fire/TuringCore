@@ -3,6 +3,8 @@ package net.geekmc.turingcore.util.lang
 import net.minestom.server.extensions.Extension
 import java.nio.file.Path
 
+const val GLOBAL_PREFIX = "global."
+
 sealed class Lang {
     abstract var messages: Map<String, Message>
     abstract val namespace: String
@@ -18,8 +20,8 @@ class GlobalLang internal constructor() : Lang() {
     override fun reload() {
         messages = LanguageService.parseLangYaml(LanguageService.GLOBAL_LANG_PATH)
             .onEach { (t, _) ->
-                check(t.startsWith("global-")) {
-                    "The key of global lang must start with `global-`."
+                check(t.startsWith("global-") || t.startsWith(GLOBAL_PREFIX)) {
+                    "The key of global lang must start with `$GLOBAL_PREFIX`."
                 }
             }
     }
@@ -47,7 +49,7 @@ class ExtensionLang internal constructor(extension: Extension) : Lang() {
     }
 
     override operator fun get(key: String): Message? {
-        return if (key.startsWith("global-")) {
+        return if (key.startsWith(GLOBAL_PREFIX)) {
             globalLang[key]
         } else {
             messages[key]

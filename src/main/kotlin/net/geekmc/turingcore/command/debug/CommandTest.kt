@@ -2,6 +2,7 @@ package net.geekmc.turingcore.command.debug
 
 import net.geekmc.turingcore.command.opSyntax
 import net.geekmc.turingcore.library.framework.AutoRegister
+import net.geekmc.turingcore.util.extender.onlyPlayer
 import net.minestom.server.entity.EntityCreature
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.LivingEntity
@@ -53,7 +54,7 @@ object CommandTest : Kommand({
 //                    final Instance instance = ...; // Instance to spawn the chicken in
 //        final Pos spawnPosition = new Pos (0, 42, 0);
 //        chicken.setInstance(instance, spawnPosition);
-    }.onlyPlayers()
+    }.onlyPlayer()
 
 
 }, name = "test") {

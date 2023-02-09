@@ -1,5 +1,19 @@
-message-command-gamemode-unknown: "&r[System] &gr{0} 是未知的游戏模式."
-message-command-gamemode-succ: "&r[System] &gr已将 {0} 的游戏模式设置为 {1}."
-message-command-kill-succ: "&r[System] &gr已成功杀死玩家: {0}"
-message-command-lang-reload-succ: "&r[System] &gr已成功重载语言模块."
-message-command-teleport-succ: "&r[System] &gr已将玩家 {0} 传送到坐标 {1}."
+lang.cmd.reload: "&<&gr>已成功重载语言模块."
+
+coin.cmd.notExist: "<&r>货币 &y{0} 不存在."
+coin.cmd.amountMustBePositive: "<&r>数值 &w{0} 必须为正数."
+coin.cmd.see: "<&gr>&f{0} 的 &f{1} 余额为 &f{2}."
+coin.cmd.add: "<&gr>已为 &w{0} 添加 &w{1} &y{2}, 现有 &w{3} &y{2}."
+coin.cmd.remove: "<&gr>已为 &w{0} 移除 &w{1} &y{2}, 现有 &w{3} &y{2}."
+coin.cmd.set: "<&gr>已将 &w{0} 的 &y{1} 余额设置为 &w{2}."
+
+cmd.teleport.help: "&r使用方法: &w/kill <坐标> [玩家名]"
+cmd.teleport.succ: "&<&gr>已将玩家 &w{0} 传送到坐标 &w{1}."
+
+cmd.kill.help: "&r使用方法: &w/kill <玩家名>"
+cmd.kill.succ: "<&gr>已杀死玩家 &w{0}"
+
+cmd.gamemode.help: "&r使用方法: &w/gamemode <游戏模式> [玩家名] "
+cmd.gamemode.unknown: "<&r>&w{0} 是未知的游戏模式."
+cmd.gamemode.succ: "<&gr>已将 &w{0} 的游戏模式设置为 &w{1}."
+

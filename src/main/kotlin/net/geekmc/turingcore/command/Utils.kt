@@ -24,7 +24,7 @@ inline fun Kommand.opSyntax(
 ) = syntax(*arguments, executor = {
     val globalLang by turingCoreDi.instance<GlobalLang>()
     if (!sender.isOp()) {
-        sender.sendLang(globalLang, "global-message-command-operator-only")
+        sender.sendLang(globalLang, "global.cmd.opOnly")
         return@syntax
     }
     executor()

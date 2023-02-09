@@ -1,5 +1,8 @@
-global-message-command-unknown: "&r[System] &gr未知指令, 请检查输入的指令是否正确."
-global-message-command-wrong-usage: "&r[System] &gr错误的指令使用方法."
-global-message-command-player-only: "&r[System] &gr只有玩家才能使用这个指令."
-global-message-command-operator-only: "&r[System] &g&r这个指令只有管理员才能使用."
-global-message-command-player-cannot-found: "&r[System] &gr无法找到用户名为 {0} 的玩家."
+global.cmd.unknown: "<&r>未知指令, 请检查输入的指令是否正确."
+global.cmd.onlyPlayer: "<&r>只有玩家才能使用这个指令."
+global.cmd.onlyOp: "<&r>只有管理员才能使用这个指令."
+global.cmd.onlyConsole: "<&r>只有控制台才能使用这个指令."
+global.cmd.wrongUsage: "<&r>错误的指令使用方法."
+global.cmd.playerNotFound: "<&r>无法找到用户名为 &w{0} 的玩家."
+
+global.data.loadOfflineDataFailed: "<&r>无法加载离线玩家 &y{0} 的数据."

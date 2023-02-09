@@ -57,7 +57,7 @@ class TuringCore : Extension() {
     private fun registerUnknownCommandCallback() {
         // 输入未知指令时的提示信息。
         Manager.command.unknownCommandCallback = CommandCallback { sender, _ ->
-            sender.sendLang(globalLang, "global-message-command-unknown")
+            sender.sendLang(globalLang, "global.cmd.unknown")
         }
     }
 
