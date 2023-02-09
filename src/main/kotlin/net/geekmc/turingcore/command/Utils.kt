@@ -1,6 +1,8 @@
 package net.geekmc.turingcore.command
 
+import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.util.extender.isOp
+import net.geekmc.turingcore.util.lang.GlobalLang
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.arguments.Argument
@@ -8,6 +10,7 @@ import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity
 import net.minestom.server.entity.Player
 import net.minestom.server.utils.entity.EntityFinder
 import org.jetbrains.annotations.Contract
+import org.kodein.di.instance
 import world.cepi.kstom.command.kommand.Kommand
 import world.cepi.kstom.command.kommand.SyntaxContext
 
@@ -19,8 +22,9 @@ inline fun Kommand.opSyntax(
     vararg arguments: Argument<*> = arrayOf(),
     crossinline executor: SyntaxContext.() -> Unit
 ) = syntax(*arguments, executor = {
+    val globalLang by turingCoreDi.instance<GlobalLang>()
     if (!sender.isOp()) {
-        sender.sendLang("message-command-operator-only")
+        sender.sendLang(globalLang, "global-message-command-operator-only")
         return@syntax
     }
     executor()
