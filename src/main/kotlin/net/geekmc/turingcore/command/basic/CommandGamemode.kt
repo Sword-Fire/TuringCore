@@ -2,9 +2,11 @@ package net.geekmc.turingcore.command.basic
 
 import net.geekmc.turingcore.command.args
 import net.geekmc.turingcore.command.findPlayers
-import net.geekmc.turingcore.command.opSyntax
+import net.geekmc.turingcore.command.setDefaultValueToSelf
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.framework.AutoRegister
+import net.geekmc.turingcore.util.extender.help
+import net.geekmc.turingcore.util.extender.onlyOp
 import net.geekmc.turingcore.util.lang.Lang
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.command.CommandSender
@@ -22,7 +24,7 @@ object CommandGamemode : Kommand({
     val di = turingCoreDi
     val lang: Lang by di.instance()
 
-    val targetArg = ArgumentEntity("target").onlyPlayers(true)
+    val targetArg = ArgumentEntity("target").onlyPlayers(true).setDefaultValueToSelf()
     val modeArgs = ArgumentWord("mode").from(
         *listOf(
             GameMode.values().map { it.toString() },
@@ -45,23 +47,22 @@ object CommandGamemode : Kommand({
         }
         sender.sendLang(lang, "cmd.gamemode.succ", player.username, player.gameMode.name)
     }
+//    syntax(modeArgs) {
+//        if (sender !is Player) {
+//            sender.sendLang(lang, "global.cmd.playerOnly")
+//            return@syntax
+//        }
+//        setGameMode(player, player, !modeArgs)
+//    }.onlyOp()
 
-    opSyntax(modeArgs) {
-        if (sender !is Player) {
-            sender.sendLang(lang, "global.cmd.playerOnly")
-            return@opSyntax
-        }
-        setGameMode(player, player, !modeArgs)
-    }
-
-    opSyntax(modeArgs, targetArg) {
+    syntax(modeArgs, targetArg) {
         val players = (!targetArg).findPlayers(sender)
         if (players.isEmpty()) {
             sender.sendLang(lang, "global.cmd.playerNotFound", args.getRaw(targetArg))
-            return@opSyntax
+            return@syntax
         }
         players.forEach {
             setGameMode(sender, it, !modeArgs)
         }
-    }
+    }.onlyOp()
 }, name = "gamemode", aliases = arrayOf("gm"))

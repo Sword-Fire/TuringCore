@@ -5,6 +5,7 @@ import net.geekmc.turingcore.library.data.player.withOfflinePlayerData
 import net.geekmc.turingcore.library.di.TuringCoreDIAware
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.framework.AutoRegister
+import net.geekmc.turingcore.util.extender.help
 import net.geekmc.turingcore.util.extender.onlyOp
 import net.geekmc.turingcore.util.lang.Lang
 import net.geekmc.turingcore.util.lang.sendLang
@@ -67,24 +68,22 @@ object CommandCoin : Kommand({
             sender.sendLang(lang, "coin.cmd.see", username, coin, amount)
         }
 
-//        syntax(coinArg) {
-//            val coin = !coinArg
-//            if (!CoinService.isCoinExist(coin)) {
-//                sender.sendLang(lang, "coin.cmd.notExist", coin)
-//                return@syntax
-//            }
-//            sender.sendLang(lang, "coin.cmd.see", !playerArg, coin, player.coins[coin])
-//        }.onlyPlayer()
     }
 
     subcommand("add") {
-        syntax(playerArg, coinArg, amountArg) {
+        syntax(coinArg, amountArg, playerArg) {
             val coin = !coinArg
             if (!CoinService.isCoinExist(coin)) {
                 sender.sendLang(lang, "coin.cmd.notExist", coin)
                 return@syntax
             }
-            val username = !playerArg
+            val username = if ((!playerArg) == playerArgDefault) {
+                if (sender !is Player) {
+                    sender.sendLang(lang, "global.cmd.playerOnly")
+                    return@syntax
+                }
+                player.username
+            } else !playerArg
             val player = Manager.connection.findPlayer(username)
             val amount = !amountArg
             if (amount <= 0) {
@@ -109,13 +108,19 @@ object CommandCoin : Kommand({
     }
 
     subcommand("remove", "rem") {
-        syntax(playerArg, coinArg, amountArg) {
+        syntax(coinArg, amountArg, playerArg) {
             val coin = !coinArg
             if (!CoinService.isCoinExist(coin)) {
                 sender.sendLang(lang, "coin.cmd.notExist", coin)
                 return@syntax
             }
-            val username = !playerArg
+            val username = if ((!playerArg) == playerArgDefault) {
+                if (sender !is Player) {
+                    sender.sendLang(lang, "global.cmd.playerOnly")
+                    return@syntax
+                }
+                player.username
+            } else !playerArg
             val player = Manager.connection.findPlayer(username)
             val amount = !amountArg
             if (amount <= 0) {
@@ -140,13 +145,19 @@ object CommandCoin : Kommand({
     }
 
     subcommand("set") {
-        syntax(playerArg, coinArg, amountArg) {
+        syntax(coinArg, amountArg, playerArg) {
             val coin = !coinArg
             if (!CoinService.isCoinExist(coin)) {
                 sender.sendLang(lang, "coin.cmd.notExist", coin)
                 return@syntax
             }
-            val username = !playerArg
+            val username = if ((!playerArg) == playerArgDefault) {
+                if (sender !is Player) {
+                    sender.sendLang(lang, "global.cmd.playerOnly")
+                    return@syntax
+                }
+                player.username
+            } else !playerArg
             val player = Manager.connection.findPlayer(username)
             val amount = !amountArg
             if (amount <= 0) {

@@ -28,7 +28,7 @@ fun <T : Kondition<T>> Kondition<T>.onlyOp() =
     condition {
         val isOp = sender.isOp()
         if (!isOp) {
-            sender.sendLang(lang, "global.cmd.onlyOp")
+            sender.sendLang(lang, "global.cmd.onlyOp", this.input)
         }
         isOp
     }
@@ -37,7 +37,7 @@ fun <T : Kondition<T>> Kondition<T>.onlyPlayer() =
     condition {
         val isPlayer = sender is Player
         if (!isPlayer) {
-            sender.sendLang(lang, "global.cmd.onlyPlayer")
+            sender.sendLang(lang, "global.cmd.onlyPlayer", this.input)
         }
         isPlayer
     }
@@ -46,7 +46,7 @@ fun <T : Kondition<T>> Kondition<T>.onlyConsole() =
     condition {
         val isConsole = sender is ConsoleSender
         if (!isConsole) {
-            sender.sendLang(lang, "global.cmd.onlyConsole")
+            sender.sendLang(lang, "global.cmd.onlyConsole", this.input)
         }
         isConsole
     }

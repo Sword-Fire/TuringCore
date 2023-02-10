@@ -3,6 +3,7 @@ package net.geekmc.turingcore.command.basic
 import net.geekmc.turingcore.command.opSyntax
 import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.framework.AutoRegister
+import net.geekmc.turingcore.util.extender.help
 import net.geekmc.turingcore.util.extender.onlyOp
 import net.geekmc.turingcore.util.lang.Lang
 import net.geekmc.turingcore.util.lang.sendLang

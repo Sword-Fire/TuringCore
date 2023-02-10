@@ -12,15 +12,14 @@ import net.minestom.server.utils.entity.EntityFinder
 import org.jetbrains.annotations.Contract
 import org.kodein.di.instance
 import world.cepi.kstom.command.kommand.Kommand
-import world.cepi.kstom.command.kommand.SyntaxContext
 
-val SyntaxContext.args
+val Kommand.SyntaxContext.args
     get() = this.context
 
 @Contract(pure = true)
 inline fun Kommand.opSyntax(
     vararg arguments: Argument<*> = arrayOf(),
-    crossinline executor: SyntaxContext.() -> Unit
+    crossinline executor: Kommand.SyntaxContext.() -> Unit
 ) = syntax(*arguments, executor = {
     val globalLang by turingCoreDi.instance<GlobalLang>()
     if (!sender.isOp()) {
