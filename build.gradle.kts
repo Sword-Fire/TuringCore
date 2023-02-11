@@ -18,8 +18,16 @@ repositories {
     mavenLocal()
 }
 
+val isInWorkSpace = parent?.name == "swork-fire-workspace"
+
+if (isInWorkSpace) {
+    tasks.getByName("build") {
+        dependsOn(":kstom:build")
+    }
+}
+
 dependencies {
-    if (parent?.name == "swork-fire-workspace") {
+    if (isInWorkSpace) {
         compileOnly(project(":kstom"))
     } else {
         // TODO: pin version
