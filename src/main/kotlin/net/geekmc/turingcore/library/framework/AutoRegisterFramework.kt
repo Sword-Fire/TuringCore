@@ -6,7 +6,6 @@ import net.geekmc.turingcore.library.data.player.PlayerData
 import net.geekmc.turingcore.library.data.player.PlayerDataService
 import net.geekmc.turingcore.library.service.Service
 import net.minestom.server.command.builder.Command
-import net.minestom.server.extensions.Extension
 import net.minestom.server.instance.block.BlockHandler
 import org.slf4j.Logger
 import world.cepi.kstom.command.kommand.Kommand
@@ -33,8 +32,8 @@ class AutoRegisterFramework(
          * @param basePackageName 扫描的包名
          * @see [AutoRegisterFramework]
          */
-        fun load(extension: Extension, basePackageName: String): AutoRegisterFramework {
-            return AutoRegisterFramework(extension.origin.classLoader, basePackageName, extension.logger)
+        fun load(classLoader: ClassLoader, basePackageName: String, logger: Logger? = null): AutoRegisterFramework {
+            return AutoRegisterFramework(classLoader, basePackageName, logger)
         }
     }
 

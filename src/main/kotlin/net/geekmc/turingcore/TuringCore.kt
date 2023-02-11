@@ -20,7 +20,13 @@ import world.cepi.kstom.Manager
 @Suppress("unused")
 class TuringCore : Extension() {
 
-    private val autoRegisterFramework by lazy { AutoRegisterFramework.load(this, "net.geekmc.turingcore") }
+    private val autoRegisterFramework by lazy {
+        AutoRegisterFramework.load(
+            this::class.java.classLoader,
+            "net.geekmc.turingcore",
+            this.logger
+        )
+    }
     private val globalLang: GlobalLang by turingCoreDi.instance()
 
     override fun preInitialize() {
