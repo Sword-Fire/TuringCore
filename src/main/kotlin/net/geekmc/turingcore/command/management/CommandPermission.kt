@@ -2,10 +2,13 @@ package net.geekmc.turingcore.command.management
 
 import net.geekmc.turingcore.command.args
 import net.geekmc.turingcore.command.findPlayers
-import net.geekmc.turingcore.command.opSyntax
 import net.geekmc.turingcore.command.setDefaultValueToSelf
 import net.geekmc.turingcore.library.color.message
 import net.geekmc.turingcore.library.framework.AutoRegister
+import net.geekmc.turingcore.util.extender.help
+import net.geekmc.turingcore.util.extender.lang
+import net.geekmc.turingcore.util.extender.onlyOp
+import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.command.builder.arguments.ArgumentLiteral
 import net.minestom.server.command.builder.arguments.ArgumentWord
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity
@@ -22,61 +25,57 @@ object CommandPermission : Kommand({
     val targetArg = ArgumentEntity("target").onlyPlayers(true).setDefaultValueToSelf()
     val permArg = ArgumentWord("perm")
 
-    notPlayerAction = {
-        it.message("&r只有玩家能使用这个命令.")
+    help {
+        sender.sendLang(lang, "cmd.perm.help")
     }
 
-    help { sender ->
-        sender.message("&r命令用法不正确: /${context.input}")
-        sender.message("&r输入 /perm help 来了解用法.")
-    }
+    syntax(listArg, targetArg) {
+        val target = (!targetArg).findFirstPlayer(sender)
+        if (target == null) {
+            if (sender !is Player && args.getRaw(targetArg).isEmpty()) {
+                sender.sendLang(lang, "cmd.perm.noTarget")
+            } else {
+                sender.sendLang(lang, "global.cmd.playerNotFound", raw(targetArg))
+            }
+            return@syntax
+        }
+        sender.sendLang(lang,"cmd.perm.list", target.username)
+        target.allPermissions.forEach {
+            sender.message(" &y- ${it.permissionName}")
+        }
+    }.onlyOp()
 
-    opSyntax(addArg, permArg, targetArg) {
+    syntax(addArg, permArg, targetArg) {
         val players = (!targetArg).findPlayers(sender)
         if (players.isEmpty()) {
             // 不能使用 !target == target.defaultValue
             if (sender !is Player && args.getRaw(targetArg).isEmpty()) {
-                sender.message("&r非玩家使用该命令时不能省略参数 target.")
+                sender.sendLang(lang, "cmd.perm.noTarget")
             } else {
-                sender.message("&r找不到玩家: ${args.getRaw(targetArg)}")
+                sender.sendLang(lang, "global.cmd.playerNotFound", raw(targetArg))
             }
-            return@opSyntax
+            return@syntax
         }
         players.forEach {
             it.addPermission(!permArg)
         }
-        sender.message("&g已将权限 ${!permArg} 赋与 ${players.map { it.username }}")
-    }
+        sender.sendLang(lang, "cmd.perm.add", !permArg, players.map { it.username })
+    }.onlyOp()
 
-    opSyntax(removeArg, permArg, targetArg) {
+    syntax(removeArg, permArg, targetArg) {
         val players = (!targetArg).findPlayers(sender)
         if (players.isEmpty()) {
             if (sender !is Player && args.getRaw(targetArg).isEmpty()) {
-                sender.message("&r非玩家使用该命令时不能省略参数 target.")
+                sender.sendLang(lang, "cmd.perm.noTarget")
             } else {
-                sender.message("&r找不到玩家: ${args.getRaw(targetArg)}")
+                sender.sendLang(lang, "global.cmd.playerNotFound", raw(targetArg))
             }
-            return@opSyntax
+            return@syntax
         }
         players.forEach {
             it.removePermission(!permArg)
         }
-        sender.message("&y已将权限 ${!permArg} 移除自 ${players.map { it.username }}")
-    }
+        sender.sendLang(lang, "cmd.perm.remove", !permArg, players.map { it.username })
+    }.onlyOp()
 
-    opSyntax(listArg, targetArg) {
-        val target = (!targetArg).findFirstPlayer(sender)
-        if (target == null) {
-            if (sender !is Player && args.getRaw(targetArg).isEmpty()) {
-                sender.message("&r非玩家使用该命令时不能省略参数 target.")
-            } else {
-                sender.message("&r找不到玩家: ${args.getRaw(targetArg)}")
-            }
-            return@opSyntax
-        }
-        sender.message("&g玩家 ${target.username} 拥有以下权限:")
-        target.allPermissions.forEach {
-            sender.message(" &y- ${it.permissionName}")
-        }
-    }
 }, name = "perm", aliases = arrayOf("p"))

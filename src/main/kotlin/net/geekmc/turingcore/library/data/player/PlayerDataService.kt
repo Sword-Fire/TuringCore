@@ -46,14 +46,16 @@ class OfflinePlayerDataContext(val uuid: UUID) {
 
 /**
  * 尝试加载离线玩家的数据并执行 [action] 。
+ * 如果玩家在线，则不会加载/卸载数据而是直接执行 [action] 。
  * 如果加载数据失败，则不会执行 [action] 而是返回 [Result.failure] 。
  */
 fun <T> withOfflinePlayerData(uuid: UUID, action: OfflinePlayerDataContext.() -> T): Result<T> {
-    if (!PlayerDataService.loadPlayerDataSync(uuid)) {
+    val isOnline = Manager.connection.onlinePlayers.any { it.uuid == uuid }
+    if (!isOnline && !PlayerDataService.loadPlayerDataSync(uuid)) {
         return Result.failure(IllegalStateException("Failed to load player data of player $uuid"))
     }
     val value = OfflinePlayerDataContext(uuid).action()
-    if (!PlayerDataService.asyncLoginingPlayers.contains(uuid)) {
+    if (!isOnline && !PlayerDataService.asyncLoginingPlayers.contains(uuid)) {
         PlayerDataService.savePlayerData(uuid)
         PlayerDataService.unloadPlayerData(uuid)
     }

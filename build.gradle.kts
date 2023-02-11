@@ -111,3 +111,7 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Jar> {
     archiveFileName.set(outputName)
 }
+
+//tasks.withType<PublishToMavenRepository> {
+//    dependsOn("doSomething")
+//}

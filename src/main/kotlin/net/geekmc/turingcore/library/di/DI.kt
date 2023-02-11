@@ -4,8 +4,7 @@ package net.geekmc.turingcore.library.di
 
 import net.geekmc.turingcore.library.config.ConfigService
 import net.geekmc.turingcore.util.extender.saveResource
-import net.geekmc.turingcore.util.lang.ExtensionLang
-import net.geekmc.turingcore.util.lang.GlobalLang
+import net.geekmc.turingcore.util.lang.Lang
 import net.geekmc.turingcore.util.lang.LanguageService
 import net.minestom.server.MinecraftServer
 import net.minestom.server.advancements.AdvancementManager
@@ -53,8 +52,7 @@ enum class PathTags {
 val baseModule by DI.Module {
     bindSingleton<Logger> { instance<Extension>().logger }
     bindSingleton<Path>(tag = PathTags.EXTENSION_FOLDER) { instance<Extension>().dataDirectory }
-    bindSingleton<GlobalLang> { LanguageService.getGlobalLang() }
-    bindSingleton<ExtensionLang> {
+    bindSingleton<Lang> {
         val ext = instance<Extension>()
         LanguageService.getExtensionLang(ext).also {
             val path = Path.of("lang.yml")
