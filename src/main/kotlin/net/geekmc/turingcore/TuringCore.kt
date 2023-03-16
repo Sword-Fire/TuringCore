@@ -9,7 +9,7 @@ import net.geekmc.turingcore.library.di.turingCoreDi
 import net.geekmc.turingcore.library.event.EventNodes
 import net.geekmc.turingcore.library.framework.AutoRegisterFramework
 import net.geekmc.turingcore.player.uuid.UUIDService
-import net.geekmc.turingcore.util.lang.GlobalLang
+import net.geekmc.turingcore.util.lang.Lang
 import net.geekmc.turingcore.util.lang.LanguageService
 import net.geekmc.turingcore.util.lang.sendLang
 import net.minestom.server.extensions.Extension
@@ -27,7 +27,7 @@ class TuringCore : Extension() {
             this.logger
         )
     }
-    private val globalLang: GlobalLang by turingCoreDi.instance()
+    private val lang: Lang by turingCoreDi.instance()
 
     override fun preInitialize() {
         initTuringCoreDi(this)
@@ -63,7 +63,7 @@ class TuringCore : Extension() {
     private fun registerUnknownCommandCallback() {
         // 输入未知指令时的提示信息。
         Manager.command.unknownCommandCallback = CommandCallback { sender, _ ->
-            sender.sendLang(globalLang, "global.cmd.unknown")
+            sender.sendLang(lang, "global.cmd.unknown")
         }
     }
 
