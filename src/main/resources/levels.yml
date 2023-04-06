@@ -1,0 +1,11 @@
+levels:
+  starter:
+    main: true
+    display: true
+    type: SHADOW
+    shadow:
+      1: 1000
+      2: 2000
+    formula: 1000 * level
+    maxLevel: 10
+    maxExp: 10000
