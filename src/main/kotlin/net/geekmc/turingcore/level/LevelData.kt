@@ -13,6 +13,6 @@ data class LevelData(
 
 @Serializable
 data class Level(
-    var level: Long,
-    var exp: Long
+    var level: Int,
+    var exp: Int
 )

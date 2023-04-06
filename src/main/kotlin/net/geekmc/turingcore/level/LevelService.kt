@@ -47,8 +47,9 @@ object LevelService : Service(turingCoreDi) {
      * @param exp 经验值
      * @return 增加后的经验值
      */
-    fun addExp(type: String, player: Player, exp: Long): Long {
+    fun addExp(type: String, player: Player, exp: Int): Int {
         require(isLevelExist(type)) { "Level type $type does not exist" }
+        require(exp < 0) { "The target value $exp cannot be less than 0." }
 
         return 0
     }
@@ -60,8 +61,9 @@ object LevelService : Service(turingCoreDi) {
      * @param exp 经验值
      * @return 移除后的经验值
      */
-    fun removeExp(type: String, player: Player, exp: Long): Long {
+    fun removeExp(type: String, player: Player, exp: Int): Int {
         require(isLevelExist(type)) { "Level type $type does not exist" }
+        require(exp < 0) { "The target value $exp cannot be less than 0." }
 
         return 0
     }
@@ -73,8 +75,9 @@ object LevelService : Service(turingCoreDi) {
      * @param level 等级
      * @return 移除玩家的等级
      */
-    fun addLevel(type: String, player: Player, level: Long): Long {
+    fun addLevel(type: String, player: Player, level: Int): Int {
         require(isLevelExist(type)) { "Level type $type does not exist" }
+        require(level < 0) { "The target value $level cannot be less than 0." }
 
         return 0
     }
@@ -86,8 +89,9 @@ object LevelService : Service(turingCoreDi) {
      * @param level 等级
      * @return 移除后的玩家等级
      */
-    fun removeLevel(type: String, player: Player, level: Long): Long {
+    fun removeLevel(type: String, player: Player, level: Int): Int {
         require(isLevelExist(type)) { "Level type $type does not exist" }
+        require(level < 0) { "The target value $level cannot be less than 0." }
 
         return 0
     }
@@ -98,8 +102,9 @@ object LevelService : Service(turingCoreDi) {
      * @param player 玩家
      * @return 玩家的等级
      */
-    fun setLevel(type: String, player: Player, level: Long): Long {
+    fun setLevel(type: String, player: Player, level: Int): Int {
         require(isLevelExist(type)) { "Level type $type does not exist" }
+        require(level < 0) { "The target value $level cannot be less than 0." }
 
         val data: LevelData = PlayerDataService.getPlayerData(player.uuid, LevelData::class)
         val levelData = data.levels[type]!!
@@ -107,8 +112,10 @@ object LevelService : Service(turingCoreDi) {
         val original = levelData.level
         levelData.level = level
 
-        if (config.levels[type]!!.main) {
-            player.level = levelData.level.toInt()
+        // 处理升降级
+
+        if (config.levels[type]!!.main && config.levels[type]!!.display) {
+            player.level = levelData.level
         }
 
         EventDispatcher.call(PlayerExpChangedEvent(player, type, original, levelData.level))
@@ -123,16 +130,19 @@ object LevelService : Service(turingCoreDi) {
      * @param exp 经验值
      * @return 设置后的经验值
      */
-    fun setExp(type: String, player: Player, exp: Long): Long {
+    fun setExp(type: String, player: Player, exp: Int): Int {
         require(isLevelExist(type)) { "Level type $type does not exist" }
+        require(exp < 0) { "The target value $exp cannot be less than 0." }
 
         val data: LevelData = PlayerDataService.getPlayerData(player.uuid, LevelData::class)
         val level = data.levels[type]!!
 
         val original = level.exp
-        level.exp = exp + level.exp
+        level.exp = exp
 
-        if (config.levels[type]!!.main) {
+        // 处理升降级
+
+        if (config.levels[type]!!.main && config.levels[type]!!.display) {
             player.exp = level.exp.toFloat()
         }
 
@@ -147,7 +157,7 @@ object LevelService : Service(turingCoreDi) {
      * @param levels 等级与经验值的映射
      */
     @Deprecated("Use config instead")
-    fun register(type: String, levels: HashMap<Long, Long>) {
+    fun register(type: String, levels: HashMap<Int, Int>) {
     }
 
     /**

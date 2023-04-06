@@ -17,5 +17,6 @@ data class LevelConfig(
 @Serializable
 data class LevelTable(
     val main: Boolean,
-    val shadow: HashMap<Long, Long> = HashMap()
+    val display: Boolean,
+    val shadow: HashMap<Int, Int> = HashMap()
 )

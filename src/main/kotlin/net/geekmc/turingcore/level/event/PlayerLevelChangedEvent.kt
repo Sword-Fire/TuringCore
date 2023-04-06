@@ -14,6 +14,6 @@ import net.minestom.server.event.Event
 data class PlayerLevelChangedEvent(
     val player: Player,
     val type: String,
-    val original: Long,
-    val level: Long
+    val original: Int,
+    val level: Int
 ) : Event {}
