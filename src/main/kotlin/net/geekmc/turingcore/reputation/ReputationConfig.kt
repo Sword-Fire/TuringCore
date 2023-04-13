@@ -10,10 +10,9 @@ data class ReputationConfig(
 
 @Serializable
 data class ReputationTable(
-    val name: String,
     val level: HashMap<Int, Int> = HashMap(),
     val min: Int,
     val max: Int,
     val levelName: HashMap<Int, String> = HashMap(),
-    val relative: HashMap<String, Int> = HashMap()
+    val relative: HashMap<String, Double> = HashMap()
 )

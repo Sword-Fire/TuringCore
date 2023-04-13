@@ -1,4 +1,4 @@
-Reputation:
+reputations:
   # 声望阵营 City
   City:
     # 节点对
@@ -16,7 +16,7 @@ Reputation:
     min: -1000
     max: 5000
     # 可以给不同声望等级命名
-    level_name:
+    levelName:
       -1: "敌对"
       0: "冷淡"
       1: "友好"
@@ -25,4 +25,4 @@ Reputation:
     relative:
       # 每获得 1 点City的声望，会失去 0.5 点 Wilderness 的态度，
       # 获得 1 点 City 的态度
-      Wilderness: -0.5
+      Wilderness: -1
