@@ -41,10 +41,11 @@ object CommandCoin : Kommand({
         sender.sendMessage("Usage: coin add|remove|set <player> <coin> <amount>")
     }
 
-    // FIXME: coinArg 参数补全的却是玩家名。很可能是suggest中没有创建新实例的问题。等待修复。
+    // FIXME: 当 coinArg 参数和 playerArg 参数顺序颠倒时，会导致 coinArg 参数无法正确解析
+    // 以上为前提会导致输入指令 /coin see <coin> <player> 时，coin 和 player 都提示玩家名
     subcommand("see") {
 
-        syntax(coinArg, playerArg) {
+        syntax(playerArg, coinArg) {
             val coin = !coinArg
             if (!CoinService.isCoinExist(coin)) {
                 sender.sendLang(lang, "coin.cmd.notExist", coin)
@@ -71,7 +72,7 @@ object CommandCoin : Kommand({
     }
 
     subcommand("add") {
-        syntax(coinArg, amountArg, playerArg) {
+        syntax(playerArg, coinArg, amountArg) {
             val coin = !coinArg
             if (!CoinService.isCoinExist(coin)) {
                 sender.sendLang(lang, "coin.cmd.notExist", coin)
@@ -108,7 +109,7 @@ object CommandCoin : Kommand({
     }
 
     subcommand("remove", "rem") {
-        syntax(coinArg, amountArg, playerArg) {
+        syntax(playerArg, coinArg, amountArg) {
             val coin = !coinArg
             if (!CoinService.isCoinExist(coin)) {
                 sender.sendLang(lang, "coin.cmd.notExist", coin)
@@ -145,7 +146,7 @@ object CommandCoin : Kommand({
     }
 
     subcommand("set") {
-        syntax(coinArg, amountArg, playerArg) {
+        syntax(playerArg, coinArg, amountArg) {
             val coin = !coinArg
             if (!CoinService.isCoinExist(coin)) {
                 sender.sendLang(lang, "coin.cmd.notExist", coin)
