@@ -20,9 +20,9 @@ data class MessageTitle(
             MessageTitle(
                 yamlMap.get<YamlScalar>("title")!!.content,
                 yamlMap.get<YamlScalar>("subtitle")!!.content,
-                yamlMap.get<YamlScalar>("fadein")!!.content.toLong(),
-                yamlMap.get<YamlScalar>("duration")!!.content.toLong(),
-                yamlMap.get<YamlScalar>("fadeout")!!.content.toLong()
+                yamlMap.get<YamlScalar>("fadein")!!.toLong(),
+                yamlMap.get<YamlScalar>("duration")!!.toLong(),
+                yamlMap.get<YamlScalar>("fadeout")!!.toLong()
             )
     }
 

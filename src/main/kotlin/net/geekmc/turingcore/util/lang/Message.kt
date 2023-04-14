@@ -4,19 +4,25 @@ import net.minestom.server.command.CommandSender
 
 /**
  * ```
- * t1: "example message"
- * t2:
- *   - "example messages"
- * t3:
- * - type: actionbar
- *   text: "example actionbar message"
- * t4:
- * - type: title
- *   title: "example title message"
- *   subtitle: "example subtitle message"
- *   fadein: 0
- *   stay: 1.0
- *   fadeout: 0
+ * msg-example-1: "chat message"
+ * msg-example-2:
+ *   type: "title"
+ *   main: "message in main title"
+ *   sub: "message in sub title"
+ *   // 单位为tick。如果不填，会自动根据消息长度计算时间。不会低于1.5s。
+ *   fadein: 20
+ *   duration: 100
+ *   fadeout: 20
+ * msg-example-3:
+ *   type: "actionbar"
+ *   msg: "actionbar message"
+ *   // 单位为tick。如果不填，会自动根据消息长度计算时间。不会低于1.5s。
+ *   duration: 100
+ * msg-example-4: null
+ * msg-example-5:
+ *   type: "multi"
+ *   msg: "chat message1\n
+ *         chat message2 "
  *  ```
  */
 sealed interface Message {

@@ -1,0 +1,6 @@
+multi-message:
+  type: multi
+  msg: |
+    Hello,
+    World!
+  interval: 20

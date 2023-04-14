@@ -1,25 +1,26 @@
 package net.geekmc.turingcore.util.lang
 
-import com.charleskorn.kaml.Yaml
-import com.charleskorn.kaml.YamlNode
-import com.charleskorn.kaml.YamlScalar
-import com.charleskorn.kaml.yamlMap
+import com.charleskorn.kaml.*
 import java.nio.file.Path
 import kotlin.io.path.inputStream
 
 object LanguageParser {
     fun parseLangYaml(yamlNode: YamlNode): Map<String, Message> {
         return yamlNode.yamlMap.entries.map { (key, value) ->
-            key.content to if (value is YamlScalar) {
-                MessageText(value.content)
-            } else {
-                when (val typeId = value.yamlMap.get<YamlScalar>("type")!!.content) {
-                    "text" -> MessageText.create(value.yamlMap)
-                    "actionbar" -> MessageActionBar.create(value.yamlMap)
-                    "title" -> MessageTitle.create(value.yamlMap)
+            key.content to when (value) {
+                is YamlNull -> MessageNull()
+                is YamlScalar -> MessageText(value.content)
+                is YamlMap -> when (val typeId = value.get<YamlScalar>("type")!!.content) {
+                    "text" -> MessageText.create(value)
+                    "null" -> MessageNull.create(value)
+                    "actionbar" -> MessageActionBar.create(value)
+                    "title" -> MessageTitle.create(value)
+                    "multi" -> MessageMulti.create(value)
 
                     else -> error("Unknown message type: $typeId")
                 }
+
+                else -> error("Unknown Yaml format: $value")
             }
         }.toMap()
     }

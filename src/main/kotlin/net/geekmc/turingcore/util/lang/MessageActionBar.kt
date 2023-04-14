@@ -18,7 +18,7 @@ data class MessageActionBar(
         fun create(yamlMap: YamlMap): MessageActionBar =
             MessageActionBar(
                 yamlMap.get<YamlScalar>("msg")!!.content,
-                yamlMap.get<YamlScalar>("duration")!!.content.toLong()
+                yamlMap.get<YamlScalar>("duration")!!.toLong()
             )
     }
 
